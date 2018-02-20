@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NimbusFox.FoxCore</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore</AssemblyName>
+    <AssemblyName>NimbusFox.FoxCore.V1-20180220</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
