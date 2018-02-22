@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Staxel;
 
-namespace NimbusFox.FoxCore {
+namespace NimbusFox.FoxCore.Managers {
     public class FileManager {
         private readonly string StreamLocation;
         private readonly string LocalContentLocation;
@@ -34,7 +30,7 @@ namespace NimbusFox.FoxCore {
                 var bf = new BinaryFormatter();
                 var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename);
                 stream.Seek(0L, SeekOrigin.Begin);
-                return (T) bf.Deserialize(stream);
+                return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(bf.Deserialize(stream)));
             }
 
             return new T();

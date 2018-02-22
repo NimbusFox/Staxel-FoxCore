@@ -5,7 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Staxel;
 
-namespace NimbusFox.FoxCore {
+namespace NimbusFox.FoxCore.Managers {
     public class ExceptionManager {
         private string _modVersion;
         private readonly string StreamLocation;
