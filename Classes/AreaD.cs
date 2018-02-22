@@ -4,8 +4,8 @@
         public double End { get; }
 
         public AreaD(double start, double end) {
-            Start = start > end ? end : start;
-            End = end < start ? end : start;
+            Start = start >= end ? end : start;
+            End = Start != start ? end : start;
         }
     }
 }

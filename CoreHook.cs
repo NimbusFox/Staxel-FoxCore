@@ -12,10 +12,9 @@ using Staxel.Tiles;
 namespace NimbusFox.FoxCore {
     internal class CoreHook : IModHookV2 {
         internal static Universe Universe;
-        internal static readonly Dictionary<string, List<ParticleStore>> Particles = new Dictionary<string, List<ParticleStore>>();
         
         public void Dispose() {
-            Particles.Clear();
+
         }
         public void GameContextInitializeInit() { }
         public void GameContextInitializeBefore() { }
@@ -26,20 +25,6 @@ namespace NimbusFox.FoxCore {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-
-            var _particles = new Dictionary<string, List<ParticleStore>>(Particles);
-
-            if (_particles.Any()) {
-                    foreach (var item in _particles.Where(x => x.Value.Any())) {
-                        var uniqueEntities = item.Value.Select(x => x.Entity).Distinct();
-
-                        foreach (var entity in new List<Entity>(uniqueEntities)) {
-                            var current = item.Value.First(x => x.Entity == entity);
-                            BaseEffects.EmitParticles(current.Entity, current.Target, current.ParticleCode);
-                            Particles[item.Key].Remove(current);
-                        }
-                    }
-            }
         }
         public void UniverseUpdateAfter() { }
         public bool CanPlaceTile(Entity entity, Vector3I location, Tile tile, TileAccessFlags accessFlags) {

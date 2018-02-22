@@ -4,8 +4,8 @@
         public int End { get; }
 
         public AreaI(int start, int end) {
-            Start = start > end ? end : start;
-            End = end < start ? end : start;
+            Start = start >= end ? end : start;
+            End = Start == start ? end : start;
         }
     }
 }
