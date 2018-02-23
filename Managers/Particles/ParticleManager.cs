@@ -7,35 +7,23 @@ using NimbusFox.FoxCore.Staxel.Builders.Logic;
 using Plukit.Base;
 using Staxel.Logic;
 
-namespace NimbusFox.FoxCore.Managers {
+namespace NimbusFox.FoxCore.Managers.Particles {
     public class ParticleManager : IDisposable {
-        internal string Identifier { get; }
-        internal long LastTick = 0;
+        internal long LastTick;
 
         internal List<VectorRangeI> particles = new List<VectorRangeI>();
 
-        public ParticleManager() {
-            Identifier = Guid.NewGuid().ToString();
-        }
-
         public void DrawParticles() {
-            foreach (var vector in Clone()) {
-                foreach (var entity in vector.GetEntities()) {
-                    if (((ParticleHostEntityLogic) entity.Logic).CanDispose) {
-                        vector.Entities.Remove(entity);
+            if (LastTick <= DateTime.Now.Ticks) {
+                foreach (var vector in Clone()) {
+                    foreach (var entity in vector.GetUnrenderedEntities()) {
+                        CoreHook.Universe.AddEntity(entity.Key);
+                        entity.Key.Bind(CoreHook.Universe);
+                        vector.Entities[entity.Key] = true;
                     }
                 }
 
-                var newEntities = GetRange(vector, vector.End).Where(x =>
-                    vector.GetEntities().Any(y => !vector.GetEntities().Any() || y.Physics.Position != x.Physics.Position));
-
-                foreach (var entity in newEntities) {
-                    vector.Entities.Add(entity, false);
-                }
-
-                foreach (var entity in vector.GetEntities().Where(x => !CoreHook.Universe.TryGetEntity(x.Id, out _))) {
-                    CoreHook.Universe.AddEntity(entity);
-                }
+                LastTick = DateTime.Now.Ticks + 100;
             }
         }
 
@@ -51,7 +39,7 @@ namespace NimbusFox.FoxCore.Managers {
                         if (render) {
                             var entity = new Entity(CoreHook.Universe.AllocateNewEntityId(), false, ParticleHostEntityBuilder.KindCode, true);
                             entity.Physics.ForcedPosition(new Vector3D(x, y, z));
-                            ((ParticleHostEntityLogic) entity.Logic).SetParticleCode(range.ParticleCode);
+                            ((ParticleHostEntityLogic)entity.Logic).SetParticleCode(range.ParticleCode);
                             ((ParticleHostEntityLogic)entity.Logic).SetLocation(new Vector3D(x, y, z));
                             output.Add(entity);
                         }
@@ -96,14 +84,28 @@ namespace NimbusFox.FoxCore.Managers {
             return GetStartVectors(Converters.From3Dto3I(target));
         }
 
+        /// <summary>
+        /// Bug: Do not make the cuboid taller than 20 else unexpected renderings can occur
+        /// </summary>
         public void Add(Vector3I start, Vector3I end, string particleCode) {
-            particles.Add(new VectorRangeI {
+            var range = new VectorRangeI {
                 Start = start,
                 End = end,
                 ParticleCode = particleCode
-            });
+            };
+
+            var entities = GetRange(range, end);
+
+            foreach (var entity in entities) {
+                range.Entities.Add(entity, false);
+            }
+
+            particles.Add(range);
         }
 
+        /// <summary>
+        /// Bug: Do not make the cuboid taller than 20 else unexpected renderings can occur
+        /// </summary>
         public void Add(Vector3D start, Vector3D end, string particleCode) {
             Add(Converters.From3Dto3I(start), Converters.From3Dto3I(end), particleCode);
         }
@@ -112,7 +114,13 @@ namespace NimbusFox.FoxCore.Managers {
             var remove = GetStartVectors(start);
 
             if (remove.Any()) {
-                particles.Remove(remove.First());
+                foreach (var item in remove) {
+                    foreach (var entity in item.GetEntities()) {
+                        ((ParticleHostEntityLogic) entity.Logic).Finish();
+                    }
+                    item.Entities.Clear();
+                    particles.Remove(item);
+                }
             }
         }
 
@@ -121,6 +129,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void Dispose() {
+            foreach (var item in Clone()) {
+                Remove(item.Start);
+            }
             particles.Clear();
         }
     }

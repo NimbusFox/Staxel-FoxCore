@@ -20,8 +20,6 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
         private string _particleCode = "";
         private long _spawned;
         public bool CanDispose { get; private set; }
-        private bool _targetable;
-        private byte _ran;
         private ParticleDefinition _particle;
 
         public ParticleHostEntityLogic(Entity entity) {
@@ -30,8 +28,6 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
             _entity.Physics.PriorityChunkRadius(1, false);
             _done = false;
             CanDispose = false;
-            _targetable = false;
-            _ran = 0;
             _spawned = DateTime.Now.Ticks;
         }
 
@@ -98,10 +94,6 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
         public void SetParticleCode(string code) {
             _particleCode = code;
             _particle = GameContext.ParticleDatabase.GetParticle(_particleCode);
-        }
-
-        public void SetTargetable() {
-            _targetable = true;
         }
 
         public void SetLocation(Vector3D location) {

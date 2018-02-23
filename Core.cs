@@ -1,5 +1,7 @@
 ﻿using System;
 using NimbusFox.FoxCore.Managers;
+using NimbusFox.FoxCore.Managers.Particles;
+using Staxel.FoxCore.Managers.Particles;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 
 namespace NimbusFox.FoxCore {
@@ -9,6 +11,7 @@ namespace NimbusFox.FoxCore {
         public readonly WorldManager WorldManager;
         public readonly ParticleManager ParticleManager;
         public readonly EntityParticleManager EntityParticleManager;
+        public readonly EntityFollowParticleManager EntityFollowParticleManager;
 
         public FxCore(string author, string mod, string modVersion) {
             ExceptionManager = new ExceptionManager(author, mod, modVersion);
@@ -16,6 +19,7 @@ namespace NimbusFox.FoxCore {
             WorldManager = new WorldManager();
             ParticleManager = new ParticleManager();
             EntityParticleManager = new EntityParticleManager();
+            EntityFollowParticleManager = new EntityFollowParticleManager();
         }
     }
 }

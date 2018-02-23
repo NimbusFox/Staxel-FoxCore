@@ -7,8 +7,8 @@
     <ProjectGuid>{8B473A82-8C34-44EA-B13D-39D0418E021F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NimbusFox.FoxCore</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore.V1-20180222</AssemblyName>
+    <RootNamespace>Staxel.FoxCore</RootNamespace>
+    <AssemblyName>NimbusFox.FoxCore.V1-20180223</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -90,10 +90,11 @@
     <Compile Include="Classes\VectoSquareI.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="CoreHook.cs" />
-    <Compile Include="Managers\EntityParticleManager.cs" />
+    <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
+    <Compile Include="Managers\Particles\EntityParticleManager.cs" />
     <Compile Include="Managers\ExceptionManager.cs" />
     <Compile Include="Managers\FileManager.cs" />
-    <Compile Include="Managers\ParticleManager.cs" />
+    <Compile Include="Managers\Particles\ParticleManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Staxel\Builders\Logic\ParticleHostEntityLogic.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Staxel\Builders\ParticleEntityBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NimbusFox.FoxCore.V1-20180222.mod">
+    <Content Include="NimbusFox.FoxCore.V1-20180223.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

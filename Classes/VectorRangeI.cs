@@ -6,15 +6,17 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Classes {
     public class VectorRangeI {
-        public Vector3I Start { get; set; }
-        public Vector3I End { get; set; }
-        public string ParticleCode { get; set; }
-        public Entity TrackEntity { get; set; }
-        public Vector3I TrackEntityLastPos { get; set; }
+        public Vector3I Start { get; internal set; }
+        public Vector3I End { get; internal set; }
+        internal string ParticleCode { get; set; }
+        internal Entity TrackEntity { get; set; }
+        internal Vector3I TrackEntityLastPos { get; set; }
         internal Dictionary<Entity, bool> Entities { get; set; }
+        internal Vector3I Offset { get; set; }
 
         public VectorRangeI() {
             Entities = new Dictionary<Entity, bool>();
+            Offset = new Vector3I(0, 0, 0);
         }
 
         internal List<Entity> GetEntities() {

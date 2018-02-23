@@ -7,7 +7,7 @@ using NimbusFox.FoxCore.Staxel.Builders.Logic;
 using Plukit.Base;
 using Staxel.Logic;
 
-namespace NimbusFox.FoxCore.Managers {
+namespace NimbusFox.FoxCore.Managers.Particles {
     public class EntityParticleManager : ParticleManager {
         public VectorRangeI Add(Vector3I start, Entity trackEntity, string particleCode) {
             var particleHost = new VectorRangeI {
@@ -29,7 +29,6 @@ namespace NimbusFox.FoxCore.Managers {
                 foreach (var vector in Clone()) {
                     foreach (var entity in vector.GetUnrenderedEntities()) {
                         CoreHook.Universe.AddEntity(entity.Key);
-                        ((ParticleHostEntityLogic)entity.Key.Logic).SetTargetable();
                         entity.Key.Bind(CoreHook.Universe);
                         vector.Entities[entity.Key] = true;
                     }
@@ -50,22 +49,19 @@ namespace NimbusFox.FoxCore.Managers {
                         }
                     }
 
-                    try {
-                        foreach (var entity in vector.GetEntities()) {
-                            if (entity.Logic == null) {
+                    foreach (var entity in vector.GetEntities()) {
+                        if (entity.Logic == null) {
+                            vector.Entities.Remove(entity);
+                        } else {
+                            if (((ParticleHostEntityLogic)entity.Logic).CanDispose) {
                                 vector.Entities.Remove(entity);
-                            } else {
-                                if (((ParticleHostEntityLogic)entity.Logic).CanDispose) {
-                                    vector.Entities.Remove(entity);
-                                }
                             }
                         }
-                    } catch {
-                        vector.Entities.Clear();
                     }
 
                     if (vector.TrackEntityLastPos != Converters.From3Dto3I(vector.TrackEntity.Physics.Position) || !vector.Entities.Any()) {
-                        var newEntities = GetRange(vector, vector.TrackEntity.Physics.BottomPosition());
+                        var pos = vector.TrackEntity.Physics.BottomPosition();
+                        var newEntities = GetRange(vector, new Vector3D(pos.X + vector.Offset.X, pos.Y + vector.Offset.Y, pos.Z + vector.Offset.Z));
 
                         if (!vector.Entities.Any()) {
                             foreach (var entity in newEntities) {

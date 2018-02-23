@@ -44,7 +44,7 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public Vector3D GetEntityVector(Entity entity) {
-            return entity.Physics.Position;
+            return entity.Physics.BottomPosition();
         }
 
         public VectorSquareI GetSquareI(Vector3I start, Vector3I end) {
