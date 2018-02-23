@@ -10,6 +10,7 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.Managers {
     public class ParticleManager : IDisposable {
         internal string Identifier { get; }
+        internal long LastTick = 0;
 
         internal List<VectorRangeI> particles = new List<VectorRangeI>();
 
@@ -28,7 +29,9 @@ namespace NimbusFox.FoxCore.Managers {
                 var newEntities = GetRange(vector, vector.End).Where(x =>
                     vector.GetEntities().Any(y => !vector.GetEntities().Any() || y.Physics.Position != x.Physics.Position));
 
-                vector.Entities.AddRange(newEntities);
+                foreach (var entity in newEntities) {
+                    vector.Entities.Add(entity, false);
+                }
 
                 foreach (var entity in vector.GetEntities().Where(x => !CoreHook.Universe.TryGetEntity(x.Id, out _))) {
                     CoreHook.Universe.AddEntity(entity);

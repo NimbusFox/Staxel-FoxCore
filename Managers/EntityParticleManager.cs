@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Staxel.Builders;
@@ -24,52 +25,70 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public new void DrawParticles() {
-            foreach (var vector in Clone()) {
-                try {
-                    foreach (var entity in vector.GetEntities()) {
-                        if (entity.Logic == null) {
+            if (LastTick <= DateTime.Now.Ticks) {
+                foreach (var vector in Clone()) {
+                    foreach (var entity in vector.GetUnrenderedEntities()) {
+                        CoreHook.Universe.AddEntity(entity.Key);
+                        ((ParticleHostEntityLogic)entity.Key.Logic).SetTargetable();
+                        entity.Key.Bind(CoreHook.Universe);
+                        vector.Entities[entity.Key] = true;
+                    }
+
+                    if (!CoreHook.Universe.TryGetEntity(vector.TrackEntity.Id, out _)) {
+                        foreach (var entity in vector.GetEntities()) {
                             vector.Entities.Remove(entity);
-                        } else {
-                            if (((ParticleHostEntityLogic) entity.Logic).CanDispose) {
+                            entity.Dispose();
+                        }
+                        particles.Remove(vector);
+                        continue;
+                    }
+
+                    if (vector.TrackEntityLastPos != Converters.From3Dto3I(vector.TrackEntity.Physics.Position)) {
+                        foreach (var entity in vector.GetEntities()) {
+                            ((ParticleHostEntityLogic)entity?.Logic)?.Finish();
+                            vector.Entities.Remove(entity);
+                        }
+                    }
+
+                    try {
+                        foreach (var entity in vector.GetEntities()) {
+                            if (entity.Logic == null) {
                                 vector.Entities.Remove(entity);
+                            } else {
+                                if (((ParticleHostEntityLogic)entity.Logic).CanDispose) {
+                                    vector.Entities.Remove(entity);
+                                }
                             }
                         }
+                    } catch {
+                        vector.Entities.Clear();
                     }
-                } catch {
-                    vector.Entities.Clear();
-                }
 
-                if (!CoreHook.Universe.TryGetEntity(vector.TrackEntity.Id, out _)) {
-                    foreach (var entity in vector.GetEntities()) {
-                        entity.Dispose();
-                    }
-                    particles.Remove(vector);
-                    continue;
-                }
+                    if (vector.TrackEntityLastPos != Converters.From3Dto3I(vector.TrackEntity.Physics.Position) || !vector.Entities.Any()) {
+                        var newEntities = GetRange(vector, vector.TrackEntity.Physics.BottomPosition());
 
-                var newEntities = GetRange(vector, vector.TrackEntity.Physics.Position);
-
-                if (!vector.Entities.Any()) {
-                    vector.Entities.AddRange(newEntities);
-                } else {
-                    var current = vector.GetEntities();
-                    foreach (var entity in newEntities) {
-                        if (!current.Any(x => {
-                            var item = Converters.From3Dto3I(x.Physics.Position);
-                            var item2 = Converters.From3Dto3I(entity.Physics.Position);
-                            return item.X == item2.X && item.Y == item2.Y && item.Z == item2.Z;
-                        })) {
-                            vector.Entities.Add(entity);
+                        if (!vector.Entities.Any()) {
+                            foreach (var entity in newEntities) {
+                                vector.Entities.Add(entity, false);
+                            }
+                        } else {
+                            var current = vector.GetEntities();
+                            foreach (var entity in newEntities) {
+                                if (!current.Any(x => {
+                                    var item = Converters.From3Dto3I(x.Physics.Position);
+                                    var item2 = Converters.From3Dto3I(entity.Physics.Position);
+                                    return item.X == item2.X && item.Y == item2.Y && item.Z == item2.Z && !((ParticleHostEntityLogic)entity.Logic)._done;
+                                })) {
+                                    vector.Entities.Add(entity, false);
+                                }
+                            }
                         }
+
+                        vector.TrackEntityLastPos = Converters.From3Dto3I(vector.TrackEntity.Physics.Position);
                     }
                 }
 
-
-                foreach (var entity in vector.GetEntities().Where(x => !CoreHook.Universe.TryGetEntity(x.Id, out _))) {
-                    CoreHook.Universe.AddEntity(entity);
-                    ((ParticleHostEntityLogic)entity.Logic).SetTargetable();
-                    entity.Bind(CoreHook.Universe);
-                }
+                LastTick = DateTime.Now.Ticks + 100;
             }
         }
     }

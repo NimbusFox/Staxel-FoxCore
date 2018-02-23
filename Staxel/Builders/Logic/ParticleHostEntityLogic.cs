@@ -8,6 +8,7 @@ using Staxel;
 using Staxel.Core;
 using Staxel.Effects;
 using Staxel.Logic;
+using Staxel.Particles;
 using Staxel.Tiles;
 
 namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
@@ -15,12 +16,13 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
         private readonly Entity _entity;
         private readonly Blob _blob;
         private Vector3D _location;
-        private bool _done;
+        public bool _done { get; private set; }
         private string _particleCode = "";
         private long _spawned;
         public bool CanDispose { get; private set; }
         private bool _targetable;
         private byte _ran;
+        private ParticleDefinition _particle;
 
         public ParticleHostEntityLogic(Entity entity) {
             _entity = entity;
@@ -38,15 +40,9 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
         public override void Update(Timestep timestep, EntityUniverseFacade entityUniverseFacade) {
             if (!_done) {
                 if (!string.IsNullOrWhiteSpace(_particleCode)) {
-                    var particle = GameContext.ParticleDatabase.GetParticle(_particleCode);
-
-                    if (DateTime.Now.AddSeconds(-particle.ParticleData.GetDouble("emitDuration")).Ticks > _spawned) {
-                        _done = true;
-                    }
-
                     if (DateTime.Now.Ticks >= _spawned) {
-                        BaseEffects.EmitParticles(_entity, _location, _particleCode);
-                        //_spawned = DateTime.Now.AddSeconds(particle.ParticleData.GetDouble("emitDuration")).Ticks;
+                        BaseEffects.EmitParticles(_entity, _location, _particle.Code);
+                        _spawned = DateTime.Now.AddSeconds(_particle.ParticleData.GetDouble("emitDuration")).Ticks;
                     }
                 }
             }
@@ -96,12 +92,12 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
 
         public new void Dispose() {
             base.Dispose();
-            _done = true;
             CanDispose = true;
         }
 
         public void SetParticleCode(string code) {
             _particleCode = code;
+            _particle = GameContext.ParticleDatabase.GetParticle(_particleCode);
         }
 
         public void SetTargetable() {
@@ -110,6 +106,10 @@ namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
 
         public void SetLocation(Vector3D location) {
             _location = location;
+        }
+
+        public void Finish() {
+            _done = true;
         }
     }
 }
