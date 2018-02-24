@@ -27,12 +27,10 @@ namespace NimbusFox.FoxCore {
             EntityFollowParticleManager = new EntityFollowParticleManager();
         }
 
-        public static T ResolveOptionalDependency<T>(string key) {
+        public static TInterface ResolveOptionalDependency<TInterface>(string key) {
             var assembly = Assembly.GetAssembly(typeof(FxCore));
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
-            Console.WriteLine(dir);
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
-                Console.WriteLine(file.FullName);
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
 
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
@@ -41,9 +39,9 @@ namespace NimbusFox.FoxCore {
                         if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
                             var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
                             foreach (var module in item.DefinedTypes) {
-                                if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(T))) {
+                                if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
                                     Console.WriteLine("FOUND ONE");
-                                    return (T)Activator.CreateInstance(module.ReflectedType);
+                                    return (TInterface)Activator.CreateInstance(module.ReflectedType);
                                 }
                             }
                         }
@@ -51,7 +49,34 @@ namespace NimbusFox.FoxCore {
                 }
             }
 
-            return default(T);
+            return default(TInterface);
+        }
+
+        public static List<TInterface> GetDependencies<TInterface>(string key) {
+            var output = new List<TInterface>();
+
+            var assembly = Assembly.GetAssembly(typeof(FxCore));
+            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
+            foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
+                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
+
+                if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
+                    var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
+                    if (current.Any()) {
+                        if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
+                            var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
+                            foreach (var module in item.DefinedTypes) {
+                                if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
+                                    Console.WriteLine("FOUND ONE");
+                                    output.Add((TInterface)Activator.CreateInstance(module.ReflectedType));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return output;
         }
     }
 }
