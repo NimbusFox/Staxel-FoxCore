@@ -12,7 +12,7 @@ using Staxel.Logic;
 
 namespace Staxel.FoxCore.Managers.Particles {
     public class EntityFollowParticleManager : EntityParticleManager {
-        public void Add(Entity entity, string particleCode, int xOffset = 0, int yOffset = 0, int zoffset = 0) {
+        public Guid Add(Entity entity, string particleCode, int xOffset = 0, int yOffset = 0, int zoffset = 0) {
             var particleHost = new VectorRangeI {
                 ParticleCode = particleCode,
                 TrackEntity = entity,
@@ -20,6 +20,7 @@ namespace Staxel.FoxCore.Managers.Particles {
             };
 
             particles.Add(particleHost);
+            return particleHost.UID;
         }
 
         public new void DrawParticles() {

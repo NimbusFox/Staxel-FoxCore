@@ -13,10 +13,12 @@ namespace NimbusFox.FoxCore.Classes {
         internal Vector3I TrackEntityLastPos { get; set; }
         internal Dictionary<Entity, bool> Entities { get; set; }
         internal Vector3I Offset { get; set; }
+        public Guid UID { get; }
 
         public VectorRangeI() {
             Entities = new Dictionary<Entity, bool>();
             Offset = new Vector3I(0, 0, 0);
+            UID = Guid.NewGuid();
         }
 
         internal List<Entity> GetEntities() {

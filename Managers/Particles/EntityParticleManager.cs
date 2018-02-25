@@ -9,7 +9,7 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Managers.Particles {
     public class EntityParticleManager : ParticleManager {
-        public VectorRangeI Add(Vector3I start, Entity trackEntity, string particleCode) {
+        public Guid Add(Vector3I start, Entity trackEntity, string particleCode) {
             var particleHost = new VectorRangeI {
                 Start = start,
                 ParticleCode = particleCode,
@@ -17,10 +17,10 @@ namespace NimbusFox.FoxCore.Managers.Particles {
             };
 
             particles.Add(particleHost);
-            return particleHost;
+            return particleHost.UID;
         }
 
-        public VectorRangeI Add(Vector3D start, Entity trackEntity, string particleCode) {
+        public Guid Add(Vector3D start, Entity trackEntity, string particleCode) {
             return Add(Converters.From3Dto3I(start), trackEntity, particleCode);
         }
 

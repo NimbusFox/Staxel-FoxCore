@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Staxel.FoxCore</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore.V1-20180224</AssemblyName>
+    <AssemblyName>NimbusFox.FoxCore.V1-20180225</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -103,7 +103,7 @@
     <Compile Include="Staxel\Builders\ParticleEntityBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NimbusFox.FoxCore.V1-20180224.mod">
+    <Content Include="NimbusFox.FoxCore.V1-20180225.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

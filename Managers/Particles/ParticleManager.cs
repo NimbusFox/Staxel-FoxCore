@@ -87,7 +87,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         /// <summary>
         /// Bug: Do not make the cuboid taller than 20 else unexpected renderings can occur
         /// </summary>
-        public void Add(Vector3I start, Vector3I end, string particleCode) {
+        public Guid Add(Vector3I start, Vector3I end, string particleCode) {
             var range = new VectorRangeI {
                 Start = start,
                 End = end,
@@ -101,36 +101,30 @@ namespace NimbusFox.FoxCore.Managers.Particles {
             }
 
             particles.Add(range);
+
+            return range.UID;
         }
 
         /// <summary>
         /// Bug: Do not make the cuboid taller than 20 else unexpected renderings can occur
         /// </summary>
-        public void Add(Vector3D start, Vector3D end, string particleCode) {
-            Add(Converters.From3Dto3I(start), Converters.From3Dto3I(end), particleCode);
+        public Guid Add(Vector3D start, Vector3D end, string particleCode) {
+            return Add(Converters.From3Dto3I(start), Converters.From3Dto3I(end), particleCode);
         }
 
-        public void Remove(Vector3I start) {
-            var remove = GetStartVectors(start);
-
-            if (remove.Any()) {
-                foreach (var item in remove) {
-                    foreach (var entity in item.GetEntities()) {
-                        ((ParticleHostEntityLogic) entity.Logic).Finish();
-                    }
-                    item.Entities.Clear();
-                    particles.Remove(item);
+        public void Remove(Guid UID) {
+            var target = Clone().FirstOrDefault(x => x.UID == UID);
+            if (target != null) {
+                foreach (var entity in target.Entities) {
+                    ((ParticleHostEntityLogic) entity.Key.Logic).Finish();
                 }
+                particles.Remove(target);
             }
-        }
-
-        public void Remove(Vector3D start) {
-            Remove(Converters.From3Dto3I(start));
         }
 
         public void Dispose() {
             foreach (var item in Clone()) {
-                Remove(item.Start);
+                Remove(item.UID);
             }
             particles.Clear();
         }
