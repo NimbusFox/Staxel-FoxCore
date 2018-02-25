@@ -37,5 +37,9 @@ namespace NimbusFox.FoxCore.Classes {
                    && Y.End > position.Y
                    && Z.End > position.Z;
         }
+
+        public long GetTileCount() {
+            return (X.End - X.Start) * (Z.End - Z.Start) * (Y.End - Y.Start);
+        }
     }
 }

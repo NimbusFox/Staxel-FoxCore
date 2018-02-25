@@ -2,6 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
 using Staxel;
+using System;
 
 namespace NimbusFox.FoxCore.Managers {
     public class FileManager {
@@ -17,20 +18,40 @@ namespace NimbusFox.FoxCore.Managers {
             }
         }
 
-        public void WriteFile<T>(string fileName, T data) {
-            var bf = new BinaryFormatter();
+        public void WriteFile<T>(string fileName, T data, bool outputAsText = false) {
             var stream = new MemoryStream();
-            bf.Serialize(stream, data);
+            var output = JsonConvert.SerializeObject(data, Formatting.Indented);
+            stream.Seek(0L, SeekOrigin.Begin);
+            if (!outputAsText) {
+                var bf = new BinaryFormatter();
+                bf.Serialize(stream, output);
+            } else {
+                var sw = new StreamWriter(stream);
+                sw.Write(output);
+                sw.Flush();
+            }
             stream.Seek(0L, SeekOrigin.Begin);
             GameContext.ContentLoader.WriteLocalStream(StreamLocation + fileName, stream);
         }
 
-        public T ReadFile<T>(string filename) where T : new() {
+        public T ReadFile<T>(string filename, bool inputIsText = false) where T : new() {
             if (FileExists(filename)) {
                 var bf = new BinaryFormatter();
-                var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename);
-                stream.Seek(0L, SeekOrigin.Begin);
-                return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(bf.Deserialize(stream)));
+                var stream = GameContext.ContentLoader.ReadLocalStream(StreamLocation + filename);
+                try {
+                    string input;
+                    if (!inputIsText) {
+                        input = (string)bf.Deserialize(stream);
+                    } else {
+                        var sr = new StreamReader(stream);
+                        input = sr.ReadToEnd();
+                    }
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    return JsonConvert.DeserializeObject<T>(input);
+                } catch {
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(bf.Deserialize(stream)));
+                }
             }
 
             return new T();

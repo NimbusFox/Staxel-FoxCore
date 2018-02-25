@@ -32,7 +32,6 @@ namespace NimbusFox.FoxCore {
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
-
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
                     var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
                     if (current.Any()) {
@@ -40,7 +39,6 @@ namespace NimbusFox.FoxCore {
                             var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
                             foreach (var module in item.DefinedTypes) {
                                 if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
-                                    Console.WriteLine("FOUND ONE");
                                     return (TInterface)Activator.CreateInstance(module.ReflectedType);
                                 }
                             }
@@ -59,7 +57,6 @@ namespace NimbusFox.FoxCore {
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
-
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
                     var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
                     if (current.Any()) {
@@ -67,7 +64,6 @@ namespace NimbusFox.FoxCore {
                             var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
                             foreach (var module in item.DefinedTypes) {
                                 if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
-                                    Console.WriteLine("FOUND ONE");
                                     output.Add((TInterface)Activator.CreateInstance(module.ReflectedType));
                                 }
                             }

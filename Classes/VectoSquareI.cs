@@ -1,17 +1,16 @@
-﻿using Plukit.Base;
+﻿using System;
+using Plukit.Base;
 
 namespace NimbusFox.FoxCore.Classes {
+    [Serializable]
     public class VectorSquareI {
-        private Vector3I Start { get;}
-        private Vector3I End { get;}
 
-        public AreaI X { get; }
-        public AreaI Z { get; }
+        public AreaI X { get; set; }
+        public AreaI Z { get; set; }
+
+        public VectorSquareI() { }
 
         public VectorSquareI(Vector3I start, Vector3I end) {
-            Start = start;
-            End = end;
-
             X = new AreaI(start.X, end.X);
 
             Z = new AreaI(start.Z, end.Z);
@@ -29,6 +28,10 @@ namespace NimbusFox.FoxCore.Classes {
                    && Z.Start <= position.Z
                    && X.End >= position.X
                    && Z.End >= position.Z;
+        }
+
+        public int GetTileCount() {
+            return (X.End - X.Start) * (Z.End - Z.Start);
         }
     }
 }

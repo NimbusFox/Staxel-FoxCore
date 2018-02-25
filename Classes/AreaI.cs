@@ -1,7 +1,12 @@
-﻿namespace NimbusFox.FoxCore.Classes {
+﻿using System;
+
+namespace NimbusFox.FoxCore.Classes {
+    [Serializable]
     public class AreaI {
-        public int Start { get; }
-        public int End { get; }
+        public int Start { get; set; }
+        public int End { get; set; }
+
+        public AreaI() { }
 
         public AreaI(int start, int end) {
             Start = start >= end ? end : start;

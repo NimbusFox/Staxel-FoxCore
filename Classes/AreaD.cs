@@ -1,4 +1,7 @@
-﻿namespace NimbusFox.FoxCore.Classes {
+﻿using System;
+
+namespace NimbusFox.FoxCore.Classes {
+    [Serializable]
     public class AreaD {
         public double Start { get; }
         public double End { get; }
