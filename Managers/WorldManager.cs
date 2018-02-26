@@ -14,39 +14,6 @@ namespace NimbusFox.FoxCore.Managers {
             get { return Universe.World; }
         }
 
-        public Lyst<Entity> GetPlayerEntities() {
-            var output = new Lyst<Entity>();
-
-            Universe.GetPlayers(output);
-
-            return output;
-        }
-
-        public IReadOnlyList<string> GetPlayerNames() {
-            return GetPlayerEntities().Select(x => x.PlayerEntityLogic.DisplayName()).ToList();
-        }
-
-        public Entity GetPlayerEntityByName(string name) {
-            return GetPlayerEntities().FirstOrDefault(x => x.PlayerEntityLogic.DisplayName() == name);
-        }
-
-        public Entity GetPlayerEntityByUid(string uid) {
-            return GetPlayerEntities().FirstOrDefault(x => x.PlayerEntityLogic.Uid() == uid);
-        }
-
-        public Vector3D? GetPlayerVector(string name) {
-            var target = GetPlayerEntityByName(name);
-            if (target == null) {
-                return null;
-            }
-
-            return GetEntityVector(target);
-        }
-
-        public Vector3D GetEntityVector(Entity entity) {
-            return entity.Physics.BottomPosition();
-        }
-
         public VectorSquareI GetSquareI(Vector3I start, Vector3I end) {
             return new VectorSquareI(start, end);
         }

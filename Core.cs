@@ -6,6 +6,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using NimbusFox.FoxCore.Managers;
 using NimbusFox.FoxCore.Managers.Particles;
+using Staxel.FoxCore.Managers;
 using Staxel.FoxCore.Managers.Particles;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 
@@ -17,6 +18,8 @@ namespace NimbusFox.FoxCore {
         public readonly ParticleManager ParticleManager;
         public readonly EntityParticleManager EntityParticleManager;
         public readonly EntityFollowParticleManager EntityFollowParticleManager;
+        // ReSharper disable once MemberCanBeMadeStatic.Global
+        public UserManager UserManager => CoreHook.UserManager;
 
         public FxCore(string author, string mod, string modVersion) {
             ExceptionManager = new ExceptionManager(author, mod, modVersion);
@@ -27,7 +30,8 @@ namespace NimbusFox.FoxCore {
             EntityFollowParticleManager = new EntityFollowParticleManager();
         }
 
-        public static TInterface ResolveOptionalDependency<TInterface>(string key) {
+        // ReSharper disable once MemberCanBeMadeStatic.Global
+        public TInterface ResolveOptionalDependency<TInterface>(string key) {
             var assembly = Assembly.GetAssembly(typeof(FxCore));
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
@@ -50,7 +54,8 @@ namespace NimbusFox.FoxCore {
             return default(TInterface);
         }
 
-        public static List<TInterface> GetDependencies<TInterface>(string key) {
+        // ReSharper disable once MemberCanBeMadeStatic.Global
+        public List<TInterface> GetDependencies<TInterface>(string key) {
             var output = new List<TInterface>();
 
             var assembly = Assembly.GetAssembly(typeof(FxCore));

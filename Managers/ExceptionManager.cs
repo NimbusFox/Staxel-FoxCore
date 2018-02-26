@@ -12,7 +12,7 @@ namespace NimbusFox.FoxCore.Managers {
         private readonly string LocalContentLocation;
         private readonly string ErrorsDir;
 
-        public ExceptionManager(string author, string mod, string modVersion) {
+        internal ExceptionManager(string author, string mod, string modVersion) {
             StreamLocation = $"Mods\\{author}\\{mod}\\";
             LocalContentLocation = GameContext.ContentLoader.LocalContentDirectory + StreamLocation;
             ErrorsDir = LocalContentLocation + "Errors\\";

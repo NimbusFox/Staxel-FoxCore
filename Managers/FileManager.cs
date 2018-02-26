@@ -9,7 +9,7 @@ namespace NimbusFox.FoxCore.Managers {
         private readonly string StreamLocation;
         private readonly string LocalContentLocation;
 
-        public FileManager(string author, string mod) {
+        internal FileManager(string author, string mod) {
             StreamLocation = $"Mods\\{author}\\{mod}\\";
             LocalContentLocation = GameContext.ContentLoader.LocalContentDirectory + StreamLocation;
 
