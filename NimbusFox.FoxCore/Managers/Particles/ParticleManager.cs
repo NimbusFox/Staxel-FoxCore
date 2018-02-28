@@ -51,7 +51,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         }
 
         public List<Entity> GetRange(VectorRangeI range, Vector3D top) {
-            return GetRange(range, Converters.From3Dto3I(top));
+            return GetRange(range, top.From3Dto3I());
         }
 
         internal List<VectorRangeI> Clone() {
@@ -65,7 +65,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         }
 
         public bool ContainsWithinVector(Vector3D target) {
-            return ContainsWithinVector(Converters.From3Dto3I(target));
+            return ContainsWithinVector(target.From3Dto3I());
         }
 
         public bool ContainsStartVector(Vector3I target) {
@@ -73,7 +73,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         }
 
         public bool ContainsStartVector(Vector3D target) {
-            return ContainsStartVector(Converters.From3Dto3I(target));
+            return ContainsStartVector(target.From3Dto3I());
         }
 
         public List<VectorRangeI> GetStartVectors(Vector3I target) {
@@ -81,7 +81,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         }
 
         public List<VectorRangeI> GetStartVectors(Vector3D target) {
-            return GetStartVectors(Converters.From3Dto3I(target));
+            return GetStartVectors(target.From3Dto3I());
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         /// Bug: Do not make the cuboid taller than 20 else unexpected renderings can occur
         /// </summary>
         public Guid Add(Vector3D start, Vector3D end, string particleCode) {
-            return Add(Converters.From3Dto3I(start), Converters.From3Dto3I(end), particleCode);
+            return Add(start.From3Dto3I(), end.From3Dto3I(), particleCode);
         }
 
         public void Remove(Guid UID) {

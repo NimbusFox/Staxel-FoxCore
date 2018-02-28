@@ -27,7 +27,7 @@ namespace Staxel.FoxCore.Managers.Particles {
             if (LastTick <= DateTime.Now.Ticks) {
                 foreach (var vector in Clone()) {
                     if (CoreHook.Universe.TryGetEntity(vector.TrackEntity.Id, out _)) {
-                        vector.Start = Converters.From3Dto3I(vector.TrackEntity.Physics.BottomPosition());
+                        vector.Start = vector.TrackEntity.Physics.BottomPosition().From3Dto3I();
                         vector.Start = new Vector3I(vector.Start.X + vector.Offset.Y, vector.Start.Y + vector.Offset.X, vector.Start.Z + vector.Offset.Z);
                     }
                 }

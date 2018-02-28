@@ -20,7 +20,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         }
 
         public Guid Add(Vector3D start, Entity trackEntity, string particleCode) {
-            return Add(Converters.From3Dto3I(start), trackEntity, particleCode);
+            return Add(start.From3Dto3I(), trackEntity, particleCode);
         }
 
         public new void DrawParticles() {
@@ -41,7 +41,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                         continue;
                     }
 
-                    if (vector.TrackEntityLastPos != Converters.From3Dto3I(vector.TrackEntity.Physics.Position)) {
+                    if (vector.TrackEntityLastPos != vector.TrackEntity.Physics.Position.From3Dto3I()) {
                         foreach (var entity in vector.GetEntities()) {
                             ((ParticleHostEntityLogic)entity?.Logic)?.Finish();
                             vector.Entities.Remove(entity);
@@ -58,7 +58,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                         }
                     }
 
-                    if (vector.TrackEntityLastPos != Converters.From3Dto3I(vector.TrackEntity.Physics.Position) || !vector.Entities.Any()) {
+                    if (vector.TrackEntityLastPos != vector.TrackEntity.Physics.Position.From3Dto3I() || !vector.Entities.Any()) {
                         var pos = vector.TrackEntity.Physics.BottomPosition();
                         var newEntities = GetRange(vector, new Vector3D(pos.X + vector.Offset.X, pos.Y + vector.Offset.Y, pos.Z + vector.Offset.Z));
 
@@ -70,8 +70,8 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                             var current = vector.GetEntities();
                             foreach (var entity in newEntities) {
                                 if (!current.Any(x => {
-                                    var item = Converters.From3Dto3I(x.Physics.Position);
-                                    var item2 = Converters.From3Dto3I(entity.Physics.Position);
+                                    var item = x.Physics.Position.From3Dto3I();
+                                    var item2 = entity.Physics.Position.From3Dto3I();
                                     return item.X == item2.X && item.Y == item2.Y && item.Z == item2.Z && !((ParticleHostEntityLogic)entity.Logic)._done;
                                 })) {
                                     vector.Entities.Add(entity, false);
@@ -79,7 +79,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                             }
                         }
 
-                        vector.TrackEntityLastPos = Converters.From3Dto3I(vector.TrackEntity.Physics.Position);
+                        vector.TrackEntityLastPos = vector.TrackEntity.Physics.Position.From3Dto3I();
                     }
                 }
 
