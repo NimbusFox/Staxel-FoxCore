@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NimbusFox.FoxCore.Classes;
-using NimbusFox.FoxCore.Staxel.Builders;
-using NimbusFox.FoxCore.Staxel.Builders.Logic;
+using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
 using Plukit.Base;
 using Staxel.Logic;
 

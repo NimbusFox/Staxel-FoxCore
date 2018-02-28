@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8B473A82-8C34-44EA-B13D-39D0418E021F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Staxel.FoxCore</RootNamespace>
+    <AssemblyName>NimbusFox.FoxCore.V1-20180228</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>
+    </NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Steam\steamapps\common\Staxel\bin\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Plukit.Base">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel.Auth">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.Auth.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel.Checks">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.Checks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel.ToolUtilities">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.ToolUtilities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel.Trace">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.Trace.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Staxel.ValueSource">
+      <HintPath>..\..\..\..\Steam\steamapps\common\Staxel\bin\Staxel.ValueSource.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\AreaD.cs" />
+    <Compile Include="Classes\AreaI.cs" />
+    <Compile Include="Classes\Converters.cs" />
+    <Compile Include="Classes\ParticleStore.cs" />
+    <Compile Include="Classes\UserCache.cs" />
+    <Compile Include="Classes\VectorCubeD.cs" />
+    <Compile Include="Classes\VectorCubeI.cs" />
+    <Compile Include="Classes\VectorRangeI.cs" />
+    <Compile Include="Classes\VectorSquareD.cs" />
+    <Compile Include="Classes\VectoSquareI.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="CoreHook.cs" />
+    <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
+    <Compile Include="Managers\Particles\EntityParticleManager.cs" />
+    <Compile Include="Managers\ExceptionManager.cs" />
+    <Compile Include="Managers\FileManager.cs" />
+    <Compile Include="Managers\Particles\ParticleManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
+    <Compile Include="Managers\WorldManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NimbusFox.FoxCore.V1-20180228.mod">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
+      <Project>{690691FF-8AEF-43FE-A5B9-6FD6131ECF87}</Project>
+      <Name>NimbusFox.FoxCore.Client</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

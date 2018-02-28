@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NimbusFox.FoxCore.Staxel.Builders.Logic;
 using Plukit.Base;
 using Staxel;
 using Staxel.Client;
@@ -13,7 +12,7 @@ using Staxel.Effects;
 using Staxel.Logic;
 using Staxel.Rendering;
 
-namespace NimbusFox.FoxCore.Staxel.Builders.Painter {
+namespace NimbusFox.FoxCore.Client.Staxel.Builders.Painter {
     class ParticleHostEntityPainter : EntityPainter {
         private EffectRenderer _effectRenderer = Allocator.EffectRenderer.Allocate();
 

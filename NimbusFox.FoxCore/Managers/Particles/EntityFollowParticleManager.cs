@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NimbusFox.FoxCore;
 using NimbusFox.FoxCore.Classes;
+using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
 using NimbusFox.FoxCore.Managers.Particles;
-using NimbusFox.FoxCore.Staxel.Builders.Logic;
 using Plukit.Base;
 using Staxel.Logic;
 

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NimbusFox.FoxCore.Staxel.Builders.Logic;
-using NimbusFox.FoxCore.Staxel.Builders.Painter;
+using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
+using NimbusFox.FoxCore.Client.Staxel.Builders.Painter;
 using Staxel.Logic;
 
-namespace NimbusFox.FoxCore.Staxel.Builders {
+namespace NimbusFox.FoxCore.Client.Staxel.Builders {
     public class ParticleHostEntityBuilder : IEntityPainterBuilder, IEntityLogicBuilder {
 
         public EntityPainter Instance() {

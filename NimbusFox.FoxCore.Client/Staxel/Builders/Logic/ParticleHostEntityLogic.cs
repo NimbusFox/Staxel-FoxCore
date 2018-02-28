@@ -11,7 +11,7 @@ using Staxel.Logic;
 using Staxel.Particles;
 using Staxel.Tiles;
 
-namespace NimbusFox.FoxCore.Staxel.Builders.Logic {
+namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
     public class ParticleHostEntityLogic : EntityLogic {
         private readonly Entity _entity;
         private readonly Blob _blob;
