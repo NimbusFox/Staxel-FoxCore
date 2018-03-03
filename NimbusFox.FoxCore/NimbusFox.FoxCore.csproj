@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Staxel.FoxCore</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore.V1-20180228</AssemblyName>
+    <AssemblyName>NimbusFox.FoxCore.V1.1</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -102,7 +102,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NimbusFox.FoxCore.V1-20180228.mod">
+    <Content Include="NimbusFox.FoxCore.V1.1.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

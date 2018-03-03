@@ -30,22 +30,24 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         public List<Entity> GetRange(VectorRangeI range, Vector3I top) {
             var output = new List<Entity>();
             var cube = new VectorCubeI(range.Start, top);
-            for (var y = cube.Y.Start - 1; y <= cube.Y.End; y++) {
-                for (var x = cube.X.Start; x <= cube.X.End; x++) {
-                    for (var z = cube.Z.Start; z <= cube.Z.End; z++) {
-                        var render = z == cube.Z.Start || z == cube.Z.End
-                                                        || x == cube.X.Start || x == cube.X.Start - 1 || x == cube.X.End || x == cube.X.End - 1;
+            Fox_Core.VectorLoop(range.Start, top, (x, y, z) => {
+                var renderCount = 0;
 
-                        if (render) {
-                            var entity = new Entity(CoreHook.Universe.AllocateNewEntityId(), false, ParticleHostEntityBuilder.KindCode, true);
-                            entity.Physics.ForcedPosition(new Vector3D(x, y, z));
-                            ((ParticleHostEntityLogic)entity.Logic).SetParticleCode(range.ParticleCode);
-                            ((ParticleHostEntityLogic)entity.Logic).SetLocation(new Vector3D(x, y, z));
-                            output.Add(entity);
-                        }
-                    }
+                renderCount += y == cube.Y.Start || y == cube.Y.End ? 1 : 0;
+
+                renderCount += z == cube.Z.Start || z == cube.Z.End ? 1 : 0;
+
+                renderCount += x == cube.X.Start || x == cube.X.Start - 1 || x == cube.X.End
+                               || x == cube.X.End - 1 ? 1 : 0;
+
+                if (renderCount > 1) {
+                    var entity = new Entity(CoreHook.Universe.AllocateNewEntityId(), false, ParticleHostEntityBuilder.KindCode, true);
+                    entity.Physics.ForcedPosition(new Vector3D(x, y, z));
+                    ((ParticleHostEntityLogic)entity.Logic).SetParticleCode(range.ParticleCode);
+                    ((ParticleHostEntityLogic)entity.Logic).SetLocation(new Vector3D(x, y, z));
+                    output.Add(entity);
                 }
-            }
+            });
 
             return output;
         }

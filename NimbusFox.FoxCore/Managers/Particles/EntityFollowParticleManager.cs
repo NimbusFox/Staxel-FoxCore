@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NimbusFox;
 using NimbusFox.FoxCore;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;

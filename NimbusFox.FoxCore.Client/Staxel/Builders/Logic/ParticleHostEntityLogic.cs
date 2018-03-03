@@ -72,14 +72,6 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
             return false;
         }
 
-        public override bool IsAtLastSavedPosition() {
-            return false;
-        }
-
-        public override ChunkKey GetLastSavedPosition() {
-            return new ChunkKey();
-        }
-
         public override void StorePersistenceData(Blob data) { }
         public override void RestoreFromPersistedData(Blob data, EntityUniverseFacade facade) { }
         public override bool IsCollidable() {

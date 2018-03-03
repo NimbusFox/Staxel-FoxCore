@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
 using Staxel.Effects;
 using Staxel.FoxCore.Managers;
@@ -10,7 +9,7 @@ using Staxel.Logic;
 using Staxel.Modding;
 using Staxel.Tiles;
 
-namespace NimbusFox.FoxCore {
+namespace NimbusFox {
     internal class CoreHook : IModHookV2 {
         internal static UserManager UserManager;
         internal static Universe Universe;

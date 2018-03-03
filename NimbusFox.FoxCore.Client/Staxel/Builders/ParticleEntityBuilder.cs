@@ -8,7 +8,7 @@ using NimbusFox.FoxCore.Client.Staxel.Builders.Painter;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Client.Staxel.Builders {
-    public class ParticleHostEntityBuilder : IEntityPainterBuilder, IEntityLogicBuilder {
+    public class ParticleHostEntityBuilder : IEntityPainterBuilder, IEntityLogicBuilder2 {
 
         public EntityPainter Instance() {
             return new ParticleHostEntityPainter();
@@ -22,6 +22,10 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders {
 
         public string Kind {
             get { return KindCode; }
+        }
+
+        public bool IsTileStateEntityKind() {
+            return false;
         }
 
         public static string KindCode {

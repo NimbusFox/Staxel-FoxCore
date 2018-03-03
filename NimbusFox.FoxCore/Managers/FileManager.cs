@@ -3,6 +3,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
 using Staxel;
 using System;
+using Plukit.Base;
+using Staxel.LivingWorld;
+using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Managers {
     public class FileManager {
@@ -34,6 +37,10 @@ namespace NimbusFox.FoxCore.Managers {
             GameContext.ContentLoader.WriteLocalStream(StreamLocation + fileName, stream);
         }
 
+        public void WriteFileStream(string filename, Stream stream) {
+            GameContext.ContentLoader.WriteLocalStream(StreamLocation + filename, stream);
+        }
+
         public T ReadFile<T>(string filename, bool inputIsText = false) where T : new() {
             if (FileExists(filename)) {
                 var bf = new BinaryFormatter();
@@ -55,6 +62,10 @@ namespace NimbusFox.FoxCore.Managers {
             }
 
             return new T();
+        }
+
+        public Stream ReadFileStream(string filename, bool required = false) {
+            return GameContext.ContentLoader.ReadLocalStream(StreamLocation + filename, required);
         }
 
         public bool FileExists(string filename) {
