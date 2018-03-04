@@ -13,10 +13,11 @@ namespace NimbusFox {
     internal class CoreHook : IModHookV2 {
         internal static UserManager UserManager;
         internal static Universe Universe;
+        internal static TileManager TileManager;
         private static long CacheTick;
         
         public void Dispose() {
-
+            TileManager = null;
         }
 
         public void GameContextInitializeInit() {
@@ -30,6 +31,9 @@ namespace NimbusFox {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
+            if (TileManager == null) {
+                TileManager = new TileManager();
+            } 
 
             if (CacheTick <= DateTime.Now.Ticks) {
                 foreach (var player in UserManager.GetPlayerEntities()) {

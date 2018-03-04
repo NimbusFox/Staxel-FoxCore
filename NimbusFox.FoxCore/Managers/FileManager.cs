@@ -9,8 +9,8 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Managers {
     public class FileManager {
-        private readonly string StreamLocation;
-        private readonly string LocalContentLocation;
+        internal readonly string StreamLocation;
+        internal readonly string LocalContentLocation;
 
         internal FileManager(string author, string mod) {
             StreamLocation = $"Mods\\{author}\\{mod}\\";
@@ -34,17 +34,17 @@ namespace NimbusFox.FoxCore.Managers {
                 sw.Flush();
             }
             stream.Seek(0L, SeekOrigin.Begin);
-            GameContext.ContentLoader.WriteLocalStream(StreamLocation + fileName, stream);
+            GameContext.ContentLoader.WriteLocalStream(LocalContentLocation + fileName, stream);
         }
 
         public void WriteFileStream(string filename, Stream stream) {
-            GameContext.ContentLoader.WriteLocalStream(StreamLocation + filename, stream);
+            GameContext.ContentLoader.WriteLocalStream(LocalContentLocation + filename, stream);
         }
 
         public T ReadFile<T>(string filename, bool inputIsText = false) where T : new() {
             if (FileExists(filename)) {
                 var bf = new BinaryFormatter();
-                var stream = GameContext.ContentLoader.ReadLocalStream(StreamLocation + filename);
+                var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename);
                 try {
                     string input;
                     if (!inputIsText) {
@@ -65,7 +65,7 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public Stream ReadFileStream(string filename, bool required = false) {
-            return GameContext.ContentLoader.ReadLocalStream(StreamLocation + filename, required);
+            return GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename, required);
         }
 
         public bool FileExists(string filename) {

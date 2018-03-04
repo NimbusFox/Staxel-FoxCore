@@ -14,7 +14,6 @@ using Staxel.Tiles;
 namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
     public class ParticleHostEntityLogic : EntityLogic {
         private readonly Entity _entity;
-        private readonly Blob _blob;
         private Vector3D _location;
         public bool _done { get; private set; }
         private string _particleCode = "";
@@ -24,7 +23,6 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
 
         public ParticleHostEntityLogic(Entity entity) {
             _entity = entity;
-            _blob = entity.Blob.FetchBlob("logic");
             _entity.Physics.PriorityChunkRadius(1, false);
             _done = false;
             CanDispose = false;
@@ -69,7 +67,7 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
         }
 
         public override bool IsPersistent() {
-            return false;
+            return true;
         }
 
         public override void StorePersistenceData(Blob data) { }

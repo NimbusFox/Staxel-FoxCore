@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,12 +70,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
@@ -83,6 +80,7 @@
     <Compile Include="Classes\AreaD.cs" />
     <Compile Include="Classes\AreaI.cs" />
     <Compile Include="Classes\Converters.cs" />
+    <Compile Include="Classes\DictionaryData.cs" />
     <Compile Include="Classes\ParticleStore.cs" />
     <Compile Include="Classes\UserCache.cs" />
     <Compile Include="Classes\VectorCubeD.cs" />
@@ -90,6 +88,7 @@
     <Compile Include="Classes\VectorRangeI.cs" />
     <Compile Include="Classes\VectorSquareD.cs" />
     <Compile Include="Classes\VectoSquareI.cs" />
+    <Compile Include="Compass.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="CoreHook.cs" />
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
@@ -97,11 +96,13 @@
     <Compile Include="Managers\ExceptionManager.cs" />
     <Compile Include="Managers\FileManager.cs" />
     <Compile Include="Managers\Particles\ParticleManager.cs" />
+    <Compile Include="Managers\TileManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FodyWeavers.xml" />
     <Content Include="NimbusFox.FoxCore.V1.1.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -110,10 +111,11 @@
     <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
       <Project>{690691FF-8AEF-43FE-A5B9-6FD6131ECF87}</Project>
       <Name>NimbusFox.FoxCore.Client</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

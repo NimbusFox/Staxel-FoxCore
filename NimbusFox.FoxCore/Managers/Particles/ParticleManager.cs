@@ -37,8 +37,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
 
                 renderCount += z == cube.Z.Start || z == cube.Z.End ? 1 : 0;
 
-                renderCount += x == cube.X.Start || x == cube.X.Start - 1 || x == cube.X.End
-                               || x == cube.X.End - 1 ? 1 : 0;
+                renderCount += x == cube.X.Start || x == cube.X.Start - 1 || x == cube.X.End ? 1 : 0;
 
                 if (renderCount > 1) {
                     var entity = new Entity(CoreHook.Universe.AllocateNewEntityId(), false, ParticleHostEntityBuilder.KindCode, true);
@@ -47,6 +46,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                     ((ParticleHostEntityLogic)entity.Logic).SetLocation(new Vector3D(x, y, z));
                     output.Add(entity);
                 }
+
             });
 
             return output;
