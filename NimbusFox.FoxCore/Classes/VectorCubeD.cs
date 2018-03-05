@@ -1,6 +1,8 @@
-﻿using Plukit.Base;
+﻿using System;
+using Plukit.Base;
 
 namespace NimbusFox.FoxCore.Classes {
+    [Serializable]
     public class VectorCubeD {
         private Vector3D Start { get; }
         private Vector3D End { get; }
@@ -36,6 +38,14 @@ namespace NimbusFox.FoxCore.Classes {
                    && X.End > position.X
                    && Y.End > position.Y
                    && Z.End > position.Z;
+        }
+
+        public Vector3D GetStart() {
+            return new Vector3D(X.Start, Y.Start, Z.Start);
+        }
+
+        public Vector3D GetEnd() {
+            return new Vector3D(X.End, Y.End, Z.End);
         }
     }
 }

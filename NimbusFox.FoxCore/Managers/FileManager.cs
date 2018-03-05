@@ -38,6 +38,7 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void WriteFileStream(string filename, Stream stream) {
+            stream.Seek(0L, SeekOrigin.Begin);
             GameContext.ContentLoader.WriteLocalStream(LocalContentLocation + filename, stream);
         }
 
@@ -65,7 +66,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public Stream ReadFileStream(string filename, bool required = false) {
-            return GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename, required);
+            var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename, required);
+            stream.Seek(0L, SeekOrigin.Begin);
+            return stream;
         }
 
         public bool FileExists(string filename) {
