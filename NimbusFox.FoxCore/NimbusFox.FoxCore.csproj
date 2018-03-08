@@ -103,9 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
-    <Content Include="NimbusFox.FoxCore.V1.1.mod">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
@@ -118,4 +115,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>del $(TargetDir)\*.mod</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>echo {}  &gt; $(TargetDir)$(TargetName).mod</PostBuildEvent>
+  </PropertyGroup>
 </Project>
