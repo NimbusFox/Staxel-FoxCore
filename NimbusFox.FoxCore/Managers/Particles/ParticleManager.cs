@@ -121,12 +121,21 @@ namespace NimbusFox.FoxCore.Managers.Particles {
                     ((ParticleHostEntityLogic) entity.Key.Logic).Finish();
                 }
                 particles.Remove(target);
+
             }
         }
 
         public void Dispose() {
             foreach (var item in Clone()) {
                 Remove(item.UID);
+            }
+
+            foreach (var item in Clone()) {
+                foreach (var entity in item.Entities) {
+                    if (!((ParticleHostEntityLogic) entity.Key.Logic).IsDisposed) {
+                        ((ParticleHostEntityLogic)entity.Key.Logic).Dispose();
+                    }
+                }
             }
             particles.Clear();
         }

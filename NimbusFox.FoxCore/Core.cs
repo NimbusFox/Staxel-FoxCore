@@ -31,6 +31,7 @@ namespace NimbusFox.FoxCore {
             ParticleManager = new ParticleManager();
             EntityParticleManager = new EntityParticleManager();
             EntityFollowParticleManager = new EntityFollowParticleManager();
+            VersionCheck.VersionCheck.Check();
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Global
