@@ -13,7 +13,7 @@ using Staxel.Tiles;
 
 namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
     public class ParticleHostEntityLogic : EntityLogic {
-        private readonly Entity _entity;
+        private Entity _entity;
         private Vector3D _location;
         public bool _done { get; private set; }
         private string _particleCode = "";
@@ -65,13 +65,16 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
         public override Heading Heading() {
             return new Heading();
         }
-
+        
         public override bool IsPersistent() {
-            return true;
+            return false;
         }
 
-        public override void StorePersistenceData(Blob data) { }
-        public override void RestoreFromPersistedData(Blob data, EntityUniverseFacade facade) { }
+        public override void StorePersistenceData(Blob data) {
+        }
+
+        public override void RestoreFromPersistedData(Blob data, EntityUniverseFacade facade) {
+        }
         public override bool IsCollidable() {
             return false;
         }
@@ -79,6 +82,7 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
         public new void Dispose() {
             base.Dispose();
             CanDispose = true;
+            _done = true;
         }
 
         public void SetParticleCode(string code) {

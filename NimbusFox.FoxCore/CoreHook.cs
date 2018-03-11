@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NimbusFox.FoxCore.Client.Staxel.Builders;
+using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
+using NimbusFox.FoxCore.VersionCheck;
 using Plukit.Base;
+using Staxel.Collections;
 using Staxel.Effects;
 using Staxel.FoxCore.Managers;
 using Staxel.Items;
@@ -11,13 +15,15 @@ using Staxel.Tiles;
 
 namespace NimbusFox {
     internal class CoreHook : IModHookV2 {
+
         internal static UserManager UserManager;
         internal static Universe Universe;
         internal static TileManager TileManager;
         private static long CacheTick;
-        
+
         public void Dispose() {
             TileManager = null;
+            CacheTick = 0;
         }
 
         public void GameContextInitializeInit() {
@@ -33,7 +39,7 @@ namespace NimbusFox {
             Universe = universe;
             if (TileManager == null) {
                 TileManager = new TileManager();
-            } 
+            }
 
             if (CacheTick <= DateTime.Now.Ticks) {
                 foreach (var player in UserManager.GetPlayerEntities()) {
