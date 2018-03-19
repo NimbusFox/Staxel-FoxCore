@@ -34,21 +34,18 @@ namespace NimbusFox.FoxCore {
             VersionCheck.VersionCheck.Check();
         }
 
-        // ReSharper disable once MemberCanBeMadeStatic.Global
-        public TInterface ResolveOptionalDependency<TInterface>(string key) {
+        public static TInterface ResolveOptionalDependency<TInterface>(string key) {
             var assembly = Assembly.GetAssembly(typeof(Fox_Core));
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
                     var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
-                    if (current.Any()) {
-                        if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
-                            var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
-                            foreach (var module in item.DefinedTypes) {
-                                if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
-                                    return (TInterface)Activator.CreateInstance(module.ReflectedType);
-                                }
+                    if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
+                        var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
+                        foreach (var module in item.DefinedTypes) {
+                            if (module.GetInterfaces().Contains(typeof(TInterface))) {
+                                return (TInterface)Activator.CreateInstance(module);
                             }
                         }
                     }
@@ -58,8 +55,7 @@ namespace NimbusFox.FoxCore {
             return default(TInterface);
         }
 
-        // ReSharper disable once MemberCanBeMadeStatic.Global
-        public List<TInterface> GetDependencies<TInterface>(string key) {
+        public static List<TInterface> GetDependencies<TInterface>(string key) {
             var output = new List<TInterface>();
 
             var assembly = Assembly.GetAssembly(typeof(Fox_Core));
@@ -68,12 +64,12 @@ namespace NimbusFox.FoxCore {
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
                     var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
-                    if (current.Any()) {
-                        if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
-                            var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
-                            foreach (var module in item.DefinedTypes) {
-                                if (module.ReflectedType != null && module.ReflectedType.GetInterfaces().Contains(typeof(TInterface))) {
-                                    output.Add((TInterface)Activator.CreateInstance(module.ReflectedType));
+                    if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
+                        var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
+                        foreach (var module in item.DefinedTypes) {
+                            if (module != null) {
+                                if (module.GetInterfaces().Contains(typeof(TInterface))) {
+                                    output.Add((TInterface)Activator.CreateInstance(module));
                                 }
                             }
                         }
