@@ -13,8 +13,8 @@ namespace NimbusFox.FoxCore.Managers {
         internal readonly string LocalContentLocation;
 
         internal FileManager(string author, string mod) {
-            StreamLocation = $"Mods\\{author}\\{mod}\\";
-            LocalContentLocation = GameContext.ContentLoader.LocalContentDirectory + StreamLocation;
+            StreamLocation = Path.Combine("Mods", author, mod);
+            LocalContentLocation = Path.Combine(GameContext.ContentLoader.LocalContentDirectory, StreamLocation);
 
             if (!Directory.Exists(LocalContentLocation)) {
                 Directory.CreateDirectory(LocalContentLocation);
@@ -34,18 +34,18 @@ namespace NimbusFox.FoxCore.Managers {
                 sw.Flush();
             }
             stream.Seek(0L, SeekOrigin.Begin);
-            GameContext.ContentLoader.WriteLocalStream(LocalContentLocation + fileName, stream);
+            GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, fileName), stream);
         }
 
         public void WriteFileStream(string filename, Stream stream) {
             stream.Seek(0L, SeekOrigin.Begin);
-            GameContext.ContentLoader.WriteLocalStream(LocalContentLocation + filename, stream);
+            GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, filename), stream);
         }
 
         public T ReadFile<T>(string filename, bool inputIsText = false) where T : new() {
             if (FileExists(filename)) {
                 var bf = new BinaryFormatter();
-                var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename);
+                var stream = GameContext.ContentLoader.ReadLocalStream(Path.Combine(LocalContentLocation, filename));
                 try {
                     string input;
                     if (!inputIsText) {
@@ -66,13 +66,13 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public Stream ReadFileStream(string filename, bool required = false) {
-            var stream = GameContext.ContentLoader.ReadLocalStream(LocalContentLocation + filename, required);
+            var stream = GameContext.ContentLoader.ReadLocalStream(Path.Combine(LocalContentLocation, filename), required);
             stream.Seek(0L, SeekOrigin.Begin);
             return stream;
         }
 
         public bool FileExists(string filename) {
-            return File.Exists(LocalContentLocation + filename);
+            return File.Exists(Path.Combine(LocalContentLocation, filename));
         }
     }
 }
