@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Managers;
 using NimbusFox.FoxCore.Managers.Particles;
@@ -38,9 +38,9 @@ namespace NimbusFox.FoxCore {
             var assembly = Assembly.GetAssembly(typeof(Fox_Core));
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
-                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
+                var data = FileManager.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName), typeof(Dictionary<string, object>));
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
-                    var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
+                    var current = FileManager.DeserializeObject<string[]>(FileManager.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]), typeof(string[]));
                     if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
                         var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
                         foreach (var module in item.DefinedTypes) {
@@ -61,9 +61,9 @@ namespace NimbusFox.FoxCore {
             var assembly = Assembly.GetAssembly(typeof(Fox_Core));
             var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
-                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName));
+                var data = FileManager.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName), typeof(Dictionary<string, object>));
                 if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
-                    var current = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]));
+                    var current = FileManager.DeserializeObject<string[]>(FileManager.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]), typeof(string[]));
                     if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
                         var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
                         foreach (var module in item.DefinedTypes) {
@@ -83,9 +83,9 @@ namespace NimbusFox.FoxCore {
         public static void VectorLoop(Vector3I start, Vector3I end, Action<int, int, int> coordFunction) {
             var region = new VectorCubeI(start, end);
 
-            for (var x = region.X.Start; x <= region.X.End; x++) {
-                for (var y = region.Y.Start; y <= region.Y.End; y++) {
-                    for (var z = region.Z.Start; z <= region.Z.End; z++) {
+            for (var y = region.Y.Start; y <= region.Y.End; y++) {
+                for (var z = region.Z.Start; z <= region.Z.End; z++) {
+                    for (var x = region.X.Start; x <= region.X.End; x++) {
                         coordFunction(x, y, z);
                     }
                 }

@@ -1,16 +1,20 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Web.Script.Serialization;
 using Newtonsoft.Json;
-using Staxel;
-using System;
 using Plukit.Base;
-using Staxel.LivingWorld;
-using Staxel.Logic;
+using Staxel;
+using Staxel.FoxCore.Classes;
 
 namespace NimbusFox.FoxCore.Managers {
     public class FileManager {
         internal readonly string StreamLocation;
         internal readonly string LocalContentLocation;
+
+        private static dynamic JsonSerializeObject;
+        private static dynamic JsonDeserialzeObject;
 
         internal FileManager(string author, string mod) {
             StreamLocation = Path.Combine("Mods", author, mod);
@@ -21,9 +25,17 @@ namespace NimbusFox.FoxCore.Managers {
             }
         }
 
+        public static string SerializeObject<T>(T data) {
+            return JsonConvert.SerializeObject(data, Formatting.Indented);
+        }
+
+        public static T DeserializeObject<T>(string json, Type type) {
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+
         public void WriteFile<T>(string fileName, T data, bool outputAsText = false) {
             var stream = new MemoryStream();
-            var output = JsonConvert.SerializeObject(data, Formatting.Indented);
+            var output = SerializeObject(data);
             stream.Seek(0L, SeekOrigin.Begin);
             if (!outputAsText) {
                 var bf = new BinaryFormatter();
@@ -42,27 +54,22 @@ namespace NimbusFox.FoxCore.Managers {
             GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, filename), stream);
         }
 
-        public T ReadFile<T>(string filename, bool inputIsText = false) where T : new() {
+        public T ReadFile<T>(string filename, bool inputIsText = false) {
             if (FileExists(filename)) {
                 var bf = new BinaryFormatter();
                 var stream = GameContext.ContentLoader.ReadLocalStream(Path.Combine(LocalContentLocation, filename));
-                try {
-                    string input;
-                    if (!inputIsText) {
-                        input = (string)bf.Deserialize(stream);
-                    } else {
-                        var sr = new StreamReader(stream);
-                        input = sr.ReadToEnd();
-                    }
-                    stream.Seek(0L, SeekOrigin.Begin);
-                    return JsonConvert.DeserializeObject<T>(input);
-                } catch {
-                    stream.Seek(0L, SeekOrigin.Begin);
-                    return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(bf.Deserialize(stream)));
+                string input;
+                if (!inputIsText) {
+                    input = (string)bf.Deserialize(stream);
+                } else {
+                    var sr = new StreamReader(stream);
+                    input = sr.ReadToEnd();
                 }
+                stream.Seek(0L, SeekOrigin.Begin);
+                return DeserializeObject<T>(input, typeof(T));
             }
 
-            return new T();
+            return (T) Activator.CreateInstance(typeof(T));
         }
 
         public Stream ReadFileStream(string filename, bool required = false) {

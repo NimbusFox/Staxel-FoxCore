@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using Staxel;
 
 namespace NimbusFox.FoxCore.Managers {
-    public class ExceptionManager {
+    public class ExceptionManager : FileManager {
         private string _modVersion;
-        private readonly string StreamLocation;
-        private readonly string LocalContentLocation;
         private readonly string ErrorsDir;
 
-        internal ExceptionManager(string author, string mod, string modVersion) {
-            StreamLocation = $"Mods\\{author}\\{mod}\\";
-            LocalContentLocation = GameContext.ContentLoader.LocalContentDirectory + StreamLocation;
-            ErrorsDir = LocalContentLocation + "Errors\\";
+        internal ExceptionManager(string author, string mod, string modVersion) : base(author, mod) {
+            ErrorsDir = Path.Combine(LocalContentLocation, "Errors");
             _modVersion = modVersion;
         }
 
@@ -26,11 +21,11 @@ namespace NimbusFox.FoxCore.Managers {
 
             var filename = DateTime.Now.Ticks;
 
-            File.AppendAllText(ErrorsDir + $"{filename}.{_modVersion}.error", JsonConvert.SerializeObject(ex, Formatting.Indented));
+            File.AppendAllText(Path.Combine(ErrorsDir, $"{filename}.{_modVersion}.error"), SerializeObject(ex));
             if (extras != null) {
                 if (extras.Any()) {
                     foreach (var file in extras) {
-                        File.AppendAllText(ErrorsDir + $"{filename}.{_modVersion}.{file.Key}.data", JsonConvert.SerializeObject(file.Value, Formatting.Indented));
+                        File.AppendAllText(Path.Combine(ErrorsDir, $"{filename}.{_modVersion}.{file.Key}.data"), SerializeObject(file.Value));
                     }
                 }
             }

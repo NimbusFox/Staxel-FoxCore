@@ -4,9 +4,9 @@ using Plukit.Base;
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]
     public class VectorCubeI {
-        public AreaI X { get; }
-        public AreaI Y { get; }
-        public AreaI Z { get; }
+        public AreaI X { get; private set; }
+        public AreaI Y { get; private set; }
+        public AreaI Z { get; private set; }
 
         public VectorCubeI(Vector3I start, Vector3I end) {
             X = new AreaI(start.X, end.X);
@@ -15,6 +15,8 @@ namespace NimbusFox.FoxCore.Classes {
 
             Z = new AreaI(start.Z, end.Z);
         }
+
+        private VectorCubeI() { }
 
         public bool IsInside(Vector3I position) {
             return X.Start < position.X

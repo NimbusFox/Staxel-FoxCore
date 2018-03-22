@@ -19,10 +19,12 @@ namespace NimbusFox {
         internal static UserManager UserManager;
         internal static Universe Universe;
         internal static TileManager TileManager;
+        private static bool InitTileManager;
         private static long CacheTick;
 
         public void Dispose() {
             TileManager = null;
+            InitTileManager = true;
             CacheTick = 0;
         }
 
@@ -37,7 +39,8 @@ namespace NimbusFox {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-            if (TileManager == null) {
+            if (InitTileManager) {
+                InitTileManager = false;
                 TileManager = new TileManager();
             }
 

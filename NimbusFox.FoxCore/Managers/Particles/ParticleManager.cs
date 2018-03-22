@@ -118,10 +118,9 @@ namespace NimbusFox.FoxCore.Managers.Particles {
             var target = Clone().FirstOrDefault(x => x.UID == UID);
             if (target != null) {
                 foreach (var entity in target.Entities) {
-                    ((ParticleHostEntityLogic) entity.Key.Logic).Finish();
+                    ((ParticleHostEntityLogic) entity.Key?.Logic)?.Finish();
                 }
                 particles.Remove(target);
-
             }
         }
 
