@@ -33,11 +33,11 @@ namespace NimbusFox.FoxCore.Managers.Particles {
             Fox_Core.VectorLoop(range.Start, top, (x, y, z) => {
                 var renderCount = 0;
 
-                renderCount += y == cube.Y.Start || y == cube.Y.End ? 1 : 0;
+                renderCount += y == cube.Start.Y || y == cube.End.Y ? 1 : 0;
 
-                renderCount += z == cube.Z.Start || z == cube.Z.End ? 1 : 0;
+                renderCount += z == cube.Start.Z || z == cube.End.Z ? 1 : 0;
 
-                renderCount += x == cube.X.Start || x == cube.X.Start - 1 || x == cube.X.End ? 1 : 0;
+                renderCount += x == cube.Start.X || x == cube.Start.X - 1 || x == cube.End.X ? 1 : 0;
 
                 if (renderCount > 1) {
                     var entity = new Entity(CoreHook.Universe.AllocateNewEntityId(), false, ParticleHostEntityBuilder.KindCode, true);

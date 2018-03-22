@@ -14,42 +14,43 @@ using Staxel.Modding;
 using Staxel.Tiles;
 
 namespace NimbusFox {
-    internal class CoreHook : IModHookV2 {
+    public class CoreHook : IModHookV2 {
 
         internal static UserManager UserManager;
-        internal static Universe Universe;
+        public static Universe Universe;
         internal static TileManager TileManager;
-        private static bool InitTileManager;
-        private static long CacheTick;
+        private static bool _initTileManager = true;
+        private static long _cacheTick;
 
         public void Dispose() {
             TileManager = null;
-            InitTileManager = true;
-            CacheTick = 0;
+            _initTileManager = true;
+            _cacheTick = 0;
         }
 
         public void GameContextInitializeInit() {
             UserManager = new UserManager();
         }
         public void GameContextInitializeBefore() { }
-        public void GameContextInitializeAfter() { }
+        public void GameContextInitializeAfter() {
+            TileManager = new TileManager();
+        }
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }
         public void GameContextReloadAfter() { }
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-            if (InitTileManager) {
-                InitTileManager = false;
-                TileManager = new TileManager();
+            if (_initTileManager) {
+                _initTileManager = false;
             }
 
-            if (CacheTick <= DateTime.Now.Ticks) {
+            if (_cacheTick <= DateTime.Now.Ticks) {
                 foreach (var player in UserManager.GetPlayerEntities()) {
                     UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
                 }
                 UserManager.CacheCheck();
-                CacheTick = DateTime.Now.AddSeconds(30).Ticks;
+                _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
             }
         }
         public void UniverseUpdateAfter() { }

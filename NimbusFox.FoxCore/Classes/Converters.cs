@@ -2,6 +2,7 @@
 using Plukit.Base;
 using Staxel.Core;
 using Staxel.FoxCore;
+using Staxel.FoxCore.Enums;
 
 namespace NimbusFox.FoxCore {
     public static class Converters {

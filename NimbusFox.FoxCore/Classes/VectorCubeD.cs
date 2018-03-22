@@ -1,19 +1,26 @@
 ﻿using System;
 using Plukit.Base;
+using Staxel.FoxCore;
 
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]
     public class VectorCubeD {
-        private Vector3D Start { get; }
-        private Vector3D End { get; }
+        public Vector3D Start { get; }
+        public Vector3D End { get; }
 
+        [Obsolete]
         public AreaD X { get; }
+        [Obsolete]
         public AreaD Y { get; }
+        [Obsolete]
         public AreaD Z { get; }
 
         public VectorCubeD(Vector3D start, Vector3D end) {
-            Start = start;
-            End = end;
+            Vector3D first;
+            Vector3D second;
+            Global.Sort3D(start, end, out first, out second);
+            Start = first;
+            End = second;
 
             X = new AreaD(start.X, end.X);
 
@@ -23,29 +30,21 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public bool IsInside(Vector3I position) {
-            return X.Start < position.X
-                   && Y.Start < position.Y
-                   && Z.Start < position.Z
-                   && X.End > position.X
-                   && Y.End > position.Y
-                   && Z.End > position.Z;
+            return Start.X < position.X
+                   && Start.Y < position.Y
+                   && Start.Z < position.Z
+                   && End.X > position.X
+                   && End.Y > position.Y
+                   && End.Z > position.Z;
         }
 
         public bool IsInside(Vector3D position) {
-            return X.Start < position.X
-                   && Y.Start < position.Y
-                   && Z.Start < position.Z
-                   && X.End > position.X
-                   && Y.End > position.Y
-                   && Z.End > position.Z;
-        }
-
-        public Vector3D GetStart() {
-            return new Vector3D(X.Start, Y.Start, Z.Start);
-        }
-
-        public Vector3D GetEnd() {
-            return new Vector3D(X.End, Y.End, Z.End);
+            return Start.X < position.X
+                   && Start.Y < position.Y
+                   && Start.Z < position.Z
+                   && End.X > position.X
+                   && End.Y > position.Y
+                   && End.Z > position.Z;
         }
     }
 }

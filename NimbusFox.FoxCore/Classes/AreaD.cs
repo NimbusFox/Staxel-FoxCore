@@ -2,6 +2,7 @@
 
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]
+    [Obsolete]
     public class AreaD {
         public double Start { get; }
         public double End { get; }

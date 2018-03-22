@@ -83,9 +83,9 @@ namespace NimbusFox.FoxCore {
         public static void VectorLoop(Vector3I start, Vector3I end, Action<int, int, int> coordFunction) {
             var region = new VectorCubeI(start, end);
 
-            for (var y = region.Y.Start; y <= region.Y.End; y++) {
-                for (var z = region.Z.Start; z <= region.Z.End; z++) {
-                    for (var x = region.X.Start; x <= region.X.End; x++) {
+            for (var y = region.Start.Y; y <= region.End.Y; y++) {
+                for (var z = region.Start.Z; z <= region.End.Z; z++) {
+                    for (var x = region.Start.X; x <= region.End.X; x++) {
                         coordFunction(x, y, z);
                     }
                 }
