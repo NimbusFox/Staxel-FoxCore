@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using System.Timers;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Plukit.Base;
@@ -34,24 +37,28 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void WriteFile<T>(string fileName, T data, bool outputAsText = false) {
-            var stream = new MemoryStream();
-            var output = SerializeObject(data);
-            stream.Seek(0L, SeekOrigin.Begin);
-            if (!outputAsText) {
-                var bf = new BinaryFormatter();
-                bf.Serialize(stream, output);
-            } else {
-                var sw = new StreamWriter(stream);
-                sw.Write(output);
-                sw.Flush();
-            }
-            stream.Seek(0L, SeekOrigin.Begin);
-            GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, fileName), stream);
+            new Thread(() => {
+                var stream = new MemoryStream();
+                var output = SerializeObject(data);
+                stream.Seek(0L, SeekOrigin.Begin);
+                if (!outputAsText) {
+                    var bf = new BinaryFormatter();
+                    bf.Serialize(stream, output);
+                } else {
+                    var sw = new StreamWriter(stream);
+                    sw.Write(output);
+                    sw.Flush();
+                }
+                stream.Seek(0L, SeekOrigin.Begin);
+                GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, fileName), stream);
+            }).Start();
         }
 
         public void WriteFileStream(string filename, Stream stream) {
-            stream.Seek(0L, SeekOrigin.Begin);
-            GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, filename), stream);
+            new Thread(() => {
+                stream.Seek(0L, SeekOrigin.Begin);
+                GameContext.ContentLoader.WriteLocalStream(Path.Combine(LocalContentLocation, filename), stream);
+            }).Start();
         }
 
         public T ReadFile<T>(string filename, bool inputIsText = false) {
