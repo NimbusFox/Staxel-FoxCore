@@ -5,15 +5,15 @@ using Staxel.FoxCore;
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]
     public class VectorCubeD {
-        public Vector3D Start { get; }
-        public Vector3D End { get; }
+        public Vector3D Start { get; private set; }
+        public Vector3D End { get; private set; }
 
         [Obsolete]
-        public AreaD X { get; }
+        public AreaD X { get; private set; }
         [Obsolete]
-        public AreaD Y { get; }
+        public AreaD Y { get; private set; }
         [Obsolete]
-        public AreaD Z { get; }
+        public AreaD Z { get; private set; }
 
         public VectorCubeD(Vector3D start, Vector3D end) {
             Vector3D first;

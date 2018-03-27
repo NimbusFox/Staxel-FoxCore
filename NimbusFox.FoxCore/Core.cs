@@ -15,6 +15,7 @@ using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 namespace NimbusFox.FoxCore {
     public class Fox_Core {
         public readonly ExceptionManager ExceptionManager;
+        [Obsolete("Please use the new DirectoryManager")]
         public readonly FileManager FileManager;
         public readonly WorldManager WorldManager;
         public readonly ParticleManager ParticleManager;
@@ -23,6 +24,7 @@ namespace NimbusFox.FoxCore {
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
         public TileManager TileManager => CoreHook.TileManager;
+        public readonly DirectoryManager DirectoryManager;
 
         public Fox_Core(string author, string mod, string modVersion) {
             ExceptionManager = new ExceptionManager(author, mod, modVersion);
@@ -31,46 +33,30 @@ namespace NimbusFox.FoxCore {
             ParticleManager = new ParticleManager();
             EntityParticleManager = new EntityParticleManager();
             EntityFollowParticleManager = new EntityFollowParticleManager();
+            DirectoryManager = new DirectoryManager(author, mod);
             VersionCheck.VersionCheck.Check();
         }
 
         public static TInterface ResolveOptionalDependency<TInterface>(string key) {
-            var assembly = Assembly.GetAssembly(typeof(Fox_Core));
-            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
-            foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
-                var data = FileManager.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName), typeof(Dictionary<string, object>));
-                if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
-                    var current = FileManager.DeserializeObject<string[]>(FileManager.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]), typeof(string[]));
-                    if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
-                        var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
-                        foreach (var module in item.DefinedTypes) {
-                            if (module.GetInterfaces().Contains(typeof(TInterface))) {
-                                return (TInterface)Activator.CreateInstance(module);
-                            }
-                        }
-                    }
-                }
-            }
+            var collection = GetDependencies<TInterface>(key);
 
-            return default(TInterface);
+            return collection.FirstOrDefault();
         }
 
         public static List<TInterface> GetDependencies<TInterface>(string key) {
             var output = new List<TInterface>();
-
             var assembly = Assembly.GetAssembly(typeof(Fox_Core));
-            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
+            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal));
             foreach (var file in new DirectoryInfo(dir).GetFiles("*.mod")) {
-                var data = FileManager.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file.FullName), typeof(Dictionary<string, object>));
-                if (data.Any(x => x.Key.ToLower() == "fxdependencykeys")) {
-                    var current = FileManager.DeserializeObject<string[]>(FileManager.SerializeObject(data[data.First(x => x.Key.ToLower() == "fxdependencykeys").Key]), typeof(string[]));
+                var data = BlobAllocator.AcquireAllocator().NewBlob(true);
+                data.ReadJson(File.ReadAllText(file.FullName));
+                if (data.Contains("fxdependencykeys")) {
+                    var current = data.GetStringList("fxdependencykeys");
                     if (current.Any(x => string.Equals(x, key, StringComparison.CurrentCultureIgnoreCase))) {
-                        var item = Assembly.LoadFile(file.FullName.Replace(".mod", ".dll"));
+                        var item = Assembly.Load(Assembly.LoadFile(file.FullName.Replace(".mod", ".dll")).GetName());
                         foreach (var module in item.DefinedTypes) {
-                            if (module != null) {
-                                if (module.GetInterfaces().Contains(typeof(TInterface))) {
-                                    output.Add((TInterface)Activator.CreateInstance(module));
-                                }
+                            if (module.GetInterfaces().Contains(typeof(TInterface))) {
+                                output.Add((TInterface)Activator.CreateInstance(module));
                             }
                         }
                     }

@@ -12,12 +12,10 @@ using Staxel;
 using Staxel.FoxCore.Classes;
 
 namespace NimbusFox.FoxCore.Managers {
+    [Obsolete("Please use the new DirectoryManager")]
     public class FileManager {
         internal readonly string StreamLocation;
-        internal readonly string LocalContentLocation;
-
-        private static dynamic JsonSerializeObject;
-        private static dynamic JsonDeserialzeObject;
+        private readonly string LocalContentLocation;
 
         internal FileManager(string author, string mod) {
             StreamLocation = Path.Combine("Mods", author, mod);

@@ -11,7 +11,7 @@ namespace Staxel.FoxCore.Classes {
     public static class Extensions {
 
         public static void ObjectToBlob(this Blob blob, string key, object data) {
-            var blobEntry = blob.FetchBlob(key);
+            var blobEntry = key == null ? blob : blob.FetchBlob(key);
 
             if (data is IList list) {
 
@@ -76,7 +76,7 @@ namespace Staxel.FoxCore.Classes {
 
         private static bool GetProcessProperty(Blob blob, string key, object value) {
             if (value == null) {
-                blob.SetString(key, null);
+                blob.SetString(key, "null");
                 return true;
             }
 
@@ -113,12 +113,17 @@ namespace Staxel.FoxCore.Classes {
 
             Blob blobEntry;
 
-            if (blob.Contains(key)) {
-                blobEntry = blob.FetchBlob(key);
-                value = (T)Activator.CreateInstance(defaultValue.GetType(), true);
+            if (key == null) {
+                blobEntry = blob;
             } else {
-                return value;
+                if (blob.Contains(key)) {
+                    blobEntry = blob.FetchBlob(key);
+                    value = (T)Activator.CreateInstance(defaultValue.GetType(), true);
+                } else {
+                    return value;
+                }
             }
+
 
             if (value is IList) {
                 var list = (IList) value;
@@ -225,7 +230,8 @@ namespace Staxel.FoxCore.Classes {
             }
 
             if (type == typeof(string)) {
-                return blob.GetString(key);
+                var data = blob.GetString(key);
+                return data == "null" ? null : data;
             }
 
             if (type == typeof(Guid)) {

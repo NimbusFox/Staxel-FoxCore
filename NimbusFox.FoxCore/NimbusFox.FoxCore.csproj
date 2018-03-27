@@ -90,6 +90,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="CoreHook.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="Managers\DirectoryManager.cs" />
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
     <Compile Include="Managers\Particles\EntityParticleManager.cs" />
     <Compile Include="Managers\ExceptionManager.cs" />

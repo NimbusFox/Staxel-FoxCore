@@ -19,12 +19,10 @@ namespace NimbusFox {
         internal static UserManager UserManager;
         public static Universe Universe;
         internal static TileManager TileManager;
-        private static bool _initTileManager = true;
         private static long _cacheTick;
 
         public void Dispose() {
             TileManager = null;
-            _initTileManager = true;
             _cacheTick = 0;
         }
 
@@ -41,9 +39,6 @@ namespace NimbusFox {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-            if (_initTileManager) {
-                _initTileManager = false;
-            }
 
             if (_cacheTick <= DateTime.Now.Ticks) {
                 foreach (var player in UserManager.GetPlayerEntities()) {

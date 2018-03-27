@@ -5,8 +5,8 @@ using Staxel.FoxCore;
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]
     public class VectorCubeI {
-        public Vector3I Start { get; }
-        public Vector3I End { get; }
+        public Vector3I Start { get; private set; }
+        public Vector3I End { get; private set; }
 
         [Obsolete]
         public AreaI X { get; private set; }
