@@ -48,10 +48,6 @@ namespace Staxel.FoxCore.Classes {
             foreach (var property in data.GetType().GetProperties()) {
                 var item = property.GetValue(data);
 
-                if (item.GetType() == data.GetType()) {
-                    continue;
-                }
-
                 if (GetProcessProperty(blobEntry, property.Name, item)) {
                     continue;
                 }
@@ -76,7 +72,7 @@ namespace Staxel.FoxCore.Classes {
 
         private static bool GetProcessProperty(Blob blob, string key, object value) {
             if (value == null) {
-                blob.SetString(key, "null");
+                blob.FetchBlob(key);
                 return true;
             }
 
@@ -230,8 +226,7 @@ namespace Staxel.FoxCore.Classes {
             }
 
             if (type == typeof(string)) {
-                var data = blob.GetString(key);
-                return data == "null" ? null : data;
+                return blob.GetString(key);
             }
 
             if (type == typeof(Guid)) {
@@ -248,6 +243,14 @@ namespace Staxel.FoxCore.Classes {
 
             if (type.IsNumber()) {
                 return Convert.ChangeType(blob.GetDouble(key), type);
+            }
+
+            Blob blob2;
+
+            if (blob.TryGetBlob(key, out blob2)) {
+                if (!blob2.KeyValueIteratable.Any()) {
+                    return null;
+                }
             }
 
             return defaultValue;
