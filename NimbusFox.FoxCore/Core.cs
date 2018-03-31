@@ -23,7 +23,6 @@ namespace NimbusFox.FoxCore {
         public readonly EntityFollowParticleManager EntityFollowParticleManager;
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
-        public TileManager TileManager => CoreHook.TileManager;
         public readonly DirectoryManager DirectoryManager;
 
         public Fox_Core(string author, string mod, string modVersion) {

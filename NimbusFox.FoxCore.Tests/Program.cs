@@ -53,42 +53,21 @@ namespace NimbusFox.FoxCore.Tests {
         //    }
         //}
 
-        //static void Main(string[] args) {
-        //    var dic = new Dictionary<Guid, List<Guid>>();
-        //    for (var i = 0; i < 10; i++) {
-        //        var list = new List<Guid>();
-        //        for (var j = 0; j < 10; j++) {
-        //            list.Add(Guid.NewGuid());
-        //        }
-        //        dic.Add(Guid.NewGuid(), list);
-        //    }
-
-        //    if (!Directory.Exists("./Results")) {
-        //        Directory.CreateDirectory("./Results");
-        //    }
-
-        //    File.WriteAllText($"./Results/{Guid.NewGuid().ToString()}.txt", FileManager.SerializeObject(dic));
-        //}
-
-        public static TileManager tm;
-
         static void Main(string[] args) {
-            var data = File.ReadAllText("./Tiles.json");
-            var blob = BlobAllocator.AcquireAllocator().NewBlob(false);
-            blob.ReadJson(data);
-            var obj = blob.BlobToObject(null, new Dictionary<string, DictionaryData>());
+            var dic = new Dictionary<Guid, List<Guid>>();
+            for (var i = 0; i < 10; i++) {
+                var list = new List<Guid>();
+                for (var j = 0; j < 10; j++) {
+                    list.Add(Guid.NewGuid());
+                }
+                dic.Add(Guid.NewGuid(), list);
+            }
 
-            tm = new TileManager(obj);
+            if (!Directory.Exists("./Results")) {
+                Directory.CreateDirectory("./Results");
+            }
 
-            Input();
-        }
-
-        public static void Input() {
-            var input = Console.ReadLine();
-
-            Console.WriteLine(tm.GetTileCode(input));
-
-            Input();
+            File.WriteAllText($"./Results/{Guid.NewGuid().ToString()}.txt", FileManager.SerializeObject(dic));
         }
     }
 }

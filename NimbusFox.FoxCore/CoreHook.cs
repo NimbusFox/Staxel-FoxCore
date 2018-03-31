@@ -18,11 +18,9 @@ namespace NimbusFox {
 
         internal static UserManager UserManager;
         public static Universe Universe;
-        internal static TileManager TileManager;
         private static long _cacheTick;
 
         public void Dispose() {
-            TileManager = null;
             _cacheTick = 0;
         }
 
@@ -31,7 +29,6 @@ namespace NimbusFox {
         }
         public void GameContextInitializeBefore() { }
         public void GameContextInitializeAfter() {
-            TileManager = new TileManager();
         }
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }
