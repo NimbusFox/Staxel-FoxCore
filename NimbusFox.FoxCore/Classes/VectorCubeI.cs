@@ -51,5 +51,12 @@ namespace NimbusFox.FoxCore.Classes {
         public long GetTileCount() {
             return (End.X - Start.X) * (End.Z - Start.Z) * (End.Y - Start.Y);
         }
+
+        public VectorCubeI GetOuterRegions() {
+            return new VectorCubeI {
+                Start = new Vector3I(Start.X - 1, Start.Y - 1, Start.Z - 1),
+                End = new Vector3I(End.X + 1, End.Y + 1, End.Z + 1)
+            };
+        }
     }
 }
