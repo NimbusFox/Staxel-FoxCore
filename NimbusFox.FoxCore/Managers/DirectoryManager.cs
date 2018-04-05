@@ -4,32 +4,66 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using NimbusFox;
+using NimbusFox.FoxCore;
+using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
+using Staxel.Core;
 using Staxel.FoxCore.Classes;
+using Staxel.Items;
+using Staxel.Tiles;
+using Staxel.Voxel;
 
 namespace Staxel.FoxCore.Managers {
     public class DirectoryManager {
         private string _localContentLocation;
+        private string _root;
         private DirectoryManager _parent { get; set; }
 
         public DirectoryManager Parent => _parent ?? this;
 
+        public DirectoryManager TopLevel {
+            get {
+                if (_parent != null) {
+                    return _parent.TopLevel;
+                }
+
+                return this;
+            }
+        }
+
+        internal string GetPath(char seperator) {
+            return Regex.Replace(_localContentLocation.Replace(_root, ""), @"\/|\\", seperator.ToString()) + seperator;
+        }
+
         internal DirectoryManager(string author, string mod) {
             var streamLocation = Path.Combine("Mods", author, mod);
             _localContentLocation = Path.Combine(GameContext.ContentLoader.LocalContentDirectory, streamLocation);
+            _root = _localContentLocation;
 
             if (!Directory.Exists(_localContentLocation)) {
                 Directory.CreateDirectory(_localContentLocation);
             }
         }
 
-        private DirectoryManager() { }
+        internal DirectoryManager(string mod) {
+            _localContentLocation = Path.Combine(GameContext.ContentLoader.RootDirectory, "mods", mod);
+            _root = _localContentLocation;
+        }
+
+        internal DirectoryManager() {
+            _localContentLocation = GameContext.ContentLoader.RootDirectory;
+            _root = _localContentLocation;
+        }
 
         public DirectoryManager FetchDirectory(string name) {
             var dir = new DirectoryManager {
                 _localContentLocation = Path.Combine(_localContentLocation, name),
+                _root = _root,
                 _parent = this
             };
 
@@ -57,6 +91,9 @@ namespace Staxel.FoxCore.Managers {
         }
 
         public static Blob SerializeObject<T>(T data) {
+            if (data is Blob) {
+                return (Blob)(object)data;
+            }
             var blob = BlobAllocator.AcquireAllocator().NewBlob(true);
             blob.ObjectToBlob(null, data);
             return blob;
@@ -73,15 +110,16 @@ namespace Staxel.FoxCore.Managers {
                     output.SaveJsonStream(stream);
                 }
                 stream.Seek(0L, SeekOrigin.Begin);
-                GameContext.ContentLoader.WriteLocalStream(Path.Combine(_localContentLocation, fileName), stream);
+                File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
                 onFinish?.Invoke();
             }).Start();
         }
 
-        public void WriteFileStream(string filename, Stream stream) {
+        public void WriteFileStream(string filename, Stream stream, Action onWrite = null) {
             new Thread(() => {
                 stream.Seek(0L, SeekOrigin.Begin);
-                GameContext.ContentLoader.WriteLocalStream(Path.Combine(_localContentLocation, filename), stream);
+                File.WriteAllBytes(Path.Combine(_localContentLocation, filename), stream.ReadAllBytes());
+                onWrite?.Invoke();
             }).Start();
         }
 
@@ -89,7 +127,7 @@ namespace Staxel.FoxCore.Managers {
             new Thread(() => {
                 if (FileExists(filename)) {
                     var stream =
-                        GameContext.ContentLoader.ReadLocalStream(Path.Combine(_localContentLocation, filename));
+                        GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), filename));
                     Blob input;
                     if (!inputIsText) {
                         input = stream.ReadBlob();
@@ -102,9 +140,11 @@ namespace Staxel.FoxCore.Managers {
                     stream.Seek(0L, SeekOrigin.Begin);
                     if (typeof(T) == input.GetType()) {
                         onLoad((T) (object) input);
+                        return;
                     }
 
                     onLoad(input.BlobToObject(null, (T) Activator.CreateInstance(typeof(T))));
+                    return;
                 }
 
                 onLoad((T) Activator.CreateInstance(typeof(T)));
@@ -114,9 +154,9 @@ namespace Staxel.FoxCore.Managers {
         public void ReadFileStream(string filename, Action<Stream> onLoad, bool required = false) {
             new Thread(() => {
                 var stream =
-                    GameContext.ContentLoader.ReadLocalStream(Path.Combine(_localContentLocation, filename), required);
+                    GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), filename));
                 stream.Seek(0L, SeekOrigin.Begin);
-                onLoad(stream);
+                onLoad?.Invoke(stream);
             }).Start();
         }
 
@@ -130,6 +170,205 @@ namespace Staxel.FoxCore.Managers {
             if (DirectoryExists(name)) {
                 Directory.Delete(Path.Combine(_localContentLocation, name), recursive);
             }
+        }
+
+        public void ExportCube(Vector3I range, Vector3I baseVector, string name) {
+            var data = new Dictionary<int, Color>();
+            var colorSet = new HashSet<Color>
+            {
+                Color.Transparent
+            };
+
+            var dictionary = new Dictionary<CodeEntry, Color> {
+                {
+                    new CodeEntry(Constants.SkyCode + "+0", 0U),
+                    Color.Transparent
+                }, {
+                    new CodeEntry(Constants.CompoundCode + "+0", 0U),
+                    Color.Transparent
+                }, {
+                    new CodeEntry(Constants.CompoundCollisionCode + "+0", 0U),
+                    Color.Transparent
+                }
+            };
+
+            var fileData = new VectorFileData { Size = range };
+
+            fileData.Mappings.Add("00000000", new VectorData {
+                Code = Constants.SkyCode,
+                Rotation = 0
+            });
+
+            fileData.Mappings.Add("FF000000", new VectorData {
+                Code = Constants.SkyCode,
+                Rotation = 0
+            });
+
+            var randomSource = GameContext.RandomSource;
+
+            Fox_Core.VectorLoop(new Vector3I(0, 0, 0), range, (x, y, z) => {
+                var index = x + z * range.X + y * range.X * range.Z;
+                Tile tile;
+                if (!CoreHook.Universe.ReadTile(baseVector + new Vector3I(x, y, z),
+                    TileAccessFlags.SynchronousWait, out tile)) {
+                    throw new Exception("Failed to read tile at: " + (baseVector + new Vector3I(x, y, z)) +
+                                        ". Tileflags: " + TileAccessFlags.SynchronousWait);
+                }
+
+                var rotation = tile.Configuration.Rotation(tile.Variant());
+                if (tile.Configuration.CompoundFiller) {
+                    rotation = 0U;
+                }
+
+                var key = new CodeEntry(tile.Configuration.Code + '+' + rotation, rotation);
+
+                Color color;
+                if (!dictionary.TryGetValue(key, out color)) {
+                    color = tile.Configuration.ExportColor;
+                    var loop = true;
+                    while (loop) {
+                        while (colorSet.Contains(color)) {
+                            color = new Color(randomSource.Next(0, 256), randomSource.Next(0, 256), randomSource.Next(0, 256));
+                        }
+                        colorSet.Add(color);
+                        dictionary.Add(key, color);
+
+                        if (!fileData.Mappings.ContainsKey(ColorMath.ToString(color))) {
+                            fileData.Mappings.Add(ColorMath.ToString(color), new VectorData {
+                                Code = tile.Configuration.Code,
+                                Rotation = rotation
+                            });
+                            loop = false;
+                        }
+                    }
+                }
+
+                if (!data.ContainsKey(index)) {
+                    data.Add(index, color);
+                }
+            });
+
+            WriteFile(name + ".json", fileData, null, true);
+
+            WriteQBFile(range, name, data);
+        }
+
+        public VoxelOutput ImportCube(string name) {
+            var output = new VoxelOutput();
+            var check = false;
+            ReadFile<VectorFileData>(name + ".json", json => {
+                output.JsonData = json;
+                output.Voxels = ReadQBFile(name, Vector3I.Zero, json.Size);
+                check = true;
+            }, true);
+
+            while (!check) { }
+
+            return output;
+        }
+
+        public VoxelObject ReadQBFile(string name, Vector3I offSet, Vector3I sizeLimit) {
+            VoxelObject output = null;
+
+            ReadFileStream(name + ".qb", data => {
+                output = VoxelLoader.LoadQb(data, name + "qb", offSet, sizeLimit);
+            }, true);
+
+            while(output == null) { }
+
+            return output;
+        }
+
+        public void WriteQBFile(Vector3I range, string name, Dictionary<int, Color> data) {
+
+            var stream = new MemoryStream();
+
+            var bw = new BinaryWriter(stream);
+
+            bw.Write((byte)1);
+            bw.Write((byte)1);
+            bw.Write((byte)0);
+            bw.Write((byte)0);
+            bw.Write(0U);
+            bw.Write(0U);
+            bw.Write(1U);
+            bw.Write(0U);
+            bw.Write(1U);
+            bw.Write("main");
+            bw.Write(range.X);
+            bw.Write(range.Y);
+            bw.Write(range.Z);
+            bw.Write(0);
+            bw.Write(0);
+            bw.Write(0);
+
+            void Action(Color color, int run) {
+                if (run <= 0)
+                    return;
+                var num = 1;
+                if (run > 2) {
+                    bw.Write(2U);
+                    bw.Write((uint) run);
+                } else
+                    num = run;
+
+                for (var index = 0; index < num; ++index)
+                    bw.Write(color.PackedValue);
+            }
+
+            var num1 = 0;
+            var color1 = Color.White;
+            var num2 = 0;
+            for (; num1 < range.Z; ++num1) {
+                for (var index = 0; index < range.X * range.Y; ++index) {
+                    var num3 = index % range.X;
+                    var num4 = index / range.X;
+                    var transparent = data[num3 + num1 * range.X + num4 * range.X * range.Z];
+                    if (((int)transparent.PackedValue & -16777216) == 0)
+                        transparent = Color.Transparent;
+                    else
+                        transparent.PackedValue |= 4278190080U;
+                    if (transparent != color1) {
+                        Action(color1, num2);
+                        num2 = 0;
+                    }
+                    color1 = transparent;
+                    ++num2;
+                }
+                Action(color1, num2);
+                num2 = 0;
+                bw.Write(6U);
+            }
+
+            bw.Flush();
+            stream.Seek(0L, SeekOrigin.Begin);
+
+            var wait = true;
+
+            WriteFileStream(name + ".qb", stream, () => { wait = false; });
+
+            while (wait) { }
+        }
+
+        public void WriteQBFile(string name, VoxelObject voxels) {
+            var colors = new Dictionary<int, Color>();
+
+            Fox_Core.VectorLoop(Vector3I.Zero, voxels.Size, (x, y, z) => {
+                try {
+                    var index = x + z * voxels.Size.X + y * voxels.Size.X * voxels.Size.Z;
+
+                    var color = voxels.Read(x, y, z);
+                    if (!colors.ContainsKey(index)) {
+                        colors.Add(index, color);
+                    } else {
+                        colors[index] = color;
+                    }
+                } catch {
+
+                }
+            });
+
+            WriteQBFile(voxels.Size, name, colors);
         }
     }
 }

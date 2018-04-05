@@ -24,7 +24,14 @@ namespace NimbusFox.FoxCore {
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
         public readonly DirectoryManager DirectoryManager;
+        internal readonly DirectoryManager ModDirectory;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="author"></param>
+        /// <param name="mod">Must match your mod directory name</param>
+        /// <param name="modVersion"></param>
         public Fox_Core(string author, string mod, string modVersion) {
             ExceptionManager = new ExceptionManager(author, mod, modVersion);
             FileManager = new FileManager(author, mod);
@@ -33,6 +40,7 @@ namespace NimbusFox.FoxCore {
             EntityParticleManager = new EntityParticleManager();
             EntityFollowParticleManager = new EntityFollowParticleManager();
             DirectoryManager = new DirectoryManager(author, mod);
+            ModDirectory = new DirectoryManager(mod);
             VersionCheck.VersionCheck.Check();
         }
 

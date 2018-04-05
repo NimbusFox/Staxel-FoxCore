@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FNA">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\FNA.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,15 +80,31 @@
   <ItemGroup>
     <Compile Include="Classes\AreaD.cs" />
     <Compile Include="Classes\AreaI.cs" />
+    <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\VectorFileData.cs" />
     <Compile Include="Classes\ParticleStore.cs" />
     <Compile Include="Classes\UserCache.cs" />
     <Compile Include="Classes\VectorCubeD.cs" />
     <Compile Include="Classes\VectorCubeI.cs" />
+    <Compile Include="Classes\VectorData.cs" />
     <Compile Include="Classes\VectorRangeI.cs" />
     <Compile Include="Classes\VectorSquareD.cs" />
     <Compile Include="Classes\VectoSquareI.cs" />
+    <Compile Include="Classes\VoxelOutput.cs" />
+    <Compile Include="Classes\Voxels.Core\AmbientOcclusion.cs" />
+    <Compile Include="Classes\Voxels.Core\Color.cs" />
+    <Compile Include="Classes\Voxels.Core\MagicaVoxel.cs" />
+    <Compile Include="Classes\Voxels.Core\MeshBuilder.cs" />
+    <Compile Include="Classes\Voxels.Core\QbclFile.cs" />
+    <Compile Include="Classes\Voxels.Core\QbFile.cs" />
+    <Compile Include="Classes\Voxels.Core\Voxel.cs" />
+    <Compile Include="Classes\Voxels.Core\VoxelData.cs" />
+    <Compile Include="Classes\Voxels.Core\VoxelImport.cs" />
+    <Compile Include="Classes\Voxels.Core\VoxFile.cs" />
+    <Compile Include="Classes\Voxels.Core\Voxlap.cs" />
+    <Compile Include="Classes\Voxels.Core\XYZ.cs" />
     <Compile Include="Enums\Compass.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="CoreHook.cs" />
@@ -95,12 +115,10 @@
     <Compile Include="Managers\ExceptionManager.cs" />
     <Compile Include="Managers\FileManager.cs" />
     <Compile Include="Managers\Particles\ParticleManager.cs" />
+    <Compile Include="Managers\VariantManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
@@ -113,7 +131,10 @@
       <Name>NimbusFox.FoxCore.VersionCheck</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Staxel\Commands\" />
+    <Folder Include="Staxel\Translations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>del $(TargetDir)\*.mod</PreBuildEvent>
