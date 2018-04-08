@@ -12,16 +12,21 @@ using Staxel.Logic;
 
 namespace Staxel.FoxCore.Managers {
     public class UserManager {
-        private static readonly FileManager FileManager = new FileManager("NimbusFox", "FoxCore");
+        private static readonly DirectoryManager FileManager = new DirectoryManager("NimbusFox", "FoxCore");
         private const string CacheFile = "User.cache";
-        private readonly List<UserCache> _cache;
+        private List<UserCache> _cache;
 
         internal UserManager() {
             if (FileManager.FileExists(CacheFile)) {
                 _cache = new List<UserCache>();
                 Flush();
             } else {
-                _cache = FileManager.ReadFile<List<UserCache>>(CacheFile);
+                var wait = true;
+                FileManager.ReadFile<List<UserCache>>(CacheFile, (data) => {
+                    _cache = data;
+                    wait = false;
+                });
+                while (wait) { }
             }
         }
 

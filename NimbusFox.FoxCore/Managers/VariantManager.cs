@@ -106,15 +106,22 @@ namespace Staxel.FoxCore.Managers {
 
             var voxels = QbFile.Read(voxelStream);
 
+            voxelStream.Seek(0L, SeekOrigin.Begin);
+
+            var sVoxels = VoxelLoader.LoadQb(voxelStream, file, Vector3I.Zero,
+                new Vector3I(voxels.size.X, voxels.size.Y, voxels.size.Z));
+
             var colors = new List<Color>();
 
-            Fox_Core.VectorLoop(Vector3I.One, new Vector3I(voxels.size.X, voxels.size.Y, voxels.size.Z), (x, y, z) => {
+            Fox_Core.VectorLoop(Vector3I.Zero, sVoxels.Size, (x, y, z) => {
                 try {
-                    var color = ColorMath.FromRgba(voxels.ColorOf(new XYZ(x, y, z)).RGBA);
+                    var color = sVoxels.Read(x, y, z);
 
                     foreach (var check in replaceColorsWith) {
                         if (color == check.Key) {
                             color = check.Value;
+
+                            sVoxels.Write(x, y, z, check.Value);
                         }
                     }
 
@@ -122,7 +129,7 @@ namespace Staxel.FoxCore.Managers {
                 } catch { }
             });
 
-            return new VoxelObject(new Vector3I(voxels.size.X, voxels.size.Y, voxels.size.Z), Vector3I.Zero, Vector3I.Zero, new Vector3I(voxels.size.X, voxels.size.Y, voxels.size.Z), colors.ToArray(), true);
+            return sVoxels;
         }
     }
 }

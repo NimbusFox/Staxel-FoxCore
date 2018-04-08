@@ -15,7 +15,7 @@ namespace NimbusFox.FoxCore.VersionCheck {
 
         public static void Check() {
             var assembly = Assembly.GetAssembly(typeof(VersionCheck));
-            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf("\\", StringComparison.Ordinal));
+            var dir = assembly.Location.Substring(0, assembly.Location.LastIndexOf(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal));
 
             var fileRemoved = false;
 

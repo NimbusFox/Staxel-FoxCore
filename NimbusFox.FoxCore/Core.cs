@@ -24,7 +24,7 @@ namespace NimbusFox.FoxCore {
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
         public readonly DirectoryManager DirectoryManager;
-        internal readonly DirectoryManager ModDirectory;
+        public readonly DirectoryManager ModDirectory;
 
         /// <summary>
         /// 
