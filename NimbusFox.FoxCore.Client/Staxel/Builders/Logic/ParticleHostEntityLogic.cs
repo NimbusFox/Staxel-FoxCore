@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Plukit.Base;
 using Staxel;
 using Staxel.Core;
 using Staxel.Effects;
 using Staxel.Logic;
 using Staxel.Particles;
-using Staxel.Tiles;
 
 namespace NimbusFox.FoxCore.Client.Staxel.Builders.Logic {
     public class ParticleHostEntityLogic : EntityLogic {

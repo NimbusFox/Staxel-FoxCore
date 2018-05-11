@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Plukit.Base;
+﻿using Plukit.Base;
 
-namespace Staxel.FoxCore {
+namespace NimbusFox.FoxCore {
     internal static class Global {
         public static void Sort3D(Vector3D first, Vector3D second, out Vector3D start, out Vector3D end) {
             var startx = 0.0;

@@ -2,12 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Plukit.Base;
 
-namespace Staxel.FoxCore.Classes {
+namespace NimbusFox.FoxCore.Classes {
     public static class Extensions {
 
         public static void ObjectToBlob(this Blob blob, string key, object data) {
@@ -243,6 +240,14 @@ namespace Staxel.FoxCore.Classes {
 
             if (type.IsNumber()) {
                 return Convert.ChangeType(blob.GetDouble(key), type);
+            }
+
+            if (blob.KeyValueIteratable[key].Kind != BlobEntryKind.Blob) {
+                try {
+                    return blob.GetString(key);
+                } catch {
+                    return blob.GetBool(key);
+                }
             }
 
             Blob blob2;

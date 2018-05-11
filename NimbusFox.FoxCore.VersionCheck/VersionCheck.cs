@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NimbusFox.FoxCore.VersionCheck {
     public static class VersionCheck {
         private static string[] VersionToRemove => new [] {
             "NimbusFox.FoxCore.V1-20180228",
-            "NimbusFox.FoxCore.V1-20180226"
+            "NimbusFox.FoxCore.V1-20180226",
+            "NimbusFox.FoxCore.V1.2"
         };
 
         public static void Check() {

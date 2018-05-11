@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NimbusFox;
-using NimbusFox.FoxCore;
-using NimbusFox.FoxCore.Managers;
 using Plukit.Base;
-using Staxel.FoxCore.Classes;
+using NimbusFox.FoxCore.Classes;
 using Staxel.Logic;
 
-namespace Staxel.FoxCore.Managers {
+namespace NimbusFox.FoxCore.Managers {
     public class UserManager {
         private static readonly DirectoryManager FileManager = new DirectoryManager("NimbusFox", "FoxCore");
         private const string CacheFile = "User.cache";
@@ -35,7 +30,7 @@ namespace Staxel.FoxCore.Managers {
         }
 
         private void Flush() {
-            FileManager.WriteFile(CacheFile, _cache);
+            //FileManager.WriteFile(CacheFile, _cache);
         }
 
         private Universe Universe => CoreHook.Universe;

@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NimbusFox;
-using NimbusFox.FoxCore;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
-using NimbusFox.FoxCore.Managers.Particles;
 using Plukit.Base;
 using Staxel.Logic;
 
-namespace Staxel.FoxCore.Managers.Particles {
+namespace NimbusFox.FoxCore.Managers.Particles {
     public class EntityFollowParticleManager : EntityParticleManager {
         public Guid Add(Entity entity, string particleCode, int xOffset = 0, int yOffset = 0, int zoffset = 0) {
             var particleHost = new VectorRangeI {

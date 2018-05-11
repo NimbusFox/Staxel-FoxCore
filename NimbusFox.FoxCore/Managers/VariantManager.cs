@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using NimbusFox.FoxCore;
 using Plukit.Base;
-using Staxel.Core;
-using Staxel.Items;
+using Staxel;
 using Staxel.Tiles;
 using Staxel.Voxel;
 using Voxels;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Staxel.FoxCore.Managers {
+namespace NimbusFox.FoxCore.Managers {
     public static class VariantManager {
         public static void CreateTile(Tile baseTile, Dictionary<Color, Color> replaceColorsWith,
             string newVariantTileCode, Fox_Core modFoxCore, Blob overrides) {

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using NimbusFox.FoxCore.Managers;
 using Plukit.Base;
 using Staxel.Core;
-using Staxel.FoxCore.Managers;
+using Staxel;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace Staxel.FoxCore.Forms {
+namespace NimbusFox.FoxCore.Forms {
     public partial class VariantLoader : Form {
         private Dictionary<string, Dictionary<Color, Color>> _colors;
         public VariantLoader() {
@@ -32,7 +27,7 @@ namespace Staxel.FoxCore.Forms {
                         var current = blob.GetBlob(palette.Key);
 
                         if (!_colors.ContainsKey(palette.Key)) {
-                            _colors.Add(palette.Key, new Dictionary<Microsoft.Xna.Framework.Color, Color>());
+                            _colors.Add(palette.Key, new Dictionary<Color, Color>());
                         }
 
                         foreach (var colorKey in current.KeyValueIteratable.Keys) {
@@ -41,9 +36,7 @@ namespace Staxel.FoxCore.Forms {
                             if (!_colors[palette.Key].ContainsKey(colorK)) {
                                 _colors[palette.Key].Add(colorK, colorV);
                             }
-                            Application.DoEvents();
                         }
-                        Application.DoEvents();
                     }
                     wait = false;
                 }, true);
@@ -80,7 +73,6 @@ namespace Staxel.FoxCore.Forms {
 
                         foreach (var tile in tiles.KeyValueIteratable.Keys) {
                             index++;
-                            Application.DoEvents();
 
                             prgrssTileItems.Value = index;
                             lblTileItem.Text = $@"{tile} ({index} of {total})";
@@ -123,7 +115,6 @@ namespace Staxel.FoxCore.Forms {
 
                         foreach (var item in items.KeyValueIteratable.Keys) {
                             index++;
-                            Application.DoEvents();
 
                             prgrssTileItems.Value = index;
                             lblTileItem.Text = $@"{item} ({index} of {total})";

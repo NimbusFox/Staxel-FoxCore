@@ -1,0 +1,10 @@
+﻿language.code=en-GB
+language=English
+
+mods.nimbusfox.exception.message=<NimbusFox>:^c:FF0000;An error occured in {0-mod} and an error log has been stored in the save folder under Mods\\Nimbusfox\\{1-mod}\\Errors. Currently there are no ways of sending the errors to me. If you see me in Discord don't hesitate to send me the file there. No personal information is gathered. Only what is public and what is stored in memory that {2-mod} has access to is present in the error files
+
+mods.nimbusfox.foxcore.scriptrefresh.success=^c:00FF00;Reload Complete
+mods.nimbusfox.foxcore.scriptrefresh.fail=^c:FF0000;Reload encountered an error. Please visit the mod folders for the error
+mods.nimbusfox.foxcore.scriptrefresh.description=Reloads all scripts
+
+mods.nimbusfox.foxcore.scriptcommand.description=Runs a command registered by a script

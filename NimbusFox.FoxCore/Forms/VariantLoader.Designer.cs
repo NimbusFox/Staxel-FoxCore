@@ -1,4 +1,4 @@
-﻿namespace Staxel.FoxCore.Forms {
+﻿namespace NimbusFox.FoxCore.Forms {
     partial class VariantLoader {
         /// <summary>
         /// Required designer variable.

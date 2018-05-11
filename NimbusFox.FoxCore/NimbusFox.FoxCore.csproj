@@ -7,8 +7,8 @@
     <ProjectGuid>{8B473A82-8C34-44EA-B13D-39D0418E021F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Staxel.FoxCore</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore.V1.2</AssemblyName>
+    <RootNamespace>NimbusFox.FoxCore</RootNamespace>
+    <AssemblyName>NimbusFox.FoxCore.V2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -25,6 +25,8 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>
     </NoWarn>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,13 +35,26 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Costura.Fody.2.0.0\lib\net452\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="FNA">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\FNA.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NeoLua.1.2.24\lib\net45\Neo.Lua.dll</HintPath>
+    </Reference>
+    <Reference Include="Neo.Lua.Desktop, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NeoLua.1.2.24\lib\net45\Neo.Lua.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Newtonsoft.Json.dll</HintPath>
@@ -49,24 +64,16 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Simplex">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Simplex.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Staxel">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Staxel.Auth">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.Auth.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Staxel.Checks">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.Checks.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Staxel.Trace">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.Trace.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Staxel.ValueSource">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.ValueSource.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -84,6 +91,7 @@
     <Compile Include="Classes\AreaI.cs" />
     <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />
+    <Compile Include="Classes\Delegates.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\VectorFileData.cs" />
     <Compile Include="Classes\ParticleStore.cs" />
@@ -93,7 +101,7 @@
     <Compile Include="Classes\VectorData.cs" />
     <Compile Include="Classes\VectorRangeI.cs" />
     <Compile Include="Classes\VectorSquareD.cs" />
-    <Compile Include="Classes\VectoSquareI.cs" />
+    <Compile Include="Classes\VectorSquareI.cs" />
     <Compile Include="Classes\VoxelOutput.cs" />
     <Compile Include="Classes\Voxels.Core\AmbientOcclusion.cs" />
     <Compile Include="Classes\Voxels.Core\Color.cs" />
@@ -108,8 +116,17 @@
     <Compile Include="Classes\Voxels.Core\Voxlap.cs" />
     <Compile Include="Classes\Voxels.Core\XYZ.cs" />
     <Compile Include="Enums\Compass.cs" />
-    <Compile Include="Core.cs" />
+    <Compile Include="FoxCore.cs">
+      <Generator>DtsGenerator</Generator>
+      <LastGenOutput>Core.cs.d.ts</LastGenOutput>
+    </Compile>
     <Compile Include="CoreHook.cs" />
+    <Compile Include="Forms\ExceptionViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExceptionViewer.Designer.cs">
+      <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\VariantLoader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,6 +134,14 @@
       <DependentUpon>VariantLoader.cs</DependentUpon>
     </Compile>
     <Compile Include="Global.cs" />
+    <Compile Include="Interpreters\Classes\CContext.cs" />
+    <Compile Include="Interpreters\Classes\CommandBuilder.cs" />
+    <Compile Include="Interpreters\Classes\GContext.cs" />
+    <Compile Include="Interpreters\Classes\SContext.cs" />
+    <Compile Include="Interpreters\CoreIntMods.cs" />
+    <Compile Include="Interpreters\CoreInt.cs" />
+    <Compile Include="Interpreters\JSInt.cs" />
+    <Compile Include="Interpreters\LuaInt.cs" />
     <Compile Include="Managers\DirectoryManager.cs" />
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
     <Compile Include="Managers\Particles\EntityParticleManager.cs" />
@@ -127,12 +152,13 @@
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Staxel\Commands\ScriptRefreshCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
       <Project>{690691FF-8AEF-43FE-A5B9-6FD6131ECF87}</Project>
       <Name>NimbusFox.FoxCore.Client</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\NimbusFox.FoxCore.VersionCheck\NimbusFox.FoxCore.VersionCheck.csproj">
       <Project>{0fc13651-c865-49f9-a642-3a59b9958720}</Project>
@@ -140,13 +166,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Staxel\Commands\" />
-    <Folder Include="Staxel\Translations\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\ExceptionViewer.resx">
+      <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\VariantLoader.resx">
       <DependentUpon>VariantLoader.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Staxel\Translations\en-gb.lang">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -155,4 +195,13 @@
   <PropertyGroup>
     <PostBuildEvent>echo {}  &gt; $(TargetDir)$(TargetName).mod</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\Fody.3.0.0\build\Fody.targets" Condition="Exists('..\..\packages\Fody.3.0.0\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Fody.3.0.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.3.0.0\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Costura.Fody.2.0.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Costura.Fody.2.0.0\build\Costura.Fody.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Costura.Fody.2.0.0\build\Costura.Fody.targets" Condition="Exists('..\..\packages\Costura.Fody.2.0.0\build\Costura.Fody.targets')" />
 </Project>

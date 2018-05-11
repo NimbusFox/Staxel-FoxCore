@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NimbusFox.FoxCore.Classes;
+﻿using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
 using Staxel.Logic;
 

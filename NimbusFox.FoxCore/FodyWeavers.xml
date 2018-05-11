@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers>
+  <Costura>
+    <ExcludeAssemblies>
+      Plukit.Base
+      Staxel
+      Simplex
+      Staxel.Auth
+      Staxel.Server
+      Staxel.Server.NoConsole
+      Newtonsoft.Json
+      LZ4Net
+      FNA
+      YarnSpinner
+      CefSharp
+      Steamworks.NET
+      Plukit.ReliableEndpoint
+      Staxel.Checks
+      Staxel.Trace
+      Staxel.ValueSource
+      Staxel.OggVorbis
+      Open.Nat
+      NetMQ
+      CefSharp.Core
+      NimbusFox.FoxCore.VersionCheck
+      Simplex
+      Staxel.Auth
+      NimbusFox.FoxCore.Client.V1
+    </ExcludeAssemblies>
+  </Costura>
+</Weavers>

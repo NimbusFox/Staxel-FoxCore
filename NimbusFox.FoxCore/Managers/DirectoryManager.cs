@@ -2,27 +2,32 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+using Jint;
+using Jint.Native;
+using Jint.Native.Object;
+using Jint.Runtime;
 using Microsoft.Xna.Framework;
-using NimbusFox;
-using NimbusFox.FoxCore;
+using Neo.IronLua;
 using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
+using Staxel;
 using Staxel.Core;
-using Staxel.FoxCore.Classes;
 using Staxel.Items;
 using Staxel.Tiles;
 using Staxel.Voxel;
 
-namespace Staxel.FoxCore.Managers {
+namespace NimbusFox.FoxCore.Managers {
     public class DirectoryManager {
+        private static List<string> FilesInUse = new List<string>();
         private string _localContentLocation;
         private string _root;
         private DirectoryManager _parent { get; set; }
+        internal Engine _jsEngine { get; set; }
+        internal LuaGlobalPortable _luaEngine { get; set; }
+        
+        public string Folder { get; private set; }
 
         public DirectoryManager Parent => _parent ?? this;
 
@@ -44,6 +49,7 @@ namespace Staxel.FoxCore.Managers {
             var streamLocation = Path.Combine("Mods", author, mod);
             _localContentLocation = Path.Combine(GameContext.ContentLoader.LocalContentDirectory, streamLocation);
             _root = _localContentLocation;
+            Folder = mod;
 
             if (!Directory.Exists(_localContentLocation)) {
                 Directory.CreateDirectory(_localContentLocation);
@@ -52,19 +58,22 @@ namespace Staxel.FoxCore.Managers {
 
         internal DirectoryManager(string mod) {
             _localContentLocation = Path.Combine(GameContext.ContentLoader.RootDirectory, "mods", mod);
-            _root = _localContentLocation;
+            _root = GameContext.ContentLoader.RootDirectory;
+            Folder = mod;
         }
 
         internal DirectoryManager() {
             _localContentLocation = GameContext.ContentLoader.RootDirectory;
             _root = _localContentLocation;
+            Folder = "content";
         }
 
         public DirectoryManager FetchDirectory(string name) {
             var dir = new DirectoryManager {
                 _localContentLocation = Path.Combine(_localContentLocation, name),
                 _root = _root,
-                _parent = this
+                _parent = this,
+                Folder = name
             };
 
             CreateDirectory(name);
@@ -72,7 +81,7 @@ namespace Staxel.FoxCore.Managers {
             return dir;
         }
 
-        public void CreateDirectory(string name) {
+        private void CreateDirectory(string name) {
             if (!DirectoryExists(name)) {
                 Directory.CreateDirectory(Path.Combine(_localContentLocation, name));
             }
@@ -91,16 +100,116 @@ namespace Staxel.FoxCore.Managers {
         }
 
         public static Blob SerializeObject<T>(T data) {
-            if (data is Blob) {
-                return (Blob)(object)data;
+            if (data is Blob o) {
+                return o;
             }
             var blob = BlobAllocator.AcquireAllocator().NewBlob(true);
             blob.ObjectToBlob(null, data);
             return blob;
         }
 
+        public void WriteFileLua(string fileName, LuaTable data, Func<LuaTable> onFinish = null, bool outputAsText = false) {
+            var dictionary = data.Cast<object>().ToDictionary(key => key, key => data[key]);
+
+            WriteFile(fileName, dictionary, () => {
+                onFinish?.Invoke();
+            }, outputAsText);
+        }
+
+        public void ReadFileLua(string fileName, Func<LuaTable, LuaTable> onLoad, bool inputIsText) {
+            ReadFile<Dictionary<object, object>>(fileName, data => {
+                var output = new LuaTable();
+
+                foreach (var item in data) {
+                    output[item.Key] = item.Value;
+                }
+
+                onLoad(output);
+            }, inputIsText);
+        }
+
+        public void WriteFileJS(string fileName, JsValue data, Action onFinish = null, bool outputAsText = false) {
+            var blob = BlobAllocator.AcquireAllocator().NewBlob(false);
+
+            JSToBlob(blob, data);
+
+            WriteFile(fileName, blob, onFinish, outputAsText);
+        }
+
+        public void ReadFileJS(string fileName, Action<JsValue> onLoad, bool inputIsText) {
+            var js = new JsValue(new ObjectInstance(_jsEngine));
+            var wait = true;
+            ReadFile<Blob>(fileName, blob => {
+                BlobToJS(blob, js);
+                wait = false;
+            }, inputIsText);
+
+            while (wait) { }
+            onLoad.Invoke(js);
+        }
+
+        private void JSToBlob(Blob parent, JsValue data) {
+            if (data.IsObject()) {
+                foreach (var property in data.AsObject().GetOwnProperties()) {
+                    switch (property.Value.Value.Type) {
+                        case Types.Boolean:
+                            parent.SetBool(property.Key, property.Value.Value.AsBoolean());
+                            break;
+                        case Types.Null:
+                            parent.SetString(property.Key, "");
+                            break;
+                        case Types.Number:
+                            parent.SetDouble(property.Key, property.Value.Value.AsNumber());
+                            break;
+                        case Types.String:
+                            parent.SetString(property.Key, property.Value.Value.AsString());
+                            break;
+                        case Types.None:
+                            break;
+                        case Types.Object:
+                            JSToBlob(parent.FetchBlob(property.Key), property.Value.Value);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void BlobToJS(Blob container, JsValue parent) {
+            foreach (var key in container.KeyValueIteratable) {
+                switch (key.Value.Kind) {
+                    case BlobEntryKind.Bool:
+                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetBool(key.Key)), true, false, false);
+                        break;
+                    case BlobEntryKind.Float:
+                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetDouble(key.Key)), true, false, false);
+                        break;
+                    case BlobEntryKind.String:
+                        if (container.GetString(key.Key).IsNullOrEmpty()) {
+                            parent.AsObject().FastAddProperty(key.Key, JsValue.Null, true, false, false);
+                            break;
+                        }
+                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetString(key.Key)), true, false, false);
+                        break;
+                    case BlobEntryKind.Blob:
+                        parent.AsObject().FastAddProperty(key.Key, new JsValue(new ObjectInstance(_jsEngine)), true, false, false);
+                        BlobToJS(container.FetchBlob(key.Key), parent.AsObject().Get(key.Key));
+                        break;
+                }
+            }
+        }
+
         public void WriteFile<T>(string fileName, T data, Action onFinish = null, bool outputAsText = false) {
             new Thread(() => {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) { 
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
+                FilesInUse.Add(target);
+
                 var stream = new MemoryStream();
                 var output = SerializeObject(data);
                 stream.Seek(0L, SeekOrigin.Begin);
@@ -112,26 +221,52 @@ namespace Staxel.FoxCore.Managers {
                 stream.Seek(0L, SeekOrigin.Begin);
                 File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
                 onFinish?.Invoke();
+
+                FilesInUse.Remove(target);
             }).Start();
         }
 
-        public void WriteFileStream(string filename, Stream stream, Action onWrite = null) {
+        public void WriteFileStream(string fileName, Stream stream, Action onWrite = null) {
             new Thread(() => {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) {
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
+                FilesInUse.Add(target);
+
                 stream.Seek(0L, SeekOrigin.Begin);
-                File.WriteAllBytes(Path.Combine(_localContentLocation, filename), stream.ReadAllBytes());
+                File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
                 onWrite?.Invoke();
+
+                FilesInUse.Remove(target);
             }).Start();
         }
 
-        public void ReadFile<T>(string filename, Action<T> onLoad, bool inputIsText = false) {
+        public void ReadFile<T>(string fileName, Action<T> onLoad, bool inputIsText = false) {
             new Thread(() => {
-                if (FileExists(filename)) {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) {
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
+                if (FileExists(fileName)) {
                     var stream =
-                        GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), filename));
+                        GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), fileName));
                     Blob input;
                     if (!inputIsText) {
                         input = stream.ReadBlob();
                     } else {
+                        if (typeof(T) == typeof(string)) {
+                            onLoad((T)(object)stream.ReadAllText());
+                            return;
+                        }
                         input = BlobAllocator.AcquireAllocator().NewBlob(false);
                         var sr = new StreamReader(stream);
                         input.ReadJson(sr.ReadToEnd());
@@ -139,22 +274,30 @@ namespace Staxel.FoxCore.Managers {
 
                     stream.Seek(0L, SeekOrigin.Begin);
                     if (typeof(T) == input.GetType()) {
-                        onLoad((T) (object) input);
+                        onLoad((T)(object)input);
                         return;
                     }
 
-                    onLoad(input.BlobToObject(null, (T) Activator.CreateInstance(typeof(T))));
+                    onLoad(input.BlobToObject(null, (T)Activator.CreateInstance(typeof(T))));
                     return;
                 }
 
-                onLoad((T) Activator.CreateInstance(typeof(T)));
+                onLoad((T)Activator.CreateInstance(typeof(T)));
             }).Start();
         }
 
-        public void ReadFileStream(string filename, Action<Stream> onLoad, bool required = false) {
+        public void ReadFileStream(string fileName, Action<Stream> onLoad, bool required = false) {
             new Thread(() => {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) {
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
                 var stream =
-                    GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), filename));
+                    GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), fileName));
                 stream.Seek(0L, SeekOrigin.Begin);
                 onLoad?.Invoke(stream);
             }).Start();
@@ -162,12 +305,28 @@ namespace Staxel.FoxCore.Managers {
 
         public void DeleteFile(string name) {
             if (FileExists(name)) {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) {
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
                 File.Delete(Path.Combine(_localContentLocation, name));
             }
         }
 
         public void DeleteDirectory(string name, bool recursive) {
             if (DirectoryExists(name)) {
+                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
+                var collection = new List<string>();
+                collection.AddAll(FilesInUse);
+                while (collection.Any(x => x == target)) {
+                    collection.Clear();
+                    collection.AddAll(FilesInUse);
+                }
+
                 Directory.Delete(Path.Combine(_localContentLocation, name), recursive);
             }
         }
@@ -274,7 +433,7 @@ namespace Staxel.FoxCore.Managers {
                 output = VoxelLoader.LoadQb(data, name + "qb", offSet, sizeLimit);
             }, true);
 
-            while(output == null) { }
+            while (output == null) { }
 
             return output;
         }
@@ -308,7 +467,7 @@ namespace Staxel.FoxCore.Managers {
                 var num = 1;
                 if (run > 2) {
                     bw.Write(2U);
-                    bw.Write((uint) run);
+                    bw.Write((uint)run);
                 } else
                     num = run;
 

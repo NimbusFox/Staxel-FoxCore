@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Staxel;
-using Staxel.FoxCore.Managers;
 
 namespace NimbusFox.FoxCore.Managers {
     public class ExceptionManager {
         private string _modVersion;
         private readonly DirectoryManager ErrorsDir;
 
-        internal ExceptionManager(string author, string mod, string modVersion) {
-            ErrorsDir = new DirectoryManager(author, mod).FetchDirectory("Errors");
+        internal ExceptionManager(string mod, string modVersion) {
+            ErrorsDir = new DirectoryManager(mod).FetchDirectory("Errors");
             _modVersion = modVersion;
         }
 
@@ -33,6 +30,8 @@ namespace NimbusFox.FoxCore.Managers {
                     }
                 }
             }
+
+            
         }
     }
 }

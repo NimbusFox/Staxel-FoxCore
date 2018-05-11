@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Timers;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
-using Plukit.Base;
 using Staxel;
-using Staxel.FoxCore.Classes;
 
 namespace NimbusFox.FoxCore.Managers {
-    [Obsolete("Please use the new DirectoryManager")]
+    [Obsolete("Please use the new DirectoryManager", true)]
     public class FileManager {
         internal readonly string StreamLocation;
         private readonly string LocalContentLocation;

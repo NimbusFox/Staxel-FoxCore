@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
-using Microsoft.Xna.Framework;
-using NimbusFox.FoxCore.Client.Staxel.Builders;
-using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;
-using NimbusFox.FoxCore.VersionCheck;
 using Plukit.Base;
+using NimbusFox.FoxCore.Forms;
+using NimbusFox.FoxCore.Managers;
 using Staxel;
-using Staxel.Collections;
-using Staxel.Core;
-using Staxel.Effects;
-using Staxel.FoxCore.Forms;
-using Staxel.FoxCore.Managers;
+using Staxel.Commands;
 using Staxel.Items;
 using Staxel.Logic;
 using Staxel.Modding;
@@ -23,7 +15,7 @@ namespace NimbusFox {
     public class CoreHook : IModHookV2 {
 
         internal static UserManager UserManager;
-        public static Universe Universe;
+        internal static Universe Universe;
         private static long _cacheTick;
 
         public void Dispose() {
@@ -60,7 +52,9 @@ namespace NimbusFox {
                 _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
             }
         }
-        public void UniverseUpdateAfter() { }
+
+        public void UniverseUpdateAfter() {
+        }
         public bool CanPlaceTile(Entity entity, Vector3I location, Tile tile, TileAccessFlags accessFlags) {
             return true;
         }

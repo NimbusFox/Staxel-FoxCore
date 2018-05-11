@@ -1,6 +1,5 @@
 ﻿using System;
 using Plukit.Base;
-using Staxel.FoxCore;
 
 namespace NimbusFox.FoxCore.Classes {
     [Serializable]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,23 +7,22 @@ using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Managers;
 using NimbusFox.FoxCore.Managers.Particles;
 using Plukit.Base;
-using Staxel.FoxCore.Managers;
-using Staxel.FoxCore.Managers.Particles;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 
 namespace NimbusFox.FoxCore {
     public class Fox_Core {
-        public readonly ExceptionManager ExceptionManager;
-        [Obsolete("Please use the new DirectoryManager")]
-        public readonly FileManager FileManager;
-        public readonly WorldManager WorldManager;
-        public readonly ParticleManager ParticleManager;
-        public readonly EntityParticleManager EntityParticleManager;
-        public readonly EntityFollowParticleManager EntityFollowParticleManager;
+        public ExceptionManager ExceptionManager { get; }
+        public WorldManager WorldManager { get; }
+        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        public ParticleManager ParticleManager { get; }
+        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        public EntityParticleManager EntityParticleManager { get; }
+        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        public EntityFollowParticleManager EntityFollowParticleManager { get; }
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
-        public readonly DirectoryManager DirectoryManager;
-        public readonly DirectoryManager ModDirectory;
+        public DirectoryManager SaveDirectory { get; }
+        public DirectoryManager ModDirectory { get; }
 
         /// <summary>
         /// 
@@ -33,13 +31,12 @@ namespace NimbusFox.FoxCore {
         /// <param name="mod">Must match your mod directory name</param>
         /// <param name="modVersion"></param>
         public Fox_Core(string author, string mod, string modVersion) {
-            ExceptionManager = new ExceptionManager(author, mod, modVersion);
-            FileManager = new FileManager(author, mod);
+            ExceptionManager = new ExceptionManager(mod, modVersion);
             WorldManager = new WorldManager();
             ParticleManager = new ParticleManager();
             EntityParticleManager = new EntityParticleManager();
             EntityFollowParticleManager = new EntityFollowParticleManager();
-            DirectoryManager = new DirectoryManager(author, mod);
+            SaveDirectory = new DirectoryManager(author, mod);
             ModDirectory = new DirectoryManager(mod);
             VersionCheck.VersionCheck.Check();
         }

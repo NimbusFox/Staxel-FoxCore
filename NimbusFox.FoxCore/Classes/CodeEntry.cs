@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NimbusFox.FoxCore.Classes {
+﻿namespace NimbusFox.FoxCore.Classes {
     public class CodeEntry {
         public readonly string Code;
         public readonly uint Rotation;

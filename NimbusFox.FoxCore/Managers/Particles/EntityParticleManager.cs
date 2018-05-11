@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Client.Staxel.Builders.Logic;

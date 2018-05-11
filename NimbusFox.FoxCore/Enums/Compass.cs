@@ -1,4 +1,4 @@
-﻿namespace Staxel.FoxCore.Enums {
+﻿namespace NimbusFox.FoxCore.Enums {
     public enum Compass {
         NORTH,
         EAST,
