@@ -2,30 +2,30 @@
 <Weavers>
   <Costura>
     <ExcludeAssemblies>
-      Plukit.Base
-      Staxel
-      Simplex
-      Staxel.Auth
-      Staxel.Server
-      Staxel.Server.NoConsole
-      Newtonsoft.Json
-      LZ4Net
-      FNA
-      YarnSpinner
-      CefSharp
-      Steamworks.NET
-      Plukit.ReliableEndpoint
-      Staxel.Checks
-      Staxel.Trace
-      Staxel.ValueSource
-      Staxel.OggVorbis
-      Open.Nat
-      NetMQ
-      CefSharp.Core
-      NimbusFox.FoxCore.VersionCheck
-      Simplex
-      Staxel.Auth
-      NimbusFox.FoxCore.Client.V1
+        Plukit.Base
+        Staxel
+        Simplex
+        Staxel.Auth
+        Staxel.Server
+        Staxel.Server.NoConsole
+        LZ4Net
+        FNA
+        YarnSpinner
+        CefSharp
+        Steamworks.NET
+        Plukit.ReliableEndpoint
+        Staxel.Checks
+        Staxel.Trace
+        Staxel.ValueSource
+        Staxel.OggVorbis
+        Open.Nat
+        NetMQ
+        CefSharp.Core
+        NimbusFox.FoxCore.VersionCheck
+        Simplex
+        Staxel.Auth
+        NimbusFox.FoxCore.Client.V1
+        Newtonsoft.Json
     </ExcludeAssemblies>
   </Costura>
 </Weavers>

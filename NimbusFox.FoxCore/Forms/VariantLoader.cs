@@ -21,10 +21,19 @@ namespace NimbusFox.FoxCore.Forms {
             }
 
             if (dir.FileExists("palettes.json")) {
+                lblTileItem.Text = $@"Fetching Palettes ({dir.GetPath('/')}palettes.json)";
                 var wait = true;
+                Logger.WriteLine("Loading palettes");
+                prgrssPalettes.Value = 0;
                 dir.ReadFile<Blob>("palettes.json", blob => {
+                    prgrssPalettes.Maximum = blob.KeyValueIteratable.Count;
+                    prgrssPalettes.Style = ProgressBarStyle.Blocks;
+                    var index = 0;
                     foreach (var palette in blob.KeyValueIteratable) {
+                        prgrssPalettes.Value = index;
                         var current = blob.GetBlob(palette.Key);
+                        lblPalette.Text = "Adding Palette " + palette.Key;
+                        Application.DoEvents();
 
                         if (!_colors.ContainsKey(palette.Key)) {
                             _colors.Add(palette.Key, new Dictionary<Color, Color>());
@@ -37,6 +46,8 @@ namespace NimbusFox.FoxCore.Forms {
                                 _colors[palette.Key].Add(colorK, colorV);
                             }
                         }
+
+                        index++;
                     }
                     wait = false;
                 }, true);
@@ -73,6 +84,7 @@ namespace NimbusFox.FoxCore.Forms {
 
                         foreach (var tile in tiles.KeyValueIteratable.Keys) {
                             index++;
+                            Application.DoEvents();
 
                             prgrssTileItems.Value = index;
                             lblTileItem.Text = $@"{tile} ({index} of {total})";
@@ -209,8 +221,8 @@ namespace NimbusFox.FoxCore.Forms {
 
                 lblTileItem.Text = @"Fetching Palettes";
                 lblPalette.Text = @"Fetching Palettes";
-                prgrssTileItems.Style = ProgressBarStyle.Continuous;
-                prgrssPalettes.Style = ProgressBarStyle.Continuous;
+                prgrssTileItems.Style = ProgressBarStyle.Marquee;
+                prgrssPalettes.Style = ProgressBarStyle.Marquee;
                 Application.DoEvents();
                 CycleGetPalettes(modDir.FetchDirectory(mod));
 

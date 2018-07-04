@@ -1,7 +1,13 @@
-﻿using Plukit.Base;
+﻿using System;
+using System.Linq;
+using NimbusFox.FoxCore.Classes;
+using Plukit.Base;
+using Staxel;
+using Staxel.Items;
+using Staxel.Tiles;
 
 namespace NimbusFox.FoxCore {
-    internal static class Global {
+    public static class Global {
         public static void Sort3D(Vector3D first, Vector3D second, out Vector3D start, out Vector3D end) {
             var startx = 0.0;
             var endx = 0.0;
@@ -42,6 +48,36 @@ namespace NimbusFox.FoxCore {
         public static void SortInt(int first, int second, out int start, out int end) {
             start = first >= second ? second : first;
             end = first == start ? second : first;
+        }
+
+        public static Item MakeItem(string code) {
+            var tile = GameContext.TileDatabase.AllMaterials().FirstOrDefault(x => x.Code == code);
+
+            if (tile != default(TileConfiguration)) {
+                return tile.MakeItem();
+            }
+
+            var itemBlob = BlobAllocator.Blob(true);
+            itemBlob.SetString("code", code);
+
+            var item = GameContext.ItemDatabase.SpawnItemStack(itemBlob, null);
+            Blob.Deallocate(ref itemBlob);
+
+            if (item.IsNull()) {
+                return Item.NullItem;
+            }
+
+            return item.Item;
+        }
+
+        public static Tile MakeTile(string code, uint rotation = 0) {
+            var config = GameContext.TileDatabase.AllMaterials().FirstOrDefault(x => x.Code == code);
+
+            if (config == default(TileConfiguration)) {
+                throw new Exception("Unknown tile code: " + code);
+            }
+
+            return config.MakeTile(rotation);
         }
     }
 }

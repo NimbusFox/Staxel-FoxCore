@@ -1,0 +1,3 @@
+[submodule "NimbusFox.FoxCore/Personal-Newtonsoft.Json"]
+	path = NimbusFox.FoxCore/Personal-Newtonsoft.Json
+	url = git@gitlab.com:Nimbus-Fox/Personal-Newtonsoft.Json.git

@@ -5,11 +5,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Jint;
-using Jint.Native;
-using Jint.Native.Object;
-using Jint.Runtime;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
+using NimbusFox.Newtonsoft.Json;
 using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
 using Staxel;
@@ -23,6 +21,7 @@ namespace NimbusFox.FoxCore.Managers {
         private static List<string> FilesInUse = new List<string>();
         private string _localContentLocation;
         private string _root;
+        internal bool ContentFolder = false;
         private DirectoryManager _parent { get; set; }
         internal Engine _jsEngine { get; set; }
         internal LuaGlobalPortable _luaEngine { get; set; }
@@ -104,101 +103,22 @@ namespace NimbusFox.FoxCore.Managers {
                 return o;
             }
             var blob = BlobAllocator.AcquireAllocator().NewBlob(true);
-            blob.ObjectToBlob(null, data);
+            blob.ReadJson(JsonConvert.SerializeObject(data));
             return blob;
         }
 
-        public void WriteFileLua(string fileName, LuaTable data, Func<LuaTable> onFinish = null, bool outputAsText = false) {
-            var dictionary = data.Cast<object>().ToDictionary(key => key, key => data[key]);
+        public void WriteFile<T>(string fileName, T data, bool outputAsText = false, bool wait = false) {
+            var fwait = true;
 
-            WriteFile(fileName, dictionary, () => {
-                onFinish?.Invoke();
-            }, outputAsText);
-        }
+            WriteFile(fileName, data, () => { fwait = false; }, outputAsText);
 
-        public void ReadFileLua(string fileName, Func<LuaTable, LuaTable> onLoad, bool inputIsText) {
-            ReadFile<Dictionary<object, object>>(fileName, data => {
-                var output = new LuaTable();
-
-                foreach (var item in data) {
-                    output[item.Key] = item.Value;
-                }
-
-                onLoad(output);
-            }, inputIsText);
-        }
-
-        public void WriteFileJS(string fileName, JsValue data, Action onFinish = null, bool outputAsText = false) {
-            var blob = BlobAllocator.AcquireAllocator().NewBlob(false);
-
-            JSToBlob(blob, data);
-
-            WriteFile(fileName, blob, onFinish, outputAsText);
-        }
-
-        public void ReadFileJS(string fileName, Action<JsValue> onLoad, bool inputIsText) {
-            var js = new JsValue(new ObjectInstance(_jsEngine));
-            var wait = true;
-            ReadFile<Blob>(fileName, blob => {
-                BlobToJS(blob, js);
-                wait = false;
-            }, inputIsText);
-
-            while (wait) { }
-            onLoad.Invoke(js);
-        }
-
-        private void JSToBlob(Blob parent, JsValue data) {
-            if (data.IsObject()) {
-                foreach (var property in data.AsObject().GetOwnProperties()) {
-                    switch (property.Value.Value.Type) {
-                        case Types.Boolean:
-                            parent.SetBool(property.Key, property.Value.Value.AsBoolean());
-                            break;
-                        case Types.Null:
-                            parent.SetString(property.Key, "");
-                            break;
-                        case Types.Number:
-                            parent.SetDouble(property.Key, property.Value.Value.AsNumber());
-                            break;
-                        case Types.String:
-                            parent.SetString(property.Key, property.Value.Value.AsString());
-                            break;
-                        case Types.None:
-                            break;
-                        case Types.Object:
-                            JSToBlob(parent.FetchBlob(property.Key), property.Value.Value);
-                            break;
-                    }
-                }
-            }
-        }
-
-        private void BlobToJS(Blob container, JsValue parent) {
-            foreach (var key in container.KeyValueIteratable) {
-                switch (key.Value.Kind) {
-                    case BlobEntryKind.Bool:
-                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetBool(key.Key)), true, false, false);
-                        break;
-                    case BlobEntryKind.Float:
-                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetDouble(key.Key)), true, false, false);
-                        break;
-                    case BlobEntryKind.String:
-                        if (container.GetString(key.Key).IsNullOrEmpty()) {
-                            parent.AsObject().FastAddProperty(key.Key, JsValue.Null, true, false, false);
-                            break;
-                        }
-                        parent.AsObject().FastAddProperty(key.Key, new JsValue(container.GetString(key.Key)), true, false, false);
-                        break;
-                    case BlobEntryKind.Blob:
-                        parent.AsObject().FastAddProperty(key.Key, new JsValue(new ObjectInstance(_jsEngine)), true, false, false);
-                        BlobToJS(container.FetchBlob(key.Key), parent.AsObject().Get(key.Key));
-                        break;
-                }
-            }
+            while (wait && fwait) { }
         }
 
         public void WriteFile<T>(string fileName, T data, Action onFinish = null, bool outputAsText = false) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             new Thread(() => {
                 var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
                 var collection = new List<string>();
@@ -226,7 +146,18 @@ namespace NimbusFox.FoxCore.Managers {
             }).Start();
         }
 
+        public void WriteFileStream(string fileName, Stream stream, bool wait = false) {
+            var fwait = true;
+
+            WriteFileStream(fileName, stream, () => { fwait = false; });
+
+            while (wait && fwait) { }
+        }
+
         public void WriteFileStream(string fileName, Stream stream, Action onWrite = null) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             new Thread(() => {
                 var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
                 var collection = new List<string>();
@@ -244,6 +175,21 @@ namespace NimbusFox.FoxCore.Managers {
 
                 FilesInUse.Remove(target);
             }).Start();
+        }
+
+        public T ReadFile<T>(string fileName, bool inputIsText = false) {
+            T data = default;
+
+            var wait = true;
+
+            ReadFile<T>(fileName, (fileData) => {
+                data = fileData;
+                wait = false;
+            });
+
+            while (wait) { }
+
+            return data;
         }
 
         public void ReadFile<T>(string fileName, Action<T> onLoad, bool inputIsText = false) {
@@ -278,7 +224,14 @@ namespace NimbusFox.FoxCore.Managers {
                         return;
                     }
 
-                    onLoad(input.BlobToObject(null, (T)Activator.CreateInstance(typeof(T))));
+                    using (var json = new MemoryStream()) {
+                        input.SaveJsonStream(json);
+
+                        onLoad(JsonConvert.DeserializeObject<T>(json.ReadAllText()));
+
+                        Blob.Deallocate(ref input);
+                    }
+
                     return;
                 }
 
@@ -304,6 +257,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void DeleteFile(string name) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             if (FileExists(name)) {
                 var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
                 var collection = new List<string>();
@@ -318,6 +274,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void DeleteDirectory(string name, bool recursive) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             if (DirectoryExists(name)) {
                 var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
                 var collection = new List<string>();
@@ -332,6 +291,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void ExportCube(Vector3I range, Vector3I baseVector, string name) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             var data = new Dictionary<int, Color>();
             var colorSet = new HashSet<Color>
             {
@@ -430,7 +392,7 @@ namespace NimbusFox.FoxCore.Managers {
             VoxelObject output = null;
 
             ReadFileStream(name + ".qb", data => {
-                output = VoxelLoader.LoadQb(data, name + "qb", offSet, sizeLimit);
+                output = VoxelLoader.LoadQb((MemoryStream) data, name + "qb", offSet, sizeLimit);
             }, true);
 
             while (output == null) { }
@@ -439,6 +401,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void WriteQBFile(Vector3I range, string name, Dictionary<int, Color> data) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
 
             var stream = new MemoryStream();
 
@@ -510,6 +475,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public void WriteQBFile(string name, VoxelObject voxels) {
+            if (ContentFolder) {
+                throw new IOException("Unable to edit files in the content folder");
+            }
             var colors = new Dictionary<int, Color>();
 
             Fox_Core.VectorLoop(Vector3I.Zero, voxels.Size, (x, y, z) => {

@@ -42,7 +42,7 @@ using Staxel.WorldGen.Structures;
 namespace NimbusFox.FoxCore.Interpreters.Classes {
     internal class GContext {
         public NoiseSource StableNoiseSource {
-            get => GameContext.StableNoiseSource;
+            get => (NoiseSource)GameContext.StableNoiseSource;
             set => GameContext.StableNoiseSource = value;
         }
 

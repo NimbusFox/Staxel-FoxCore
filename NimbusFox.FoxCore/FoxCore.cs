@@ -13,16 +13,17 @@ namespace NimbusFox.FoxCore {
     public class Fox_Core {
         public ExceptionManager ExceptionManager { get; }
         public WorldManager WorldManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        [Obsolete("Can be buggy at times so will be removed in a future version")]
         public ParticleManager ParticleManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        [Obsolete("Can be buggy at times so will be removed in a future version")]
         public EntityParticleManager EntityParticleManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in the next version")]
+        [Obsolete("Can be buggy at times so will be removed in a future version")]
         public EntityFollowParticleManager EntityFollowParticleManager { get; }
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
         public DirectoryManager SaveDirectory { get; }
         public DirectoryManager ModDirectory { get; }
+        public DirectoryManager ModsDirectory { get; }
 
         /// <summary>
         /// 
@@ -38,6 +39,8 @@ namespace NimbusFox.FoxCore {
             EntityFollowParticleManager = new EntityFollowParticleManager();
             SaveDirectory = new DirectoryManager(author, mod);
             ModDirectory = new DirectoryManager(mod);
+            ModsDirectory = new DirectoryManager {ContentFolder = true};
+            ModsDirectory = ModsDirectory.FetchDirectory("mods");
             VersionCheck.VersionCheck.Check();
         }
 
