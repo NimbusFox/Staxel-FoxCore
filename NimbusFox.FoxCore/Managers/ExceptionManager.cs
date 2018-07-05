@@ -8,7 +8,7 @@ namespace NimbusFox.FoxCore.Managers {
         private readonly DirectoryManager ErrorsDir;
 
         internal ExceptionManager(string mod, string modVersion) {
-            ErrorsDir = new DirectoryManager(mod).FetchDirectory("Errors");
+            ErrorsDir = new DirectoryManager().FetchDirectory("modErrors").FetchDirectory(mod);
             _modVersion = modVersion;
         }
 

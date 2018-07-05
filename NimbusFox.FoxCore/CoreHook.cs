@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using Plukit.Base;
 using NimbusFox.FoxCore.Forms;
 using NimbusFox.FoxCore.Managers;
 using Staxel;
+using Staxel.Behavior;
 using Staxel.Commands;
 using Staxel.Items;
 using Staxel.Logic;
 using Staxel.Modding;
+using Staxel.Server;
 using Staxel.Tiles;
 
 namespace NimbusFox {
-    public class CoreHook : IModHookV2 {
+    internal class CoreHook : IModHookV2 {
 
         internal static UserManager UserManager;
         internal static Universe Universe;
+        internal static ServerMainLoop ServerMainLoop;
         private static long _cacheTick;
 
         public void Dispose() {
@@ -50,6 +54,12 @@ namespace NimbusFox {
                 }
                 UserManager.CacheCheck();
                 _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
+            }
+
+            if (ServerMainLoop == null) {
+                ServerMainLoop = (ServerMainLoop)typeof(DirectorFacade).GetField("_serverMainLoop",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    ?.GetValue(ServerContext.VillageDirector.UniverseFacade);
             }
         }
 

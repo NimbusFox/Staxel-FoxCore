@@ -7,7 +7,7 @@ using System.Threading;
 using Jint;
 using Microsoft.Xna.Framework;
 using Neo.IronLua;
-using NimbusFox.Newtonsoft.Json;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
 using Staxel;
@@ -72,7 +72,22 @@ namespace NimbusFox.FoxCore.Managers {
                 _localContentLocation = Path.Combine(_localContentLocation, name),
                 _root = _root,
                 _parent = this,
-                Folder = name
+                Folder = name,
+                ContentFolder = ContentFolder
+            };
+
+            CreateDirectory(name);
+
+            return dir;
+        }
+
+        internal DirectoryManager FetchDirectoryNoParent(string name) {
+            var dir = new DirectoryManager {
+                _localContentLocation = Path.Combine(_localContentLocation, name),
+                _root = _root,
+                _parent = null,
+                Folder = name,
+                ContentFolder = ContentFolder
             };
 
             CreateDirectory(name);
@@ -185,7 +200,7 @@ namespace NimbusFox.FoxCore.Managers {
             ReadFile<T>(fileName, (fileData) => {
                 data = fileData;
                 wait = false;
-            });
+            }, inputIsText);
 
             while (wait) { }
 
@@ -227,6 +242,8 @@ namespace NimbusFox.FoxCore.Managers {
                     using (var json = new MemoryStream()) {
                         input.SaveJsonStream(json);
 
+                        json.Seek(0L, SeekOrigin.Begin);
+
                         onLoad(JsonConvert.DeserializeObject<T>(json.ReadAllText()));
 
                         Blob.Deallocate(ref input);
@@ -239,7 +256,21 @@ namespace NimbusFox.FoxCore.Managers {
             }).Start();
         }
 
-        public void ReadFileStream(string fileName, Action<Stream> onLoad, bool required = false) {
+        public Stream ReadFileStream(string fileName) {
+            Stream output = null;
+            var wait = true;
+
+            ReadFileStream(fileName, (stream) => {
+                output = stream;
+                wait = false;
+            });
+
+            while (wait) { }
+
+            return output;
+        }
+
+        public void ReadFileStream(string fileName, Action<Stream> onLoad) {
             new Thread(() => {
                 var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
                 var collection = new List<string>();
@@ -393,7 +424,7 @@ namespace NimbusFox.FoxCore.Managers {
 
             ReadFileStream(name + ".qb", data => {
                 output = VoxelLoader.LoadQb((MemoryStream) data, name + "qb", offSet, sizeLimit);
-            }, true);
+            });
 
             while (output == null) { }
 

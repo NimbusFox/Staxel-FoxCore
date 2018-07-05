@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Managers;
 using NimbusFox.FoxCore.Managers.Particles;
 using Plukit.Base;
+using Staxel.Logic;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 
 namespace NimbusFox.FoxCore {
@@ -24,6 +26,10 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager SaveDirectory { get; }
         public DirectoryManager ModDirectory { get; }
         public DirectoryManager ModsDirectory { get; }
+        public DirectoryManager ConfigDirectory { get; }
+        public DirectoryManager ContentDirectory { get; }
+
+        public bool IsLocalServer => CoreHook.ServerMainLoop.isLocal();
 
         /// <summary>
         /// 
@@ -38,9 +44,11 @@ namespace NimbusFox.FoxCore {
             EntityParticleManager = new EntityParticleManager();
             EntityFollowParticleManager = new EntityFollowParticleManager();
             SaveDirectory = new DirectoryManager(author, mod);
-            ModDirectory = new DirectoryManager(mod);
+            ModDirectory = new DirectoryManager(mod) {ContentFolder = true};
             ModsDirectory = new DirectoryManager {ContentFolder = true};
-            ModsDirectory = ModsDirectory.FetchDirectory("mods");
+            ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
+            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
+            ContentDirectory = new DirectoryManager {ContentFolder = true};
             VersionCheck.VersionCheck.Check();
         }
 
@@ -87,6 +95,60 @@ namespace NimbusFox.FoxCore {
 
         public static void VectorLoop(Vector3D start, Vector3D end, Action<int, int, int> coordFunction) {
             VectorLoop(start.From3Dto3I(), end.From3Dto3I(), coordFunction);
+        }
+
+        public void MessageAllPlayers(string languageCode, params object[] textParams) {
+            var players = UserManager.GetPlayerEntities();
+
+            foreach (var player in players) {
+                CoreHook.ServerMainLoop.MessagePlayer(player.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
+        }
+
+        public void MessagePlayersByUid(IEnumerable<string> uids, string languageCode, params object[] textParams) {
+            var players = UserManager.GetPlayerEntities().Where(x => uids.Contains(x.PlayerEntityLogic.Uid()));
+
+            foreach (var player in players) {
+                CoreHook.ServerMainLoop.MessagePlayer(player.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
+        }
+
+        public void MessagePlayersByName(IEnumerable<string> names, string languageCode, params object[] textParams) {
+            var players = UserManager.GetPlayerEntities().Where(x => names.Contains(x.PlayerEntityLogic.DisplayName()));
+
+            foreach (var player in players) {
+                CoreHook.ServerMainLoop.MessagePlayer(player.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
+        }
+
+        public void MessagePlayersByEntity(IEnumerable<Entity> entities, string languageCode, params object[] textParams) {
+            foreach (var entity in entities) {
+                if (entity.PlayerEntityLogic != null) {
+                    CoreHook.ServerMainLoop.MessagePlayer(entity.PlayerEntityLogic.Uid(), languageCode, textParams);
+                }
+            }
+        }
+
+        public void MessagePlayerByUid(string uid, string languageCode, params object[] textParams) {
+            var player = UserManager.GetPlayerEntities().FirstOrDefault(x => x.PlayerEntityLogic.Uid() == uid);
+
+            if (player != default(Entity)) {
+                CoreHook.ServerMainLoop.MessagePlayer(player.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
+        }
+
+        public void MessagePlayerByName(string name, string languageCode, params object[] textParams) {
+            var player = UserManager.GetPlayerEntities().FirstOrDefault(x => x.PlayerEntityLogic.DisplayName() == name);
+
+            if (player != default(Entity)) {
+                CoreHook.ServerMainLoop.MessagePlayer(player.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
+        }
+
+        public void MessagePlayerByEntity(Entity entity, string languageCode, params object[] textParams) {
+            if (entity.PlayerEntityLogic != null) {
+                CoreHook.ServerMainLoop.MessagePlayer(entity.PlayerEntityLogic.Uid(), languageCode, textParams);
+            }
         }
     }
 }

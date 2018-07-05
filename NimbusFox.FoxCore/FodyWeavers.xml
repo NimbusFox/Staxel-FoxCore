@@ -25,7 +25,6 @@
         Simplex
         Staxel.Auth
         NimbusFox.FoxCore.Client.V1
-        Newtonsoft.Json
     </ExcludeAssemblies>
   </Costura>
 </Weavers>

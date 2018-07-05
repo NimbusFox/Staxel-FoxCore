@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using NimbusFox.Newtonsoft.Json;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Staxel;
 
 namespace NimbusFox.FoxCore.Managers {
