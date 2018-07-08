@@ -29,7 +29,7 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
 
-        public bool IsLocalServer => CoreHook.ServerMainLoop.isLocal();
+        public bool IsLocalServer => CoreHook.ServerMainLoop != null && CoreHook.ServerMainLoop.isLocal();
 
         /// <summary>
         /// 
