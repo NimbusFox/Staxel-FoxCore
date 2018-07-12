@@ -39,6 +39,18 @@ namespace NimbusFox.FoxCore.Events {
             }
 
             if (runBefore != null) {
+                if (!SameParameters(original.GetParameters(), runBefore.Method.GetParameters())) {
+                    throw new InvalidParametersException("The runBefore method must have the excat same parameters as the original function");
+                }
+            }
+
+            if (runAfter != null) {
+                if (!SameParameters(original.GetParameters(), runAfter.Method.GetParameters())) {
+                    throw new InvalidParametersException("The runAfter method must have the excat same parameters as the original function");
+                }
+            }
+
+            if (runBefore != null) {
                 WriteLogger($"Got a request from {runBeforeParent.GetType().FullName}.{runBefore.Method.Name} for {owner.FullName}.{targetMethod} prefix");
             }
 
@@ -57,6 +69,14 @@ namespace NimbusFox.FoxCore.Events {
             if (runAfter != null) {
                 WriteLogger($"Adding {runAfterParent.GetType().FullName}.{runAfter.Method.Name} to postfix patch cycle {owner.FullName}.{targetMethod}");
             }
+        }
+
+        private static bool SameParameters(IReadOnlyCollection<ParameterInfo> original, IReadOnlyList<ParameterInfo> other) {
+            if (original.Count != other.Count) {
+                return false;
+            }
+
+            return !original.Where((t, i) => t.ParameterType != other[i].ParameterType || t.Name != other[i].Name).Any();
         }
     }
 }
