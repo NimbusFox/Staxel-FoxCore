@@ -119,7 +119,6 @@
     <Compile Include="Classes\Voxels.Core\Voxlap.cs" />
     <Compile Include="Classes\Voxels.Core\XYZ.cs" />
     <Compile Include="Enums\Compass.cs" />
-    <Compile Include="EventHook.cs" />
     <Compile Include="Events\Controller.cs" />
     <Compile Include="FoxCore.cs">
       <Generator>DtsGenerator</Generator>
@@ -147,7 +146,6 @@
     <Compile Include="Interpreters\CoreInt.cs" />
     <Compile Include="Interpreters\JSInt.cs" />
     <Compile Include="Interpreters\LuaInt.cs" />
-    <Compile Include="IPatchEvent.cs" />
     <Compile Include="Managers\DirectoryManager.cs" />
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
     <Compile Include="Managers\Particles\EntityParticleManager.cs" />
