@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NimbusFox.FoxCore.Interpreters.Classes;
-using NimbusFox.FoxCore.Managers;
-using Plukit.Base;
-using Staxel.Items;
-using Staxel.Logic;
-using Staxel.Tiles;
-
-namespace NimbusFox.FoxCore.Interpreters {
+﻿namespace NimbusFox.FoxCore.Interpreters {
     //internal class CoreInt {
     //    protected string script = "";
     //    internal DirectoryManager Directory;

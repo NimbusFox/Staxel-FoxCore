@@ -7,7 +7,6 @@ using NimbusFox.FoxCore.Forms;
 using NimbusFox.FoxCore.Managers;
 using Staxel;
 using Staxel.Behavior;
-using Staxel.Commands;
 using Staxel.Items;
 using Staxel.Logic;
 using Staxel.Modding;

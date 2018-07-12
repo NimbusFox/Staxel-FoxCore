@@ -1,23 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
-using NimbusFox.FoxCore.Forms;
-using NimbusFox.FoxCore.Interpreters.Classes;
-using NimbusFox.FoxCore.Managers;
-using Plukit.Base;
-using Staxel;
-using Staxel.Commands;
-using Staxel.Items;
-using Staxel.Logic;
-using Staxel.Modding;
-using Staxel.Server;
-using Staxel.Tiles;
-
-namespace NimbusFox.FoxCore.Interpreters {
+﻿namespace NimbusFox.FoxCore.Interpreters {
     /*public class CoreIntMods : IModHookV3 {
         internal static List<CoreInt> IntMods = new List<CoreInt>();
         internal static bool AllowDebug = true;

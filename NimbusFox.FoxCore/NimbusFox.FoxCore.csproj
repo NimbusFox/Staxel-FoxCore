@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NimbusFox.FoxCore</RootNamespace>
     <AssemblyName>NimbusFox.FoxCore.V2.1</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -27,6 +27,7 @@
     </NoWarn>
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,6 +39,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=3.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Costura.Fody.3.1.0\lib\net46\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="FNA">
       <HintPath>..\NimbusFox.FoxCore.Tests\bin\Debug\FNA.dll</HintPath>
       <Private>False</Private>
@@ -88,6 +92,9 @@
     <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Delegates.cs" />
+    <Compile Include="Classes\Event.cs" />
+    <Compile Include="Classes\EventPatch.cs" />
+    <Compile Include="Classes\Exceptions.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\VectorFileData.cs" />
     <Compile Include="Classes\ParticleStore.cs" />
@@ -112,6 +119,8 @@
     <Compile Include="Classes\Voxels.Core\Voxlap.cs" />
     <Compile Include="Classes\Voxels.Core\XYZ.cs" />
     <Compile Include="Enums\Compass.cs" />
+    <Compile Include="EventHook.cs" />
+    <Compile Include="Events\Controller.cs" />
     <Compile Include="FoxCore.cs">
       <Generator>DtsGenerator</Generator>
       <LastGenOutput>Core.cs.d.ts</LastGenOutput>
@@ -138,6 +147,7 @@
     <Compile Include="Interpreters\CoreInt.cs" />
     <Compile Include="Interpreters\JSInt.cs" />
     <Compile Include="Interpreters\LuaInt.cs" />
+    <Compile Include="IPatchEvent.cs" />
     <Compile Include="Managers\DirectoryManager.cs" />
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
     <Compile Include="Managers\Particles\EntityParticleManager.cs" />
@@ -147,6 +157,37 @@
     <Compile Include="Managers\VariantManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Attributes.cs" />
+    <Compile Include="Personal-Harmony\Harmony\CodeInstruction.cs" />
+    <Compile Include="Personal-Harmony\Harmony\CodeTranspiler.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Extras\DelegateTypeFactory.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Extras\FastAccess.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Extras\MethodInvoker.cs" />
+    <Compile Include="Personal-Harmony\Harmony\GlobalSuppressions.cs" />
+    <Compile Include="Personal-Harmony\Harmony\HarmonyInstance.cs" />
+    <Compile Include="Personal-Harmony\Harmony\HarmonyMethod.cs" />
+    <Compile Include="Personal-Harmony\Harmony\HarmonySharedState.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\ByteBuffer.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\Emitter.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\ILInstruction.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\Memory.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\MethodCopier.cs" />
+    <Compile Include="Personal-Harmony\Harmony\ILCopying\Signature.cs" />
+    <Compile Include="Personal-Harmony\Harmony\MethodPatcher.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Patch.cs" />
+    <Compile Include="Personal-Harmony\Harmony\PatchFunctions.cs" />
+    <Compile Include="Personal-Harmony\Harmony\PatchProcessor.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Priority.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\AccessCache.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\AccessTools.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\DynamicTools.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\Extensions.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\FileLog.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\PatchTools.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\SelfPatching.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\SymbolExtensions.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Tools\Traverse.cs" />
+    <Compile Include="Personal-Harmony\Harmony\Transpilers.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -385,6 +426,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Patches\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
@@ -420,9 +462,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets'))" />
     <Error Condition="!Exists('..\..\packages\Fody.3.1.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.3.1.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets" Condition="Exists('..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" />
   <Import Project="..\..\packages\Fody.3.1.3\build\Fody.targets" Condition="Exists('..\..\packages\Fody.3.1.3\build\Fody.targets')" />
+  <Import Project="..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets" Condition="Exists('..\..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" />
 </Project>
