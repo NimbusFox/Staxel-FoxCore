@@ -9,10 +9,10 @@ using Plukit.Base;
 using Event = NimbusFox.FoxCore.Classes.Event;
 
 namespace NimbusFox.FoxCore.Events {
-    public static class Controller {
+    public static class PatchController {
         private static readonly HarmonyInstance Instance;
 
-        static Controller() {
+        static PatchController() {
             Instance = HarmonyInstance.Create("nimbusfox.foxcore.patches");
             WriteLogger("Listening for patch requests...");
         }
@@ -40,13 +40,13 @@ namespace NimbusFox.FoxCore.Events {
 
             if (runBefore != null) {
                 if (!SameParameters(original.GetParameters(), runBefore.Method.GetParameters())) {
-                    throw new InvalidParametersException("The runBefore method must have the excat same parameters as the original function");
+                    throw new InvalidParametersException("The runBefore method must have the exact same parameters as the original function");
                 }
             }
 
             if (runAfter != null) {
                 if (!SameParameters(original.GetParameters(), runAfter.Method.GetParameters())) {
-                    throw new InvalidParametersException("The runAfter method must have the excat same parameters as the original function");
+                    throw new InvalidParametersException("The runAfter method must have the exact same parameters as the original function");
                 }
             }
 
