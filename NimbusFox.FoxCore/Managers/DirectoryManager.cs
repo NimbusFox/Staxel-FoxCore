@@ -47,7 +47,7 @@ namespace NimbusFox.FoxCore.Managers {
         internal DirectoryManager(string author, string mod) {
             var streamLocation = Path.Combine("Mods", author, mod);
             _localContentLocation = Path.Combine(GameContext.ContentLoader.LocalContentDirectory, streamLocation);
-            _root = _localContentLocation;
+            _root = "~";
             Folder = mod;
 
             if (!Directory.Exists(_localContentLocation)) {

@@ -30,6 +30,10 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ContentDirectory { get; }
         public PatchController PatchController { get; }
 
+        private string _author;
+        private string _mod;
+        private string _version;
+
         public bool IsLocalServer => CoreHook.ServerMainLoop != null && CoreHook.ServerMainLoop.isLocal();
 
         /// <summary>
@@ -39,6 +43,9 @@ namespace NimbusFox.FoxCore {
         /// <param name="mod">Must match your mod directory name</param>
         /// <param name="modVersion"></param>
         public Fox_Core(string author, string mod, string modVersion, string patchControllerId = null) {
+            _author = author;
+            _mod = mod;
+            _version = modVersion;
             ExceptionManager = new ExceptionManager(mod, modVersion);
             WorldManager = new WorldManager();
             ParticleManager = new ParticleManager();
@@ -151,6 +158,20 @@ namespace NimbusFox.FoxCore {
             if (entity.PlayerEntityLogic != null) {
                 CoreHook.ServerMainLoop.MessagePlayer(entity.PlayerEntityLogic.Uid(), languageCode, textParams);
             }
+        }
+
+        public void LogError(string text) {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Logger.WriteLine($"[Error]{_author}.{_mod}.{_version}: {text}");
+            Console.ResetColor();
+        }
+
+        public void Log(string text, ConsoleColor color = default) {
+            if (color != default) {
+                Console.ForegroundColor = color;
+            }
+            Logger.WriteLine($"[Info]{_author}.{_mod}.{_version}: {text}");
+            Console.ResetColor();
         }
     }
 }
