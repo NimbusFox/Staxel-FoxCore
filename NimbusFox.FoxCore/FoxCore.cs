@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NimbusFox.FoxCore.Classes;
+using NimbusFox.FoxCore.Events;
 using NimbusFox.FoxCore.Managers;
 using NimbusFox.FoxCore.Managers.Particles;
 using Plukit.Base;
@@ -27,6 +28,7 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ModsDirectory { get; }
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
+        public PatchController PatchController { get; }
 
         public bool IsLocalServer => CoreHook.ServerMainLoop != null && CoreHook.ServerMainLoop.isLocal();
 
@@ -36,7 +38,7 @@ namespace NimbusFox.FoxCore {
         /// <param name="author"></param>
         /// <param name="mod">Must match your mod directory name</param>
         /// <param name="modVersion"></param>
-        public Fox_Core(string author, string mod, string modVersion) {
+        public Fox_Core(string author, string mod, string modVersion, string patchControllerId = null) {
             ExceptionManager = new ExceptionManager(mod, modVersion);
             WorldManager = new WorldManager();
             ParticleManager = new ParticleManager();
@@ -48,6 +50,7 @@ namespace NimbusFox.FoxCore {
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
             ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
             ContentDirectory = new DirectoryManager {ContentFolder = true};
+            PatchController = new PatchController(patchControllerId ?? $"{author}.{mod}");
             VersionCheck.VersionCheck.Check();
         }
 

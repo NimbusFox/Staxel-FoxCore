@@ -9,21 +9,21 @@ using Plukit.Base;
 using Event = NimbusFox.FoxCore.Classes.Event;
 
 namespace NimbusFox.FoxCore.Events {
-    public static class PatchController {
-        private static readonly HarmonyInstance Instance;
+    public class PatchController {
+        private readonly HarmonyInstance _instance;
 
-        static PatchController() {
-            Instance = HarmonyInstance.Create("nimbusfox.foxcore.patches");
-            WriteLogger("Listening for patch requests...");
+        public PatchController(string instanceName) {
+            _instance = HarmonyInstance.Create(instanceName);
+            WriteLogger($"Patch instance initialised");
         }
 
-        private static void WriteLogger(string text) {
+        private void WriteLogger(string text) {
             Console.ForegroundColor = ConsoleColor.Green;
-            Logger.WriteLine($"FoxPatch: {text}");
+            Logger.WriteLine($"FoxPatch ({_instance.Id}): {text}");
             Console.ResetColor();
         }
 
-        public static void Add(Type owner, string targetMethod, object runBeforeParent = null, Delegate runBefore = null, object runAfterParent = null, Delegate runAfter = null) {
+        public void Add(Type owner, string targetMethod, object runBeforeParent = null, Delegate runBefore = null, object runAfterParent = null, Delegate runAfter = null) {
 
             if (runBefore == null && runAfter == null) {
                 throw new ArgumentException("runBeforeMethod and runAfterMethod arguments cannot be both null");
@@ -60,7 +60,7 @@ namespace NimbusFox.FoxCore.Events {
 
             var eventItem = new Event(original, runBeforeParent, runBefore?.Method, runAfterParent, runAfter?.Method);
 
-            eventItem.PatchedMethod = Instance.Patch(eventItem.Original, eventItem.HPrefix, eventItem.HPostfix);
+            eventItem.PatchedMethod = _instance.Patch(eventItem.Original, eventItem.HPrefix, eventItem.HPostfix);
 
             if (runBefore != null) {
                 WriteLogger($"Adding {runBeforeParent.GetType().FullName}.{runBefore.Method.Name} to prefix patch cycle {owner.FullName}.{targetMethod}");

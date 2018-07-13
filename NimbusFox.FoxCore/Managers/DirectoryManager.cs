@@ -252,7 +252,7 @@ namespace NimbusFox.FoxCore.Managers {
                     return;
                 }
 
-                onLoad((T)Activator.CreateInstance(typeof(T)));
+                onLoad(default);
             }).Start();
         }
 
