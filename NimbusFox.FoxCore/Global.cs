@@ -70,6 +70,16 @@ namespace NimbusFox.FoxCore {
             return item.Item;
         }
 
+        public static T MakeItem<T>(string code) where T : Item {
+            var item = MakeItem(code);
+
+            if (item is T newItem) {
+                return newItem;
+            }
+
+            return null;
+        }
+
         public static Tile MakeTile(string code, uint rotation = 0) {
             var config = GameContext.TileDatabase.AllMaterials().FirstOrDefault(x => x.Code == code);
 

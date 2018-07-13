@@ -4,6 +4,7 @@ using Plukit.Base;
 using Staxel;
 using Staxel.Items;
 using Staxel.Tiles;
+using JsonConvert = NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.JsonConvert;
 
 namespace NimbusFox.FoxCore.Classes {
     public static class Extensions {
@@ -29,6 +30,10 @@ namespace NimbusFox.FoxCore.Classes {
             blob.FetchBlob(key).ReadJson(JsonConvert.SerializeObject(obj));
         }
 
+        public static void SetObject(this Blob blob, object obj) {
+            blob.ReadJson(JsonConvert.SerializeObject(obj));
+        }
+
         public static T GetObject<T>(this Blob blob, string key, T _default) where T : class {
             var value = blob.GetObject<T>(key);
 
@@ -49,6 +54,30 @@ namespace NimbusFox.FoxCore.Classes {
 
                 using (var ms = new MemoryStream()) {
                     tempBlob.SaveJsonStream(ms);
+
+                    ms.Seek(0L, SeekOrigin.Begin);
+
+                    return JsonConvert.DeserializeObject<T>(ms.ReadAllText());
+                }
+            } catch {
+                return null;
+            }
+        }
+
+        public static T GetObject<T>(this Blob blob, T _default) where T : class {
+            var value = blob.GetObject<T>();
+
+            if (value == null) {
+                return _default;
+            }
+
+            return value;
+        }
+
+        public static T GetObject<T>(this Blob blob) where T : class {
+            try {
+                using (var ms = new MemoryStream()) {
+                    blob.SaveJsonStream(ms);
 
                     ms.Seek(0L, SeekOrigin.Begin);
 

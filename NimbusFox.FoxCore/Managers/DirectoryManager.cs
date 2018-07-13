@@ -287,6 +287,14 @@ namespace NimbusFox.FoxCore.Managers {
             }).Start();
         }
 
+        public FileStream ObtainFileStream(string fileName, FileMode mode) {
+            return new FileStream(Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName), mode);
+        }
+
+        public FileStream ObtainFileStream(string fileName, FileMode mode, FileAccess access) {
+            return new FileStream(Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName), mode, access);
+        }
+
         public void DeleteFile(string name) {
             if (ContentFolder) {
                 throw new IOException("Unable to edit files in the content folder");

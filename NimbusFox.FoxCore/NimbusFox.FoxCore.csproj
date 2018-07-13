@@ -150,7 +150,6 @@
     <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
     <Compile Include="Managers\Particles\EntityParticleManager.cs" />
     <Compile Include="Managers\ExceptionManager.cs" />
-    <Compile Include="Managers\FileManager.cs" />
     <Compile Include="Managers\Particles\ParticleManager.cs" />
     <Compile Include="Managers\VariantManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
