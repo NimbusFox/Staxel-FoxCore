@@ -119,7 +119,7 @@
     <Compile Include="Classes\Voxels.Core\Voxlap.cs" />
     <Compile Include="Classes\Voxels.Core\XYZ.cs" />
     <Compile Include="Enums\Compass.cs" />
-    <Compile Include="Events\Controller.cs" />
+    <Compile Include="Events\PatchController.cs" />
     <Compile Include="FoxCore.cs">
       <Generator>DtsGenerator</Generator>
       <LastGenOutput>Core.cs.d.ts</LastGenOutput>
