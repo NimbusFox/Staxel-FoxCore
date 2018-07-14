@@ -89,9 +89,11 @@
   <ItemGroup>
     <Compile Include="Classes\AreaD.cs" />
     <Compile Include="Classes\AreaI.cs" />
+    <Compile Include="Classes\BaseRecord.cs" />
     <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Delegates.cs" />
+    <Compile Include="Classes\BlobDatabase.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\EventPatch.cs" />
     <Compile Include="Classes\Exceptions.cs" />
