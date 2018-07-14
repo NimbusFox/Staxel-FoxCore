@@ -7,7 +7,7 @@ using Staxel.Items;
 using Staxel.Tiles;
 
 namespace NimbusFox.FoxCore {
-    public static class Global {
+    public static class Helpers {
         public static void Sort3D(Vector3D first, Vector3D second, out Vector3D start, out Vector3D end) {
             var startx = 0.0;
             var endx = 0.0;
@@ -88,6 +88,17 @@ namespace NimbusFox.FoxCore {
             }
 
             return config.MakeTile(rotation);
+        }
+
+        public static bool IsSubclassOfRawGeneric(Type generic, Type toCheck) {
+            while (toCheck != null && toCheck != typeof(object)) {
+                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                if (generic == cur) {
+                    return true;
+                }
+                toCheck = toCheck.BaseType;
+            }
+            return false;
         }
     }
 }

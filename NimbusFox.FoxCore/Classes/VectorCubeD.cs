@@ -17,7 +17,7 @@ namespace NimbusFox.FoxCore.Classes {
         public VectorCubeD(Vector3D start, Vector3D end) {
             Vector3D first;
             Vector3D second;
-            Global.Sort3D(start, end, out first, out second);
+            Helpers.Sort3D(start, end, out first, out second);
             Start = first;
             End = second;
 

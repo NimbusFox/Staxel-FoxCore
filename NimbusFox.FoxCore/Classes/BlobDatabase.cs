@@ -45,7 +45,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public T CreateRecord<T>(Guid guid) where T : BaseRecord {
-            if (typeof(T).IsSubclassOf(typeof(BaseRecord))) {
+            if (typeof(BaseRecord).IsAssignableFrom(typeof(T))) {
                 throw new BlobDatabaseRecordTypeException("The type given for T does not inherit BaseRecord");
             }
 
@@ -57,7 +57,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public T GetRecord<T>(Guid guid) where T : BaseRecord {
-            if (typeof(T).IsSubclassOf(typeof(BaseRecord))) {
+            if (typeof(BaseRecord).IsAssignableFrom(typeof(T))) {
                 throw new BlobDatabaseRecordTypeException("The type given for T does not inherit BaseRecord");
             }
 
@@ -76,7 +76,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public T OverwriteRecord<T>(Guid guid, BaseRecord newRecord) where T : BaseRecord {
-            if (typeof(T).IsSubclassOf(typeof(BaseRecord))) {
+            if (typeof(BaseRecord).IsAssignableFrom(typeof(T))) {
                 throw new BlobDatabaseRecordTypeException("The type given for T does not inherit BaseRecord");
             }
 

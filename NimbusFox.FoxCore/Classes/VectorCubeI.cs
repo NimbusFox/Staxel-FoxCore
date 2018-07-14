@@ -17,7 +17,7 @@ namespace NimbusFox.FoxCore.Classes {
         public VectorCubeI(Vector3I start, Vector3I end) {
             Vector3I first;
             Vector3I second;
-            Global.Sort3I(start, end, out first, out second);
+            Helpers.Sort3I(start, end, out first, out second);
             Start = first;
             End = second;
             X = new AreaI(start.X, end.X);
