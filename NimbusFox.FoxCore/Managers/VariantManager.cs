@@ -109,7 +109,7 @@ namespace NimbusFox.FoxCore.Managers {
 
             var colors = new List<Color>();
 
-            Fox_Core.VectorLoop(Vector3I.Zero, sVoxels.Size, (x, y, z) => {
+            Helpers.VectorLoop(Vector3I.Zero, sVoxels.Size, (x, y, z) => {
                 try {
                     var color = sVoxels.Read(x, y, z);
 

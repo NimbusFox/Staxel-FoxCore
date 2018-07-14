@@ -2,33 +2,27 @@
 
 namespace NimbusFox.FoxCore.Classes {
     public class VectorSquareD {
-        private Vector3D Start { get; }
-        private Vector3D End { get; }
-
-        public AreaD X { get; }
-        public AreaD Z { get; }
+        public Vector3D Start { get; }
+        public Vector3D End { get; }
 
         public VectorSquareD(Vector3D start, Vector3D end) {
-            Start = start;
-            End = end;
-
-            X = new AreaD(start.X, end.X);
-
-            Z = new AreaD(start.Z, end.Z);
+            Helpers.Sort3D(start, end, out var _start, out var _end);
+            Start = _start;
+            End = _end;
         }
 
         public bool IsInside(Vector3I position) {
-            return X.Start <= position.X
-                   && Z.Start <= position.Z
-                   && X.End >= position.X
-                   && Z.End >= position.Z;
+            return Start.X <= position.X
+                   && Start.Z <= position.Z
+                   && End.X >= position.X
+                   && End.Z >= position.Z;
         }
 
         public bool IsInside(Vector3D position) {
-            return X.Start <= position.X
-                   && Z.Start <= position.Z
-                   && X.End >= position.X
-                   && Z.End >= position.Z;
+            return Start.X <= position.X
+                   && Start.Z <= position.Z
+                   && End.X >= position.X
+                   && End.Z >= position.Z;
         }
     }
 }

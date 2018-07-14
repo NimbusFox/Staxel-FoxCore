@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using NimbusFox.FoxCore.Classes.Exceptions;
@@ -89,6 +90,26 @@ namespace NimbusFox.FoxCore.Classes {
 
         public void NeedsStore() {
             _needsStore = true;
+        }
+
+        public List<T> SearchRecords<T>(Expression<Func<T, bool>> expression) where T : BaseRecord {
+            var output = new List<T>();
+            var func = expression.Compile();
+            foreach (var key in _database.KeyValueIteratable.Keys) {
+                var current = _database.GetBlob(key);
+
+                if (current.Contains("type")) {
+                    if (current.GetString("type") == typeof(T).FullName) {
+                        var record = GetRecord<T>(Guid.Parse(key));
+
+                        if (func(record)) {
+                            output.Add(record);
+                        }
+                    }
+                }
+            }
+
+            return output;
         }
 
         public void Save() {

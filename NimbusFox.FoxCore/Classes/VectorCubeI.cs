@@ -7,24 +7,10 @@ namespace NimbusFox.FoxCore.Classes {
         public Vector3I Start { get; private set; }
         public Vector3I End { get; private set; }
 
-        [Obsolete]
-        public AreaI X { get; private set; }
-        [Obsolete]
-        public AreaI Y { get; private set; }
-        [Obsolete]
-        public AreaI Z { get; private set; }
-
         public VectorCubeI(Vector3I start, Vector3I end) {
-            Vector3I first;
-            Vector3I second;
-            Helpers.Sort3I(start, end, out first, out second);
+            Helpers.Sort3I(start, end, out var first, out var second);
             Start = first;
             End = second;
-            X = new AreaI(start.X, end.X);
-
-            Y = new AreaI(start.Y, end.Y);
-
-            Z = new AreaI(start.Z, end.Z);
         }
 
         private VectorCubeI() { }

@@ -30,7 +30,7 @@ namespace NimbusFox.FoxCore.Managers.Particles {
         public List<Entity> GetRange(VectorRangeI range, Vector3I top) {
             var output = new List<Entity>();
             var cube = new VectorCubeI(range.Start, top);
-            Fox_Core.VectorLoop(range.Start, top, (x, y, z) => {
+            Helpers.VectorLoop(range.Start, top, (x, y, z) => {
                 var renderCount = 0;
 
                 renderCount += y == cube.Start.Y || y == cube.End.Y ? 1 : 0;

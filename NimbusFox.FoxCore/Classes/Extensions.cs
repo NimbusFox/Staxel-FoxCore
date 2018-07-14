@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
@@ -57,9 +58,11 @@ namespace NimbusFox.FoxCore.Classes {
 
                     ms.Seek(0L, SeekOrigin.Begin);
 
-                    return JsonConvert.DeserializeObject<T>(ms.ReadAllText());
+                    var sr = new StreamReader(ms);
+
+                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
                 }
-            } catch {
+            } catch when (!Debugger.IsAttached) {
                 return null;
             }
         }
@@ -81,9 +84,11 @@ namespace NimbusFox.FoxCore.Classes {
 
                     ms.Seek(0L, SeekOrigin.Begin);
 
-                    return JsonConvert.DeserializeObject<T>(ms.ReadAllText());
+                    var sr = new StreamReader(ms);
+
+                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
                 }
-            } catch {
+            } catch when (!Debugger.IsAttached) {
                 return null;
             }
         }

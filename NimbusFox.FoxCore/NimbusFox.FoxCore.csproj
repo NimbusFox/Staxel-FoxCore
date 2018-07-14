@@ -87,8 +87,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AreaD.cs" />
-    <Compile Include="Classes\AreaI.cs" />
     <Compile Include="Classes\BaseRecord.cs" />
     <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />

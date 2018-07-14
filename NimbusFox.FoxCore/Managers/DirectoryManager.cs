@@ -366,7 +366,7 @@ namespace NimbusFox.FoxCore.Managers {
 
             var randomSource = GameContext.RandomSource;
 
-            Fox_Core.VectorLoop(new Vector3I(0, 0, 0), range, (x, y, z) => {
+            Helpers.VectorLoop(new Vector3I(0, 0, 0), range, (x, y, z) => {
                 var index = x + z * range.X + y * range.X * range.Z;
                 Tile tile;
                 if (!CoreHook.Universe.ReadTile(baseVector + new Vector3I(x, y, z),
@@ -519,7 +519,7 @@ namespace NimbusFox.FoxCore.Managers {
             }
             var colors = new Dictionary<int, Color>();
 
-            Fox_Core.VectorLoop(Vector3I.Zero, voxels.Size, (x, y, z) => {
+            Helpers.VectorLoop(Vector3I.Zero, voxels.Size, (x, y, z) => {
                 try {
                     var index = x + z * voxels.Size.X + y * voxels.Size.X * voxels.Size.Z;
 
