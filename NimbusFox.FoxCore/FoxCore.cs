@@ -6,7 +6,6 @@ using System.Reflection;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Events;
 using NimbusFox.FoxCore.Managers;
-using NimbusFox.FoxCore.Managers.Particles;
 using Plukit.Base;
 using Staxel.Logic;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
@@ -15,12 +14,6 @@ namespace NimbusFox.FoxCore {
     public class Fox_Core {
         public ExceptionManager ExceptionManager { get; }
         public WorldManager WorldManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in a future version")]
-        public ParticleManager ParticleManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in a future version")]
-        public EntityParticleManager EntityParticleManager { get; }
-        [Obsolete("Can be buggy at times so will be removed in a future version")]
-        public EntityFollowParticleManager EntityFollowParticleManager { get; }
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public UserManager UserManager => CoreHook.UserManager;
         public DirectoryManager SaveDirectory { get; }
@@ -48,9 +41,6 @@ namespace NimbusFox.FoxCore {
             _version = modVersion;
             ExceptionManager = new ExceptionManager(mod, modVersion);
             WorldManager = new WorldManager();
-            ParticleManager = new ParticleManager();
-            EntityParticleManager = new EntityParticleManager();
-            EntityFollowParticleManager = new EntityFollowParticleManager();
             SaveDirectory = new DirectoryManager(author, mod);
             ModDirectory = new DirectoryManager(mod) {ContentFolder = true};
             ModsDirectory = new DirectoryManager {ContentFolder = true};

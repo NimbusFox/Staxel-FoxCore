@@ -147,10 +147,7 @@
     <Compile Include="Interpreters\JSInt.cs" />
     <Compile Include="Interpreters\LuaInt.cs" />
     <Compile Include="Managers\DirectoryManager.cs" />
-    <Compile Include="Managers\Particles\EntityFollowParticleManager.cs" />
-    <Compile Include="Managers\Particles\EntityParticleManager.cs" />
     <Compile Include="Managers\ExceptionManager.cs" />
-    <Compile Include="Managers\Particles\ParticleManager.cs" />
     <Compile Include="Managers\VariantManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
@@ -413,10 +410,6 @@
     <Compile Include="Staxel\Commands\ScriptRefreshCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NimbusFox.FoxCore.Client\NimbusFox.FoxCore.Client.csproj">
-      <Project>{690691ff-8aef-43fe-a5b9-6fd6131ecf87}</Project>
-      <Name>NimbusFox.FoxCore.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NimbusFox.FoxCore.VersionCheck\NimbusFox.FoxCore.VersionCheck.csproj">
       <Project>{0fc13651-c865-49f9-a642-3a59b9958720}</Project>
       <Name>NimbusFox.FoxCore.VersionCheck</Name>

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NimbusFox.FoxCore.Client</RootNamespace>
-    <AssemblyName>NimbusFox.FoxCore.Client.V1</AssemblyName>
+    <AssemblyName>NimbusFox.FoxCore.Client.V2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -78,7 +78,7 @@
     <Compile Include="Staxel\Builders\ParticleEntityBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NimbusFox.FoxCore.Client.V1.mod">
+    <Content Include="NimbusFox.FoxCore.Client.V2.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

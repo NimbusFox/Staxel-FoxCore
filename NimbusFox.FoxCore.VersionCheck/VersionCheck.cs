@@ -8,7 +8,8 @@ namespace NimbusFox.FoxCore.VersionCheck {
         private static string[] VersionToRemove => new [] {
             "NimbusFox.FoxCore.V1-20180228",
             "NimbusFox.FoxCore.V1-20180226",
-            "NimbusFox.FoxCore.V1.2"
+            "NimbusFox.FoxCore.V1.2",
+            "NimbusFox.FoxCore.V1.1"
         };
 
         public static void Check() {

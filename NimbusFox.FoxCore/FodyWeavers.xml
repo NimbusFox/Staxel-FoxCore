@@ -24,7 +24,7 @@
         NimbusFox.FoxCore.VersionCheck
         Simplex
         Staxel.Auth
-        NimbusFox.FoxCore.Client.V1
+        NimbusFox.FoxCore.Client.V2
     </ExcludeAssemblies>
   </Costura>
 </Weavers>
