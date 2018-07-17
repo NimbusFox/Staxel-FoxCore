@@ -12,28 +12,63 @@ namespace NimbusFox.FoxCore.Events {
     public class PatchController {
         private readonly HarmonyInstance _instance;
 
-        private static readonly List<Event> _events = new List<Event>();
+        private static readonly List<Event> Events = new List<Event>();
 
         static PatchController() {
             var controller = new PatchController("NimbusFox.FoxCore.PatchController");
 
-            controller.Add(typeof(Logger), nameof(Logger.LogCriticalException), typeof(PatchController), "DisplayPatchedItemOrigin");
+            controller.Add(typeof(Logger), nameof(Logger.LogCriticalException), typeof(PatchController), nameof(DisplayPatchedItemOrigin));
         }
 
-        private static void DisplayPatchedItemOrigin(string message, Exception e) {
-            foreach (var eventItem in new List<Event>(_events)) {
-                if (e.StackTrace.Contains(eventItem.PatchedMethod.Name) ||
-                    e.InnerException?.InnerException != null &&
-                    e.InnerException.InnerException.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
+        private static void DisplayPatchedItemOrigin(string message, ref Exception e) {
+            if (e?.StackTrace == null) {
+                return;
+            }
+
+            if (e.StackTrace.IsNullOrEmpty()) {
+                return;
+            }
+
+            var exceptionMessage = "";
+
+            foreach (var eventItem in new List<Event>(Events)) {
+                if (e.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
                     if (eventItem.Prefix != null) {
-                        Logger.WriteLine($"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}");
+                        exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
                     }
 
                     if (eventItem.Postfix != null) {
-                        Logger.WriteLine($"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}");
+                        exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
                     }
+
+                    continue;
+                }
+
+                var exception = e.InnerException;
+
+                while (exception != null) {
+                    if (!exception.StackTrace.IsNullOrEmpty() && exception.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
+                        if (eventItem.Prefix != null) {
+                            exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
+                        }
+
+                        if (eventItem.Postfix != null) {
+                            exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
+                        }
+
+                        break;
+                    }
+                    exception = exception.InnerException;
                 }
             }
+
+            if (exceptionMessage == "") {
+                return;
+            }
+
+            exceptionMessage += message;
+
+            e = new Exception(exceptionMessage, e);
         }
 
         public PatchController(string instanceName) {
@@ -87,7 +122,7 @@ namespace NimbusFox.FoxCore.Events {
 
             if (runBefore != null) {
                 if (!SameParameters(original.GetParameters(), runBefore.GetParameters())) {
-                    throw new InvalidParametersException("The runBefore method must have the exact same parameters as the original function");
+                    throw new InvalidParametersException($"{runBeforeParent.FullName}.{runBeforeMethodName} must have the exact same parameters as the original function");
                 }
 
                 if (!runBefore.IsStatic) {
@@ -97,7 +132,7 @@ namespace NimbusFox.FoxCore.Events {
 
             if (runAfter != null) {
                 if (!SameParameters(original.GetParameters(), runAfter.GetParameters())) {
-                    throw new InvalidParametersException("The runAfter method must have the exact same parameters as the original function");
+                    throw new InvalidParametersException($"{runAfterParent.FullName}.{runAfterMethodName} must have the exact same parameters as the original function");
                 }
 
                 if (!runAfter.IsStatic) {
@@ -117,7 +152,7 @@ namespace NimbusFox.FoxCore.Events {
 
             eventItem.PatchedMethod = _instance.Patch(eventItem.Original, eventItem.HPrefix, eventItem.HPostfix);
 
-            _events.Add(eventItem);
+            Events.Add(eventItem);
 
             if (runBefore != null) {
                 WriteLogger($"Adding {runBeforeParent.FullName}.{runBefore.Name} to prefix patch cycle {owner.FullName}.{targetMethod}");
@@ -133,17 +168,35 @@ namespace NimbusFox.FoxCore.Events {
         }
 
         private static bool SameParameters(IReadOnlyCollection<ParameterInfo> original, IReadOnlyList<ParameterInfo> other) {
-            if (original.Count != (other.Any(x => x.Name == "__instance") ? other.Count - 1 : other.Count)) {
-                return false;
-            }
-
             var check = new List<ParameterInfo>(other);
 
             if (check.Any(x => x.Name == "__instance")) {
                 check.Remove(check.First(x => x.Name == "__instance"));
             }
 
-            return !original.Where((t, i) => t.ParameterType != check[i].ParameterType || t.Name != check[i].Name).Any();
+            if (check.Any(x => x.Name == "__result")) {
+                check.Remove(check.First(x => x.Name == "__result"));
+            }
+
+            if (check.Any(x => x.Name == "__state")) {
+                check.Remove(check.First(x => x.Name == "__state"));
+            }
+
+            if (check.Any(x => x.Name == "__oringalMethod")) {
+                check.Remove(check.First(x => x.Name == "__originalMethod"));
+            }
+
+            foreach (var item in new List<ParameterInfo>(check.Where(x => x.Name.StartsWith("___")))) {
+                check.Remove(item);
+            }
+
+            if (original.Count != check.Count) {
+                return false;
+            }
+
+            return !original.Where((t, i) =>
+                t.ParameterType != check[i].ParameterType &&
+                 t.ParameterType.Name + "&" != check[i].ParameterType.Name || t.Name != check[i].Name).Any();
         }
     }
 }

@@ -21,11 +21,13 @@ namespace NimbusFox.FoxCore.Classes {
             Original = original;
             if (prefix != null && prefixParent != null) {
                 Prefix = prefix;
+                PrefixParent = prefixParent;
                 HPrefix = new HarmonyMethod(prefix);
             }
 
             if (postfix != null && postfixParent != null) {
                 Postfix = postfix;
+                PostfixParent = postfixParent;
                 HPostfix = new HarmonyMethod(postfix);
             }
         }
