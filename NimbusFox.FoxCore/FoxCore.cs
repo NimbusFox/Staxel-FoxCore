@@ -21,11 +21,16 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ModsDirectory { get; }
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
-        public PatchController PatchController { get; }
 
-        private string _author;
-        private string _mod;
-        private string _version;
+        public PatchController PatchController => _patchController ??
+                                                  (_patchController = new PatchController(_patchControllerId));
+
+        private PatchController _patchController;
+        private readonly string _patchControllerId;
+
+        private readonly string _author;
+        private readonly string _mod;
+        private readonly string _version;
 
         public bool IsLocalServer => CoreHook.ServerMainLoop != null && CoreHook.ServerMainLoop.isLocal();
 
@@ -47,7 +52,7 @@ namespace NimbusFox.FoxCore {
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
             ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
             ContentDirectory = new DirectoryManager {ContentFolder = true};
-            PatchController = new PatchController(patchControllerId ?? $"{author}.{mod}");
+            _patchControllerId = patchControllerId ?? $"{_author}.{_mod}";
             VersionCheck.VersionCheck.Check();
         }
 
