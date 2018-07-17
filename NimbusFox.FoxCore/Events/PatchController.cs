@@ -22,11 +22,11 @@ namespace NimbusFox.FoxCore.Events {
 
         private static void DisplayPatchedItemOrigin(string message, ref Exception e) {
             if (e?.StackTrace == null) {
-                return;
+                goto end;
             }
 
             if (e.StackTrace.IsNullOrEmpty()) {
-                return;
+                goto end;
             }
 
             var exceptionMessage = "";
@@ -63,12 +63,14 @@ namespace NimbusFox.FoxCore.Events {
             }
 
             if (exceptionMessage == "") {
-                return;
+                goto end;
             }
 
             exceptionMessage += message;
 
             e = new Exception(exceptionMessage, e);
+
+            end:;
         }
 
         public PatchController(string instanceName) {

@@ -109,8 +109,14 @@ namespace NimbusFox.FoxCore {
         }
 
         public static void VectorLoop(Vector3I start, Vector3I end, Action<int, int, int> coordFunction) {
-            var region = new VectorCubeI(start, end);
+            VectorLoop(new VectorCubeI(start, end), coordFunction);
+        }
 
+        public static void VectorLoop(Vector3D start, Vector3D end, Action<int, int, int> coordFunction) {
+            VectorLoop(start.From3Dto3I(), end.From3Dto3I(), coordFunction);
+        }
+
+        public static void VectorLoop(VectorCubeI region, Action<int, int, int> coordFunction) {
             for (var y = region.Start.Y; y <= region.End.Y; y++) {
                 for (var z = region.Start.Z; z <= region.End.Z; z++) {
                     for (var x = region.Start.X; x <= region.End.X; x++) {
@@ -120,8 +126,8 @@ namespace NimbusFox.FoxCore {
             }
         }
 
-        public static void VectorLoop(Vector3D start, Vector3D end, Action<int, int, int> coordFunction) {
-            VectorLoop(start.From3Dto3I(), end.From3Dto3I(), coordFunction);
+        public static void VectorLoop(VectorCubeD region, Action<int, int, int> coordFunction) {
+            VectorLoop(region.Start, region.End, coordFunction);
         }
     }
 }
