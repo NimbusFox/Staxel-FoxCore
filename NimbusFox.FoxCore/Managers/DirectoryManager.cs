@@ -18,7 +18,6 @@ using Staxel.Voxel;
 
 namespace NimbusFox.FoxCore.Managers {
     public class DirectoryManager {
-        private static List<string> FilesInUse = new List<string>();
         private string _localContentLocation;
         private string _root;
         internal bool ContentFolder = false;
@@ -135,17 +134,14 @@ namespace NimbusFox.FoxCore.Managers {
                 throw new IOException("Unable to edit files in the content folder");
             }
             new Thread(() => {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) { 
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
-                FilesInUse.Add(target);
-
                 var stream = new MemoryStream();
+                if (data is string text) {
+                    stream.WriteString(text);
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
+                    onFinish?.Invoke();
+                    return;
+                }
                 var output = SerializeObject(data);
                 stream.Seek(0L, SeekOrigin.Begin);
                 if (!outputAsText) {
@@ -156,8 +152,6 @@ namespace NimbusFox.FoxCore.Managers {
                 stream.Seek(0L, SeekOrigin.Begin);
                 File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
                 onFinish?.Invoke();
-
-                FilesInUse.Remove(target);
             }).Start();
         }
 
@@ -174,21 +168,9 @@ namespace NimbusFox.FoxCore.Managers {
                 throw new IOException("Unable to edit files in the content folder");
             }
             new Thread(() => {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) {
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
-                FilesInUse.Add(target);
-
                 stream.Seek(0L, SeekOrigin.Begin);
                 File.WriteAllBytes(Path.Combine(_localContentLocation, fileName), stream.ReadAllBytes());
                 onWrite?.Invoke();
-
-                FilesInUse.Remove(target);
             }).Start();
         }
 
@@ -209,17 +191,8 @@ namespace NimbusFox.FoxCore.Managers {
 
         public void ReadFile<T>(string fileName, Action<T> onLoad, bool inputIsText = false) {
             new Thread(() => {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) {
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
                 if (FileExists(fileName)) {
-                    var stream =
-                        GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), fileName));
+                    var stream = new FileStream(Path.Combine(_localContentLocation, fileName), FileMode.Open);
                     Blob input;
                     if (!inputIsText) {
                         input = stream.ReadBlob();
@@ -233,7 +206,9 @@ namespace NimbusFox.FoxCore.Managers {
                         input.ReadJson(sr.ReadToEnd());
                     }
 
-                    stream.Seek(0L, SeekOrigin.Begin);
+                    stream.Close();
+                    stream.Dispose();
+
                     if (typeof(T) == input.GetType()) {
                         onLoad((T)(object)input);
                         return;
@@ -272,14 +247,6 @@ namespace NimbusFox.FoxCore.Managers {
 
         public void ReadFileStream(string fileName, Action<Stream> onLoad) {
             new Thread(() => {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), fileName);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) {
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
                 var stream =
                     GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), fileName));
                 stream.Seek(0L, SeekOrigin.Begin);
@@ -300,14 +267,6 @@ namespace NimbusFox.FoxCore.Managers {
                 throw new IOException("Unable to edit files in the content folder");
             }
             if (FileExists(name)) {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) {
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
                 File.Delete(Path.Combine(_localContentLocation, name));
             }
         }
@@ -317,14 +276,6 @@ namespace NimbusFox.FoxCore.Managers {
                 throw new IOException("Unable to edit files in the content folder");
             }
             if (DirectoryExists(name)) {
-                var target = Path.Combine(GetPath(Path.DirectorySeparatorChar), name);
-                var collection = new List<string>();
-                collection.AddAll(FilesInUse);
-                while (collection.Any(x => x == target)) {
-                    collection.Clear();
-                    collection.AddAll(FilesInUse);
-                }
-
                 Directory.Delete(Path.Combine(_localContentLocation, name), recursive);
             }
         }

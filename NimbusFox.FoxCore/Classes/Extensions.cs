@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
@@ -91,6 +93,42 @@ namespace NimbusFox.FoxCore.Classes {
             } catch when (!Debugger.IsAttached) {
                 return null;
             }
+        }
+
+        internal static T GetPrivatePropertyValue<T>(this object parentObject, string field) {
+            return (T)parentObject.GetType().GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
+                .GetValue(parentObject);
+        }
+
+        internal static void SetPrivatePropertyValue(this object parentObject, string field, object value) {
+            parentObject.GetType().GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        }
+
+        internal static T GetPrivateFieldValue<T>(this object parentObject, string field) {
+            return (T)parentObject.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
+                .GetValue(parentObject);
+        }
+
+        internal static void SetPrivateFieldValue(this object parentObject, string field, object value) {
+            parentObject.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        }
+
+        internal static T GetPrivatePropertyValue<T>(this object parentObject, string field, Type type) {
+            return (T)type.GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
+                .GetValue(parentObject);
+        }
+
+        internal static void SetPrivatePropertyValue(this object parentObject, string field, object value, Type type) {
+            type.GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        }
+
+        internal static T GetPrivateFieldValue<T>(this object parentObject, string field, Type type) {
+            return (T)type.GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
+                .GetValue(parentObject);
+        }
+
+        internal static void SetPrivateFieldValue(this object parentObject, string field, object value, Type type) {
+            type.GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
         }
     }
 }

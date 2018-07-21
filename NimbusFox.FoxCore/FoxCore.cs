@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Events;
 using NimbusFox.FoxCore.Managers;
@@ -32,6 +33,8 @@ namespace NimbusFox.FoxCore {
         private readonly string _mod;
         private readonly string _version;
 
+        private readonly List<string> _reportingMods = new List<string>();
+
         public bool IsLocalServer => CoreHook.ServerMainLoop != null && CoreHook.ServerMainLoop.isLocal();
 
         /// <summary>
@@ -40,11 +43,12 @@ namespace NimbusFox.FoxCore {
         /// <param name="author"></param>
         /// <param name="mod">Must match your mod directory name</param>
         /// <param name="modVersion"></param>
-        public Fox_Core(string author, string mod, string modVersion, string patchControllerId = null) {
+        /// <param name="errorEmail">Only add an email if you are fine with the email being public. Be sure to whitelist foxcore@nimbusfox.uk</param>
+        public Fox_Core(string author, string mod, string modVersion, string errorEmail = null) {
             _author = author;
             _mod = mod;
             _version = modVersion;
-            ExceptionManager = new ExceptionManager(mod, modVersion);
+            ExceptionManager = new ExceptionManager(author, mod, modVersion, errorEmail);
             WorldManager = new WorldManager();
             SaveDirectory = new DirectoryManager(author, mod);
             ModDirectory = new DirectoryManager(mod) {ContentFolder = true};
@@ -52,8 +56,70 @@ namespace NimbusFox.FoxCore {
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
             ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
             ContentDirectory = new DirectoryManager {ContentFolder = true};
-            _patchControllerId = patchControllerId ?? $"{_author}.{_mod}";
+            _patchControllerId = $"{_author}.{_mod}";
             VersionCheck.VersionCheck.Check();
+
+            if (errorEmail != null) {
+                if (CoreHook.FxCore == null) {
+                    _reportingMods.Add($"{author}.{mod}.{modVersion}");
+                    return;
+                }
+
+                ProcessReportingMod($"{author}.{mod}.{modVersion}");
+            }
+        }
+
+        internal void ProcessReportingMods() {
+            foreach (var mod in _reportingMods) {
+                ProcessReportingMod(mod);
+            }
+        }
+
+        internal void ProcessReportingMod(string mod) {
+            var report = false;
+            var message =
+                $"{mod} would like the right to submit crash errors to the mod developer's email. Only errors and the data that was given by the mod developer will be sent to their email. Please note this can contain data that I (NimbusFox) cannot maintain nor guarantee to not be identifiable. Please be wary of this as you decide if the mod can send error logs.";
+            var answer =
+                $"Allow {mod} to report errors?: Y/N (Even if N is selected. Errors can be found in content/modErrors)";
+            var windowAnswer = $"Allow {mod} to report errors? (Even if No is selected. Errors can be found in content/modErrors)";
+            if (!CoreHook.FxCore.ConfigDirectory.FetchDirectory("errorReports").FileExists($"{mod}.config")) {
+                try {
+                    var messageBox =
+                        MessageBox.Show(
+                            $@"{message}{Environment.NewLine}{Environment.NewLine}{windowAnswer}",
+                            @"Allow mod error reports", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                            MessageBoxDefaultButton.Button2);
+
+                    report = messageBox == DialogResult.Yes;
+                } catch {
+                    Console.WriteLine();
+                    CoreHook.FxCore.Log(message, ConsoleColor.Yellow);
+                    Console.WriteLine();
+                    CoreHook.FxCore.Log(answer, ConsoleColor.Yellow);
+
+                    var input = "";
+
+                    while (input?.ToLower() != "x" && input?.ToLower() != "y") {
+                        input = Console.ReadLine();
+
+                        if (input?.ToLower() != "x" && input?.ToLower() != "y") {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(@"Please put either x or y");
+                            Console.ResetColor();
+                        }
+                    }
+
+                    report = input.ToLower() == "y";
+                }
+            } else {
+                report = CoreHook.FxCore.ConfigDirectory.FetchDirectory("errorReports")
+                    .ReadFile<Blob>($"{mod}.config", true).GetBool("report", false);
+            }
+
+            var blob = BlobAllocator.Blob(true);
+            blob.SetBool("report", report);
+            CoreHook.FxCore.ConfigDirectory.FetchDirectory("errorReports").WriteFile($"{mod}.config", blob, true, true);
+            Blob.Deallocate(ref blob);
         }
 
         public void MessageAllPlayers(string languageCode, params object[] textParams) {

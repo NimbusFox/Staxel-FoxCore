@@ -5,6 +5,7 @@ using System.Reflection;
 using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Classes.Exceptions;
 using NimbusFox.FoxCore.Dependencies.Harmony;
+using NimbusFox.FoxCore.Managers;
 using Plukit.Base;
 using Event = NimbusFox.FoxCore.Classes.Event;
 
@@ -22,55 +23,65 @@ namespace NimbusFox.FoxCore.Events {
 
         private static void DisplayPatchedItemOrigin(string message, ref Exception e) {
             if (e?.StackTrace == null) {
-                goto end;
+                return;
             }
 
             if (e.StackTrace.IsNullOrEmpty()) {
-                goto end;
+                return;
             }
 
-            var exceptionMessage = "";
+            try {
+                var exceptionMessage = Environment.NewLine;
 
-            foreach (var eventItem in new List<Event>(Events)) {
-                if (e.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
-                    if (eventItem.Prefix != null) {
-                        exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
-                    }
-
-                    if (eventItem.Postfix != null) {
-                        exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
-                    }
-
-                    continue;
-                }
-
-                var exception = e.InnerException;
-
-                while (exception != null) {
-                    if (!exception.StackTrace.IsNullOrEmpty() && exception.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
+                foreach (var eventItem in new List<Event>(Events)) {
+                    if (e.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
                         if (eventItem.Prefix != null) {
-                            exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
+                            exceptionMessage +=
+                                $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
                         }
 
                         if (eventItem.Postfix != null) {
-                            exceptionMessage += $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
+                            exceptionMessage +=
+                                $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
                         }
 
-                        break;
+                        continue;
                     }
-                    exception = exception.InnerException;
+
+                    var exception = e.InnerException;
+
+                    while (exception != null) {
+                        if (!exception.StackTrace.IsNullOrEmpty() &&
+                            exception.StackTrace.Contains(eventItem.PatchedMethod.Name)) {
+                            if (eventItem.Prefix != null) {
+                                exceptionMessage +=
+                                    $"FoxPatch: {eventItem.PatchedMethod} is linked to {eventItem.PrefixParent.FullName}.{eventItem.Prefix.Name}{Environment.NewLine}";
+                            }
+
+                            if (eventItem.Postfix != null) {
+                                exceptionMessage +=
+                                    $"FoxPatch: {eventItem.PatchedMethod.Name} is linked to {eventItem.PostfixParent.FullName}.{eventItem.Postfix.Name}{Environment.NewLine}";
+                            }
+
+                            break;
+                        }
+
+                        exception = exception.InnerException;
+                    }
+                }
+
+                if (exceptionMessage == "") {
+                    return;
+                }
+
+                exceptionMessage += message;
+
+                e = new Exception(exceptionMessage, e);
+            } catch (Exception ex) {
+                if (CoreHook.FxCore != null) {
+                    CoreHook.FxCore.ExceptionManager.HandleException(ex, new Dictionary<string, object> { { "message", message }, { "exception", e } });
                 }
             }
-
-            if (exceptionMessage == "") {
-                goto end;
-            }
-
-            exceptionMessage += message;
-
-            e = new Exception(exceptionMessage, e);
-
-            end:;
         }
 
         public PatchController(string instanceName) {
@@ -86,7 +97,7 @@ namespace NimbusFox.FoxCore.Events {
 
         public void Add(Type owner, string targetMethod, Type runBeforeParent = null, string runBeforeMethodName = null, Type runAfterParent = null, string runAfterMethodName = null) {
 
-            if (!runBeforeMethodName.IsNullOrEmpty() && !runAfterMethodName.IsNullOrEmpty()) {
+            if (runBeforeMethodName.IsNullOrEmpty() && runAfterMethodName.IsNullOrEmpty()) {
                 throw new ArgumentException("runBeforeMethod and runAfterMethod arguments cannot be both null");
             }
 
@@ -99,7 +110,9 @@ namespace NimbusFox.FoxCore.Events {
 
             if (!runBeforeMethodName.IsNullOrEmpty() && runBeforeParent != null) {
                 if (runBeforeParent.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Any(x => x.Name == runBeforeMethodName)) {
-                    runBefore = runBeforeParent.GetMethod(runBeforeMethodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                    runBefore = runBeforeParent.GetMethod(runBeforeMethodName,
+                        BindingFlags.Instance | BindingFlags.Public |
+                        BindingFlags.NonPublic | BindingFlags.Static);
                 }
 
                 if (runBefore == null) {
@@ -109,7 +122,8 @@ namespace NimbusFox.FoxCore.Events {
 
             if (!runAfterMethodName.IsNullOrEmpty() && runAfterParent != null) {
                 if (runAfterParent.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Any(x => x.Name == runAfterMethodName)) {
-                    runAfter = runAfterParent.GetMethod(runAfterMethodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                    runAfter = runAfterParent.GetMethod(runAfterMethodName,
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
                 }
 
                 if (runAfter == null) {
@@ -118,7 +132,9 @@ namespace NimbusFox.FoxCore.Events {
             }
 
             MethodInfo original;
-            if ((original = owner.GetMethod(targetMethod)) == null) {
+            if ((original = owner.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                    .FirstOrDefault(x => runBefore != null && SameParameters(x.GetParameters(), runBefore.GetParameters()) 
+                                         || runAfter != null && SameParameters(x.GetParameters(), runAfter.GetParameters()))) == default) {
                 throw new MethodNotExistsException($"{targetMethod} does not exist in {owner.FullName}");
             }
 
@@ -184,7 +200,7 @@ namespace NimbusFox.FoxCore.Events {
                 check.Remove(check.First(x => x.Name == "__state"));
             }
 
-            if (check.Any(x => x.Name == "__oringalMethod")) {
+            if (check.Any(x => x.Name == "__originalMethod")) {
                 check.Remove(check.First(x => x.Name == "__originalMethod"));
             }
 

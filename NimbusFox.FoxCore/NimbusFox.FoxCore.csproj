@@ -138,6 +138,7 @@
       <DependentUpon>VariantLoader.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="IFoxModHookV3.cs" />
     <Compile Include="Interpreters\Classes\CContext.cs" />
     <Compile Include="Interpreters\Classes\CommandBuilder.cs" />
     <Compile Include="Interpreters\Classes\GContext.cs" />
