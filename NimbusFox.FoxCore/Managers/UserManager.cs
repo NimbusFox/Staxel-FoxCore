@@ -12,7 +12,7 @@ namespace NimbusFox.FoxCore.Managers {
         private List<UserCache> _cache;
 
         internal UserManager() {
-            if (FileManager.FileExists(CacheFile)) {
+            if (!FileManager.FileExists(CacheFile)) {
                 _cache = new List<UserCache>();
                 Flush();
             } else {

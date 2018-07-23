@@ -113,8 +113,6 @@ namespace NimbusFox {
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveDisconnectingPlayer", null, null, typeof(CoreHook), nameof(OnDisconnect));
 
                 FxCore.ProcessReportingMods();
-
-                FxCore.ExceptionManager.HandleException(new Exception("Test exception", new Exception("Test innerException")), new Dictionary<string, object> { { "test", true } });
             }
         }
         public void GameContextDeinitialize() { }

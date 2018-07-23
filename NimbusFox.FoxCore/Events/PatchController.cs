@@ -96,7 +96,6 @@ namespace NimbusFox.FoxCore.Events {
         }
 
         public void Add(Type owner, string targetMethod, Type runBeforeParent = null, string runBeforeMethodName = null, Type runAfterParent = null, string runAfterMethodName = null) {
-
             if (runBeforeMethodName.IsNullOrEmpty() && runAfterMethodName.IsNullOrEmpty()) {
                 throw new ArgumentException("runBeforeMethod and runAfterMethod arguments cannot be both null");
             }
@@ -133,7 +132,7 @@ namespace NimbusFox.FoxCore.Events {
 
             MethodInfo original;
             if ((original = owner.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-                    .FirstOrDefault(x => runBefore != null && SameParameters(x.GetParameters(), runBefore.GetParameters()) 
+                    .FirstOrDefault(x => runBefore != null && SameParameters(x.GetParameters(), runBefore.GetParameters())
                                          || runAfter != null && SameParameters(x.GetParameters(), runAfter.GetParameters()))) == default) {
                 throw new MethodNotExistsException($"{targetMethod} does not exist in {owner.FullName}");
             }
@@ -215,6 +214,55 @@ namespace NimbusFox.FoxCore.Events {
             return !original.Where((t, i) =>
                 t.ParameterType != check[i].ParameterType &&
                  t.ParameterType.Name + "&" != check[i].ParameterType.Name || t.Name != check[i].Name).Any();
+        }
+
+        public void Add(Type owner, string targetMethod, Type overrideParent, string overrideMethodName,
+            Func<IEnumerable<CodeInstruction>, IEnumerable<CodeInstruction>> transpiler) {
+            if (overrideMethodName.IsNullOrEmpty()) {
+                throw new ArgumentException("overrideMethodName cannot be null or empty");
+            }
+
+            if (overrideParent == null) {
+                throw new ArgumentException("overrideParent cannot be null");
+            }
+
+            MethodInfo overrideMethod = null;
+
+            if (overrideParent.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Any(x => x.Name == overrideMethodName)) {
+                overrideMethod = overrideParent.GetMethod(overrideMethodName,
+                    BindingFlags.Instance | BindingFlags.Public |
+                    BindingFlags.NonPublic | BindingFlags.Static);
+            }
+
+            if (overrideMethod == null) {
+                throw new MethodNotExistsException($"Unable to access {overrideParent.FullName}.{overrideMethodName}");
+            }
+
+            MethodInfo original;
+            if ((original = owner.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                    .FirstOrDefault(x => overrideMethod != null && SameParameters(x.GetParameters(), overrideMethod.GetParameters()))) == default) {
+                throw new MethodNotExistsException($"{targetMethod} does not exist in {owner.FullName}");
+            }
+
+            if (!SameParameters(original.GetParameters(), overrideMethod.GetParameters())) {
+                throw new InvalidParametersException($"{overrideParent.FullName}.{overrideMethodName} must have the exact same parameters as the original function");
+            }
+
+            if (!overrideMethod.IsStatic) {
+                throw new InvalidParametersException($"{overrideParent.FullName}.{overrideMethod.Name} is not a static function");
+            }
+
+            WriteLogger($"Got a request from {overrideParent.FullName}.{overrideMethod.Name} for {owner.FullName}.{targetMethod}");
+
+            var eventItem = new Event(original, overrideParent, overrideMethod, null, null);
+
+            eventItem.PatchedMethod = _instance.Patch(eventItem.Original, eventItem.HPrefix, null, new HarmonyMethod(transpiler.Method));
+
+            Events.Add(eventItem);
+
+            WriteLogger($"Adding {overrideParent.FullName}.{overrideMethod.Name} to patch cycle {owner.FullName}.{targetMethod}");
+
+            WriteLogger($"{eventItem.PatchedMethod.Name} is linked to {overrideParent.FullName}.{overrideMethod.Name}");
         }
     }
 }
