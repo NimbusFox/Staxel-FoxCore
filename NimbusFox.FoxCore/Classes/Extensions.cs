@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using NimbusFox.FoxCore.Dependencies.Harmony;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
 using Staxel.Items;
 using Staxel.Tiles;
-using JsonConvert = NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.JsonConvert;
 
 namespace NimbusFox.FoxCore.Classes {
     public static class Extensions {
@@ -95,40 +94,36 @@ namespace NimbusFox.FoxCore.Classes {
             }
         }
 
-        internal static T GetPrivatePropertyValue<T>(this object parentObject, string field) {
-            return (T)parentObject.GetType().GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
-                .GetValue(parentObject);
+        public static T GetPrivatePropertyValue<T>(this object parentObject, string field) {
+            return (T) AccessTools.Property(parentObject.GetType(), field)?.GetValue(parentObject);
         }
 
-        internal static void SetPrivatePropertyValue(this object parentObject, string field, object value) {
-            parentObject.GetType().GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        public static void SetPrivatePropertyValue(this object parentObject, string field, object value) {
+            AccessTools.Property(parentObject.GetType(), field)?.SetValue(parentObject, value);
         }
 
-        internal static T GetPrivateFieldValue<T>(this object parentObject, string field) {
-            return (T)parentObject.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
-                .GetValue(parentObject);
+        public static T GetPrivateFieldValue<T>(this object parentObject, string field) {
+            return (T) AccessTools.Field(parentObject.GetType(), field)?.GetValue(parentObject);
         }
 
-        internal static void SetPrivateFieldValue(this object parentObject, string field, object value) {
-            parentObject.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        public static void SetPrivateFieldValue(this object parentObject, string field, object value) {
+            AccessTools.Field(parentObject.GetType(), field)?.SetValue(parentObject, value);
         }
 
-        internal static T GetPrivatePropertyValue<T>(this object parentObject, string field, Type type) {
-            return (T)type.GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
-                .GetValue(parentObject);
+        public static T GetPrivatePropertyValue<T>(this object parentObject, string field, Type type) {
+            return (T) AccessTools.Property(type, field)?.GetValue(parentObject);
         }
 
-        internal static void SetPrivatePropertyValue(this object parentObject, string field, object value, Type type) {
-            type.GetProperty(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        public static void SetPrivatePropertyValue(this object parentObject, string field, object value, Type type) {
+            AccessTools.Property(type, field)?.SetValue(parentObject, value);
         }
 
-        internal static T GetPrivateFieldValue<T>(this object parentObject, string field, Type type) {
-            return (T)type.GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?
-                .GetValue(parentObject);
+        public static T GetPrivateFieldValue<T>(this object parentObject, string field, Type type) {
+            return (T) AccessTools.Field(type, field)?.GetValue(parentObject);
         }
 
-        internal static void SetPrivateFieldValue(this object parentObject, string field, object value, Type type) {
-            type.GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(parentObject, value);
+        public static void SetPrivateFieldValue(this object parentObject, string field, object value, Type type) {
+            AccessTools.Field(type, field)?.SetValue(parentObject, value);
         }
     }
 }

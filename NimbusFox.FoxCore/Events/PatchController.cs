@@ -216,7 +216,7 @@ namespace NimbusFox.FoxCore.Events {
                  t.ParameterType.Name + "&" != check[i].ParameterType.Name || t.Name != check[i].Name).Any();
         }
 
-        public void Add(Type owner, string targetMethod, Type overrideParent, string overrideMethodName,
+        public void Override(Type owner, string targetMethod, Type overrideParent, string overrideMethodName,
             Func<IEnumerable<CodeInstruction>, IEnumerable<CodeInstruction>> transpiler) {
             if (overrideMethodName.IsNullOrEmpty()) {
                 throw new ArgumentException("overrideMethodName cannot be null or empty");
@@ -263,6 +263,40 @@ namespace NimbusFox.FoxCore.Events {
             WriteLogger($"Adding {overrideParent.FullName}.{overrideMethod.Name} to patch cycle {owner.FullName}.{targetMethod}");
 
             WriteLogger($"{eventItem.PatchedMethod.Name} is linked to {overrideParent.FullName}.{overrideMethod.Name}");
+        }
+
+        public void ConstructorOverride(Type owner, Type overrideParent, string overrideMethodName,
+            Func<IEnumerable<CodeInstruction>, IEnumerable<CodeInstruction>> transpiler) {
+            if (overrideMethodName.IsNullOrEmpty()) {
+                throw new ArgumentException("overrideMethodName cannot be null or empty");
+            }
+
+            if (overrideParent == null) {
+                throw new ArgumentException("overrideParent cannot be null");
+            }
+
+            MethodInfo overrideMethod = null;
+
+            if (overrideParent.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Any(x => x.Name == overrideMethodName)) {
+                overrideMethod = overrideParent.GetMethod(overrideMethodName,
+                    BindingFlags.Instance | BindingFlags.Public |
+                    BindingFlags.NonPublic | BindingFlags.Static);
+            }
+
+            if (overrideMethod == null) {
+                throw new MethodNotExistsException($"Unable to access {overrideParent.FullName}.{overrideMethodName}");
+            }
+
+            var original = AccessTools.Constructor(owner);
+
+            var eventItem = new Event(original, overrideParent, overrideMethod);
+
+            eventItem.PatchedMethod = _instance.Patch(eventItem.OriginalConstructor, eventItem.HPrefix,
+                new HarmonyMethod(transpiler.Method));
+
+            Events.Add(eventItem);
+
+            WriteLogger($"Adding {overrideParent.FullName}.{overrideMethod.Name} to patch cycle {owner.FullName}.Constructor");
         }
     }
 }

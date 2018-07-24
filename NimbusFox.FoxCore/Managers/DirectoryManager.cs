@@ -40,7 +40,7 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         internal string GetPath(char seperator) {
-            return Regex.Replace(_localContentLocation.Replace(_root, ""), @"\/|\\", seperator.ToString()) + seperator;
+            return Regex.Replace(_localContentLocation, @"\/|\\", seperator.ToString()) + seperator;
         }
 
         internal DirectoryManager(string author, string mod) {
@@ -247,8 +247,7 @@ namespace NimbusFox.FoxCore.Managers {
 
         public void ReadFileStream(string fileName, Action<Stream> onLoad) {
             new Thread(() => {
-                var stream =
-                    GameContext.ContentLoader.ReadStream(Path.Combine(GetPath('/'), fileName));
+                var stream = ObtainFileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
                 stream.Seek(0L, SeekOrigin.Begin);
                 onLoad?.Invoke(stream);
             }).Start();

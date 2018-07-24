@@ -8,6 +8,7 @@ using NimbusFox.FoxCore.Dependencies.Harmony;
 namespace NimbusFox.FoxCore.Classes {
     internal class Event {
         public MethodInfo Original { get; }
+        public ConstructorInfo OriginalConstructor { get; }
         public Type PrefixParent { get; }
         public MethodInfo Prefix { get; }
         public Type PostfixParent { get; }
@@ -30,6 +31,12 @@ namespace NimbusFox.FoxCore.Classes {
                 PostfixParent = postfixParent;
                 HPostfix = new HarmonyMethod(postfix);
             }
+        }
+
+        public Event(ConstructorInfo original, Type parent, MethodInfo method) {
+            OriginalConstructor = original;
+            PrefixParent = parent;
+            Prefix = method;
         }
     }
 }
