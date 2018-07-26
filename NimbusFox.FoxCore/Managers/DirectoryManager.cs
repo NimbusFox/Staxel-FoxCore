@@ -192,7 +192,7 @@ namespace NimbusFox.FoxCore.Managers {
         public void ReadFile<T>(string fileName, Action<T> onLoad, bool inputIsText = false) {
             new Thread(() => {
                 if (FileExists(fileName)) {
-                    var stream = new FileStream(Path.Combine(_localContentLocation, fileName), FileMode.Open);
+                    var stream = new MemoryStream(File.ReadAllBytes(Path.Combine(_localContentLocation, fileName)));
                     Blob input;
                     if (!inputIsText) {
                         input = stream.ReadBlob();
@@ -202,8 +202,7 @@ namespace NimbusFox.FoxCore.Managers {
                             return;
                         }
                         input = BlobAllocator.AcquireAllocator().NewBlob(false);
-                        var sr = new StreamReader(stream);
-                        input.ReadJson(sr.ReadToEnd());
+                        input.LoadJsonStream(stream);
                     }
 
                     stream.Close();
@@ -247,7 +246,7 @@ namespace NimbusFox.FoxCore.Managers {
 
         public void ReadFileStream(string fileName, Action<Stream> onLoad) {
             new Thread(() => {
-                var stream = ObtainFileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
+                var stream = new MemoryStream(File.ReadAllBytes(Path.Combine(_localContentLocation, fileName)));
                 stream.Seek(0L, SeekOrigin.Begin);
                 onLoad?.Invoke(stream);
             }).Start();

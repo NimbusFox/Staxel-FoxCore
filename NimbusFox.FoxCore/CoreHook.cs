@@ -47,9 +47,12 @@ namespace NimbusFox {
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     mod.OnPlayerSaveBefore(__instance, out var blob);
-                    __state.MergeFrom(blob);
+                    if (blob != null) {
+                        __state.MergeFrom(blob);
+                    }
                 }
             }
+            
         }
 
         internal static void AfterSave(PlayerEntityLogic __instance, Blob __state) {
@@ -62,7 +65,9 @@ namespace NimbusFox {
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     mod.OnPlayerSaveAfter(__instance, out var blob);
-                    __state.MergeFrom(blob);
+                    if (blob != null) {
+                        __state.MergeFrom(blob);
+                    }
                 }
             }
 
