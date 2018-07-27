@@ -9,6 +9,7 @@ using NimbusFox.FoxCore.Events;
 using NimbusFox.FoxCore.Managers;
 using Plukit.Base;
 using Staxel.Logic;
+using Staxel.Server;
 using WorldManager = NimbusFox.FoxCore.Managers.WorldManager;
 
 namespace NimbusFox.FoxCore {
@@ -22,6 +23,7 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ModsDirectory { get; }
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
+        public ServerMainLoop ServerMainLoop => CoreHook.ServerMainLoop;
 
         public PatchController PatchController => _patchController ??
                                                   (_patchController = new PatchController(_patchControllerId));

@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\BaseRecord.cs" />
+    <Compile Include="Classes\BlobFile.cs" />
     <Compile Include="Classes\CodeEntry.cs" />
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Delegates.cs" />

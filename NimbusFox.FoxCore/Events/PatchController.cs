@@ -22,15 +22,15 @@ namespace NimbusFox.FoxCore.Events {
         }
 
         private static void DisplayPatchedItemOrigin(string message, ref Exception e) {
-            if (e?.StackTrace == null) {
-                return;
-            }
-
-            if (e.StackTrace.IsNullOrEmpty()) {
-                return;
-            }
-
             try {
+                if (e?.StackTrace == null) {
+                    return;
+                }
+
+                if (e.StackTrace.IsNullOrEmpty()) {
+                    return;
+                }
+
                 var exceptionMessage = Environment.NewLine;
 
                 foreach (var eventItem in new List<Event>(Events)) {

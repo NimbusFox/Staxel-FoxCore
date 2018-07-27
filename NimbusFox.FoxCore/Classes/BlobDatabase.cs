@@ -34,6 +34,7 @@ namespace NimbusFox.FoxCore.Classes {
 
             try {
                 _database.LoadJsonStream(_databaseFile);
+                File.WriteAllBytes(stream.Name + ".bak", stream.ReadAllBytes());
             } catch {
                 Console.ForegroundColor = ConsoleColor.Red;
                 errorLogger($"{stream.Name} was corrupt. Will reset the database now to recover");

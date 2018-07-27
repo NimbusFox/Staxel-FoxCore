@@ -138,9 +138,9 @@ namespace NimbusFox {
             }
 
             if (ServerMainLoop == null) {
-                ServerMainLoop = (ServerMainLoop)typeof(DirectorFacade).GetField("_serverMainLoop",
-                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    ?.GetValue(ServerContext.VillageDirector.UniverseFacade);
+                ServerMainLoop =
+                    ServerContext.VillageDirector?.UniverseFacade?
+                        .GetPrivateFieldValue<ServerMainLoop>("_serverMainLoop");
             }
         }
 
