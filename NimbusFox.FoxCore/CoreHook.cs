@@ -83,12 +83,21 @@ namespace NimbusFox {
             }
         }
 
+        private static readonly List<Entity> Disconnects = new List<Entity>();
+
         internal static void OnDisconnect(Entity entity) {
+            if (!Disconnects.Contains(entity)) {
+                Disconnects.Add(entity);
+                return;
+            }
+
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     mod.OnPlayerDisconnect(entity);
                 }
             }
+
+            Disconnects.Remove(entity);
         }
 
         public void Dispose() {
@@ -133,7 +142,6 @@ namespace NimbusFox {
                 foreach (var player in UserManager.GetPlayerEntities()) {
                     UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
                 }
-                UserManager.CacheCheck();
                 _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
             }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Jint;
@@ -18,6 +19,7 @@ using Staxel.Voxel;
 
 namespace NimbusFox.FoxCore.Managers {
     public class DirectoryManager {
+        private static BinaryFormatter _bf = new BinaryFormatter();
         private string _localContentLocation;
         private string _root;
         internal bool ContentFolder = false;
@@ -145,7 +147,7 @@ namespace NimbusFox.FoxCore.Managers {
                 var output = SerializeObject(data);
                 stream.Seek(0L, SeekOrigin.Begin);
                 if (!outputAsText) {
-                    stream.WriteBlob(output);
+                    output.Write(stream);
                 } else {
                     output.SaveJsonStream(stream);
                 }
@@ -192,10 +194,13 @@ namespace NimbusFox.FoxCore.Managers {
         public void ReadFile<T>(string fileName, Action<T> onLoad, bool inputIsText = false) {
             new Thread(() => {
                 if (FileExists(fileName)) {
-                    var stream = new MemoryStream(File.ReadAllBytes(Path.Combine(_localContentLocation, fileName)));
+                    var data = File.ReadAllBytes(Path.Combine(_localContentLocation, fileName));
+                    var stream = new MemoryStream(data, 0, data.Length, false, true);
+                    stream.Seek(0, SeekOrigin.Begin);
                     Blob input;
                     if (!inputIsText) {
-                        input = stream.ReadBlob();
+                        input = BlobAllocator.Blob(false);
+                        input.Read(stream);
                     } else {
                         if (typeof(T) == typeof(string)) {
                             onLoad((T)(object)stream.ReadAllText());

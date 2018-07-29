@@ -28,18 +28,30 @@ namespace NimbusFox.FoxCore.Classes {
 
             _databaseFile.Seek(0L, SeekOrigin.Begin);
 
-            if (_databaseFile.Length == 0) {
-                return;
-            }
-
             try {
-                _database.LoadJsonStream(_databaseFile);
+                using (var ms = new MemoryStream()) {
+                    _databaseFile.CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    _database.Read(ms);
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
                 File.WriteAllBytes(stream.Name + ".bak", stream.ReadAllBytes());
             } catch {
-                Console.ForegroundColor = ConsoleColor.Red;
-                errorLogger($"{stream.Name} was corrupt. Will reset the database now to recover");
-                Console.ResetColor();
+                if (File.Exists(stream.Name + ".bak")) {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    errorLogger($"{stream.Name} was corrupt. Will revert to backup file");
+                    Console.ResetColor();
+
+                    using (var ms = new MemoryStream(File.ReadAllBytes(stream.Name + ".bak"))) {
+                        _database.LoadJsonStream(ms);
+                    }
+                }
             }
+
+            NeedsStore();
+            Save();
         }
 
         public bool RecordExists(Guid guid) {
@@ -86,6 +98,9 @@ namespace NimbusFox.FoxCore.Classes {
             
             record.Load(newRecord.CopyBlob());
 
+            NeedsStore();
+            Save();
+
             return record;
         }
 
@@ -117,7 +132,11 @@ namespace NimbusFox.FoxCore.Classes {
             if (_needsStore) {
                 _databaseFile.SetLength(0);
                 _databaseFile.Position = 0;
-                _database.SaveJsonStream(_databaseFile);
+                using (var ms = new MemoryStream()) {
+                    _database.WriteFull(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    ms.CopyTo(_databaseFile);
+                }
                 _databaseFile.Flush(true);
                 _needsStore = false;
             }

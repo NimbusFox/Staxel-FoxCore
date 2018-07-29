@@ -8,29 +8,23 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.Managers {
     public class UserManager {
         private static readonly DirectoryManager FileManager = new DirectoryManager("NimbusFox", "FoxCore");
-        private const string CacheFile = "User.cache";
-        private List<UserCache> _cache;
+        private const string CacheFile = "User.2.1.cache";
+        private Blob _cache;
 
         internal UserManager() {
             if (!FileManager.FileExists(CacheFile)) {
-                _cache = new List<UserCache>();
+                _cache = BlobAllocator.Blob(true);
                 Flush();
             } else {
-                var wait = true;
-                FileManager.ReadFile<List<UserCache>>(CacheFile, (data) => {
-                    _cache = data;
-                    wait = false;
-                });
-                while (wait) { }
+                _cache = FileManager.ReadFile<Blob>(CacheFile);
             }
         }
 
-        private List<UserCache> CloneCache() {
-            return new List<UserCache>(_cache);
-        }
-
         private void Flush() {
-            //FileManager.WriteFile(CacheFile, _cache);
+            var blob = BlobAllocator.Blob(true);
+            blob.SetObject("userCache", _cache);
+            FileManager.WriteFile(CacheFile, blob, false, true);
+            Blob.Deallocate(ref blob);
         }
 
         private Universe Universe => CoreHook.Universe;
@@ -47,27 +41,26 @@ namespace NimbusFox.FoxCore.Managers {
             if (string.IsNullOrEmpty(GetNameByUid(uid))) {
                 var newUser = new UserCache {
                     DisplayName = name,
-                    Uid = uid,
-                    Expires = DateTime.Now.AddDays(3)
+                    Uid = uid
                 };
-                _cache.Add(newUser);
+                _cache.SetObject(uid, newUser);
             } else {
-                var user = CloneCache().First(x => x.Uid == uid);
-                _cache.Remove(user);
+                var user = _cache.GetObject<UserCache>(uid);
                 user.DisplayName = name;
-                user.Expires = DateTime.Now.AddDays(3);
-                _cache.Add(user);
+                _cache.SetObject(uid, user);
             }
 
             Flush();
         }
 
-        internal void CacheCheck() {
-            foreach (var user in CloneCache()) {
-                if (user.Expires.Ticks <= DateTime.Now.Ticks) {
-                    _cache.Remove(user);
-                }
+        private List<UserCache> CloneCache() {
+            var list = new List<UserCache>();
+
+            foreach (var blob in _cache.KeyValueIteratable) {
+                list.Add(_cache.GetObject<UserCache>(blob.Key));
             }
+
+            return list;
         }
 
         public string GetUidByName(string name) {
@@ -83,7 +76,7 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public Entity GetPlayerEntityByName(string name) {
-            return GetPlayerEntities().FirstOrDefault(x => x.PlayerEntityLogic.DisplayName() == name);
+            return GetPlayerEntities().FirstOrDefault(x => string.Equals(x.PlayerEntityLogic.DisplayName(), name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public Entity GetPlayerEntityByUid(string uid) {

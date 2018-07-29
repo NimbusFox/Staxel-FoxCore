@@ -32,6 +32,7 @@ namespace NimbusFox.FoxCore.Classes {
             _timer.Start();
             _timer.Elapsed += (sender, args) => {
                 _database.NeedsStore();
+                _database.Save();
             };
         }
 

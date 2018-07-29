@@ -16,6 +16,7 @@ namespace NimbusFox.FoxCore.Classes {
 
         public BlobFile(FileStream stream, bool binary = false) {
             _fileStream = stream;
+            _binary = binary;
             _fileStream.Seek(0, SeekOrigin.Begin);
 
             Blob = BlobAllocator.Blob(true);
@@ -27,7 +28,11 @@ namespace NimbusFox.FoxCore.Classes {
 
             try {
                 if (binary) {
-                    Blob.LoadJsonStream(_fileStream);
+                    using (var ms = new MemoryStream()) {
+                        _fileStream.CopyTo(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        Blob.Read(ms);
+                    }
                 } else {
                     Blob.ReadJson(_fileStream.ReadAllText());
                 }
@@ -66,7 +71,11 @@ namespace NimbusFox.FoxCore.Classes {
             _fileStream.SetLength(0);
             _fileStream.Position = 0;
             if (_binary) {
-                _fileStream.WriteBlob(Blob);
+                using (var ms = new MemoryStream()) {
+                    Blob.WriteFull(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    ms.CopyTo(_fileStream);
+                }
             } else {
                 Blob.SaveJsonStream(_fileStream);
             }
