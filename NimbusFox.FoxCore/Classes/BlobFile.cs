@@ -21,6 +21,7 @@ namespace NimbusFox.FoxCore.Classes {
             Blob = BlobAllocator.Blob(true);
 
             if (_fileStream.Length == 0) {
+                ForceSave();
                 return;
             }
 
@@ -30,6 +31,8 @@ namespace NimbusFox.FoxCore.Classes {
                 } else {
                     Blob.ReadJson(_fileStream.ReadAllText());
                 }
+
+                stream.Seek(0, SeekOrigin.Begin);
 
                 File.WriteAllBytes(stream.Name + ".bak", stream.ReadAllBytes());
             } catch {
@@ -59,7 +62,7 @@ namespace NimbusFox.FoxCore.Classes {
             };
         }
 
-        private void ForceSave() {
+        protected void ForceSave() {
             _fileStream.SetLength(0);
             _fileStream.Position = 0;
             if (_binary) {
