@@ -59,7 +59,6 @@ namespace NimbusFox.FoxCore {
             ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
             ContentDirectory = new DirectoryManager {ContentFolder = true};
             _patchControllerId = $"{_author}.{_mod}";
-            VersionCheck.VersionCheck.Check();
 
             if (errorEmail != null) {
                 if (CoreHook.FxCore == null) {

@@ -85,6 +85,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\BaseRecord.cs" />
@@ -412,12 +413,6 @@
     <Compile Include="Staxel\Commands\ScriptRefreshCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NimbusFox.FoxCore.VersionCheck\NimbusFox.FoxCore.VersionCheck.csproj">
-      <Project>{0fc13651-c865-49f9-a642-3a59b9958720}</Project>
-      <Name>NimbusFox.FoxCore.VersionCheck</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Patches\" />
     <Folder Include="Resources\" />
   </ItemGroup>
@@ -433,6 +428,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Dynamic.snk" />
+    <None Include="Scripts\jquery-2.2.4.min.map" />
     <None Include="Staxel\Translations\en-gb.lang">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -448,9 +444,15 @@
     <Content Include="Licenses\Json.NET.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\jquery-2.2.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.2.4.js" />
+    <Content Include="Scripts\jquery-2.2.4.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
