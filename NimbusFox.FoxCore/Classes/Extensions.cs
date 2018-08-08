@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using NimbusFox.FoxCore.Dependencies.Harmony;
@@ -29,10 +30,14 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public static void SetObject(this Blob blob, string key, object obj) {
+            blob.Delete(key);
             blob.FetchBlob(key).ReadJson(JsonConvert.SerializeObject(obj));
         }
 
         public static void SetObject(this Blob blob, object obj) {
+            foreach (var entry in new List<string>(blob.KeyValueIteratable.Keys)) {
+                blob.Delete(entry);
+            }
             blob.ReadJson(JsonConvert.SerializeObject(obj));
         }
 

@@ -32,6 +32,9 @@ namespace NimbusFox {
         private static long _cacheTick;
 
         internal static void AfterLoad(PlayerEntityLogic __instance) {
+            if (__instance == null) {
+                return;
+            }
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     var blob = BlobAllocator.Blob(true);
@@ -43,6 +46,9 @@ namespace NimbusFox {
         }
 
         internal static void BeforeSave(PlayerEntityLogic __instance, Blob __state) {
+            if (__instance == null) {
+                return;
+            }
             __state = BlobAllocator.Blob(true);
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
@@ -56,6 +62,9 @@ namespace NimbusFox {
         }
 
         internal static void AfterSave(PlayerEntityLogic __instance, Blob __state) {
+            if (__instance == null) {
+                return;
+            }
             __state.FetchBlob("collections").MergeFrom(__instance.PlayerEntity.Blob.GetBlob("collections"));
             __state.SetBool("dontStare", __instance.PlayerEntity.GetPrivateFieldValue<bool>("NPCsDontStare"));
             __state.SetLong("theftCount", __instance.PlayerEntity.GetPrivateFieldValue<long>("_theftCount"));
@@ -76,6 +85,9 @@ namespace NimbusFox {
         }
 
         internal static void OnConnect(Entity entity) {
+            if (entity == null) {
+                return;
+            }
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     mod.OnPlayerConnect(entity);
@@ -86,6 +98,9 @@ namespace NimbusFox {
         private static readonly List<Entity> Disconnects = new List<Entity>();
 
         internal static void OnDisconnect(Entity entity) {
+            if (entity == null) {
+                return;
+            }
             if (!Disconnects.Contains(entity)) {
                 Disconnects.Add(entity);
                 return;
