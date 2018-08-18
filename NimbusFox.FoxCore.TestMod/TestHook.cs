@@ -18,6 +18,8 @@ namespace NimbusFox.FoxCore.TestMod {
             var fxCore = new Fox_Core("NimbusFox", "TestMod", "DEV");
             DirectoryTest(fxCore.SaveDirectory);
             DirectoryTest(fxCore.ConfigDirectory);
+
+            fxCore.ExceptionManager.HandleException(new Exception("Test"));
         }
 
         private void DirectoryTest(DirectoryManager directory) {

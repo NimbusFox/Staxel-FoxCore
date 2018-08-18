@@ -14,13 +14,14 @@ using Plukit.Base;
 namespace NimbusFox.FoxCore.Managers {
     public class ExceptionManager {
         private string _modVersion;
-        private readonly DirectoryManager _errorsDir;
+        private readonly DirectoryInfo _errorsDir;
         private readonly string _errorEmail;
         private readonly string _author;
         private readonly string _mod;
 
         internal ExceptionManager(string author, string mod, string modVersion, string errorEmail = null) {
-            _errorsDir = new DirectoryManager().FetchDirectoryNoParent("modErrors").FetchDirectoryNoParent(mod);
+            _errorsDir = new DirectoryInfo(Path.Combine(new DirectoryInfo(new DirectoryManager().GetPath(Path.DirectorySeparatorChar)).Parent.FullName, "modErrors", mod));
+            _errorsDir.Create();
             _modVersion = modVersion;
             _errorEmail = errorEmail;
             _author = author;
@@ -30,11 +31,11 @@ namespace NimbusFox.FoxCore.Managers {
         public void HandleException(Exception ex, Dictionary<string, object> extras = null) {
             var filename = DateTime.Now.Ticks;
 
-            _errorsDir.WriteFile($"{filename}.{_modVersion}.error", JsonConvert.SerializeObject(ex, Formatting.Indented), null, true);
+            File.WriteAllText(Path.Combine(_errorsDir.FullName, $"{filename}.{_modVersion}.error"), JsonConvert.SerializeObject(ex, Formatting.Indented));
 
             if (extras != null) {
                 if (extras.Any()) {
-                    _errorsDir.WriteFile($"{filename}.{_modVersion}.data", JsonConvert.SerializeObject(extras, Formatting.Indented), null, true);
+                    File.WriteAllText(Path.Combine(_errorsDir.FullName, $"{filename}.{_modVersion}.data"), JsonConvert.SerializeObject(extras, Formatting.Indented));
                 }
             }
 

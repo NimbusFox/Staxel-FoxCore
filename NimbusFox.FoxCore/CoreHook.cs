@@ -46,10 +46,10 @@ namespace NimbusFox {
         }
 
         internal static void BeforeSave(PlayerEntityLogic __instance, Blob __state) {
+            __state = BlobAllocator.Blob(true);
             if (__instance == null) {
                 return;
             }
-            __state = BlobAllocator.Blob(true);
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHookV3 mod) {
                     mod.OnPlayerSaveBefore(__instance, out var blob);
@@ -136,8 +136,8 @@ namespace NimbusFox {
             if (FxCore == null) {
                 FxCore = new Fox_Core("NimbusFox", "FoxCore", "V2.1", "nimbusfox.foxcore@nimbusfox.uk");
 
-                FxCore.PatchController.Add(typeof(PlayerEntityLogic), "PersistOtherPlayerData", typeof(CoreHook), nameof(BeforeSave), typeof(CoreHook), nameof(AfterSave));
-                FxCore.PatchController.Add(typeof(PlayerEntityLogic), "Construct", null, null, typeof(CoreHook), nameof(AfterLoad));
+                //FxCore.PatchController.Add(typeof(PlayerEntityLogic), "PersistOtherPlayerData", typeof(CoreHook), nameof(BeforeSave), typeof(CoreHook), nameof(AfterSave));
+                //FxCore.PatchController.Add(typeof(PlayerEntityLogic), "Construct", null, null, typeof(CoreHook), nameof(AfterLoad));
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveAllPlayerDataOnConnect", null, null, typeof(CoreHook), nameof(OnConnect));
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveDisconnectingPlayer", null, null, typeof(CoreHook), nameof(OnDisconnect));
 
