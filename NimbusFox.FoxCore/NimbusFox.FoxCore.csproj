@@ -151,9 +151,11 @@
     <Compile Include="Interpreters\LuaInt.cs" />
     <Compile Include="Managers\DirectoryManager.cs" />
     <Compile Include="Managers\ExceptionManager.cs" />
+    <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\VariantManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
+    <Compile Include="Patches\ChatControllerPatches.cs" />
     <Compile Include="Personal-Harmony\Harmony\Attributes.cs" />
     <Compile Include="Personal-Harmony\Harmony\CodeInstruction.cs" />
     <Compile Include="Personal-Harmony\Harmony\CodeTranspiler.cs" />
@@ -413,7 +415,7 @@
     <Compile Include="Staxel\Commands\ScriptRefreshCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Patches\" />
+    <Folder Include="Entities\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>

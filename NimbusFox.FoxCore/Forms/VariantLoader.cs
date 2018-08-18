@@ -209,7 +209,7 @@ namespace NimbusFox.FoxCore.Forms {
 
         private void VariantLoader_Shown(object sender, EventArgs e) {
             _colors = new Dictionary<string, Dictionary<Color, Color>>();
-            var modDir = new DirectoryManager().FetchDirectory("mods");
+            var modDir = new DirectoryManager().FetchDirectory("content").FetchDirectory("mods");
 
             prgrssMods.Maximum = modDir.Directories.Count;
 

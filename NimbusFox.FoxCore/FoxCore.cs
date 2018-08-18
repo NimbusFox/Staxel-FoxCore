@@ -24,6 +24,7 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
         public ServerMainLoop ServerMainLoop => CoreHook.ServerMainLoop;
+        public SettingsManager SettingsManager { get; }
 
         public PatchController PatchController => _patchController ??
                                                   (_patchController = new PatchController(_patchControllerId));
@@ -54,11 +55,12 @@ namespace NimbusFox.FoxCore {
             WorldManager = new WorldManager();
             SaveDirectory = new DirectoryManager(author, mod);
             ModDirectory = new DirectoryManager(mod) {ContentFolder = true};
-            ModsDirectory = new DirectoryManager {ContentFolder = true};
+            ModsDirectory = new DirectoryManager {ContentFolder = true}.FetchDirectoryNoParent("content");
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
-            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("config").FetchDirectoryNoParent(mod);
-            ContentDirectory = new DirectoryManager {ContentFolder = true};
+            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("modConfigs").FetchDirectoryNoParent(mod);
+            ContentDirectory = new DirectoryManager {ContentFolder = true}.FetchDirectoryNoParent("content");
             _patchControllerId = $"{_author}.{_mod}";
+            SettingsManager = new SettingsManager(author, mod, modVersion);
 
             if (errorEmail != null) {
                 if (CoreHook.FxCore == null) {
@@ -77,7 +79,7 @@ namespace NimbusFox.FoxCore {
         }
 
         internal void ProcessReportingMod(string mod) {
-            var report = false;
+            bool report;
             var message =
                 $"{mod} would like the right to submit crash errors to the mod developer's email. Only errors and the data that was given by the mod developer will be sent to their email. Please note this can contain data that I (NimbusFox) cannot maintain nor guarantee to not be identifiable. Please be wary of this as you decide if the mod can send error logs.";
             var answer =

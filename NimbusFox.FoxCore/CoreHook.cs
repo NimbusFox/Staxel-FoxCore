@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -11,8 +12,10 @@ using NimbusFox.FoxCore.Events;
 using Plukit.Base;
 using NimbusFox.FoxCore.Forms;
 using NimbusFox.FoxCore.Managers;
+using NimbusFox.FoxCore.Patches;
 using Staxel;
 using Staxel.Behavior;
+using Staxel.Client;
 using Staxel.EntityStorage;
 using Staxel.Items;
 using Staxel.Logic;
@@ -23,13 +26,14 @@ using Staxel.Tiles;
 using Blob = Plukit.Base.Blob;
 
 namespace NimbusFox {
-    internal class CoreHook : IModHookV2 {
+    internal class CoreHook : IFoxModHookV3 {
 
         internal static UserManager UserManager;
         internal static Universe Universe;
         internal static ServerMainLoop ServerMainLoop;
         internal static Fox_Core FxCore;
         private static long _cacheTick;
+        internal static Entity _settingEntity;
 
         internal static void AfterLoad(PlayerEntityLogic __instance) {
             if (__instance == null) {
@@ -117,12 +121,19 @@ namespace NimbusFox {
 
         public void Dispose() {
             _cacheTick = 0;
+            _settingEntity?.Dispose();
+            _settingEntity = null;
         }
 
         public void GameContextInitializeInit() {
             UserManager = new UserManager();
         }
         public void GameContextInitializeBefore() { }
+
+        private class TestClass {
+            public string _test;
+            public int _testNum;
+        }
 
         public void GameContextInitializeAfter() {
             if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder")) {
@@ -140,6 +151,15 @@ namespace NimbusFox {
                 //FxCore.PatchController.Add(typeof(PlayerEntityLogic), "Construct", null, null, typeof(CoreHook), nameof(AfterLoad));
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveAllPlayerDataOnConnect", null, null, typeof(CoreHook), nameof(OnConnect));
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveDisconnectingPlayer", null, null, typeof(CoreHook), nameof(OnDisconnect));
+                FxCore.PatchController.Add(typeof(ChatController), "ReceiveConsoleResponse",
+                    typeof(ChatControllerPatches), nameof(ChatControllerPatches.ReceiveConsoleResponse));
+
+                var testSetting = new TestClass();
+
+                testSetting._test = "Hello";
+                testSetting._testNum = 1996;
+
+                FxCore.SettingsManager.Update(testSetting);
 
                 FxCore.ProcessReportingMods();
             }
@@ -152,18 +172,39 @@ namespace NimbusFox {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-
-            if (_cacheTick <= DateTime.Now.Ticks) {
-                foreach (var player in UserManager.GetPlayerEntities()) {
-                    UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
+            if (universe.Server) {
+                if (_cacheTick <= DateTime.Now.Ticks) {
+                    foreach (var player in UserManager.GetPlayerEntities()) {
+                        UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
+                    }
+                    _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
                 }
-                _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
-            }
 
-            if (ServerMainLoop == null) {
-                ServerMainLoop =
-                    ServerContext.VillageDirector?.UniverseFacade?
-                        .GetPrivateFieldValue<ServerMainLoop>("_serverMainLoop");
+                if (ServerMainLoop == null) {
+                    ServerMainLoop =
+                        ServerContext.VillageDirector?.UniverseFacade?
+                            .GetPrivateFieldValue<ServerMainLoop>("_serverMainLoop");
+                }
+
+                if (SettingsManager.UpdateList.Count > 0) {
+                    var blob = BlobAllocator.Blob(true);
+
+                    var settings = blob.FetchBlob("settings");
+
+                    foreach (var item in SettingsManager.UpdateList) {
+                        settings.FetchBlob(item).MergeFrom(SettingsManager.ModsSettings[item]);
+                    }
+                    
+                    using (var ms = new MemoryStream()) {
+                        blob.Write(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        FxCore.MessageAllPlayers(blob.ToString());
+                    }
+
+                    Blob.Deallocate(ref blob);
+
+                    SettingsManager.UpdateList.Clear();
+                }
             }
         }
 
@@ -187,6 +228,46 @@ namespace NimbusFox {
         public void ClientContextDeinitialize() { }
         public void ClientContextReloadBefore() { }
         public void ClientContextReloadAfter() { }
-        public void CleanupOldSession() { }
+
+        public void CleanupOldSession() {
+            _settingEntity?.Dispose();
+            _settingEntity = null;
+        }
+
+        public bool CanInteractWithTile(Entity entity, Vector3F location, Tile tile) {
+            return true;
+        }
+
+        public bool CanInteractWithEntity(Entity entity, Entity lookingAtEntity) {
+            return true;
+        }
+
+        public void OnPlayerLoadAfter(Blob blob) { }
+        public void OnPlayerSaveBefore(PlayerEntityLogic logic, out Blob saveBlob) {
+            saveBlob = null;
+        }
+
+        public void OnPlayerSaveAfter(PlayerEntityLogic logic, out Blob saveBlob) {
+            saveBlob = null;
+        }
+
+        public void OnPlayerConnect(Entity entity) {
+            var blob = BlobAllocator.Blob(true);
+
+            var settings = blob.FetchBlob("settings");
+
+            foreach (var setting in SettingsManager.ModsSettings) {
+                settings.FetchBlob(setting.Key).MergeFrom(setting.Value);
+            }
+
+            using (var ms = new MemoryStream()) {
+                blob.Write(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                FxCore.MessagePlayerByEntity(entity, blob.ToString());
+            }
+
+            Blob.Deallocate(ref blob);
+        }
+        public void OnPlayerDisconnect(Entity entity) { }
     }
 }

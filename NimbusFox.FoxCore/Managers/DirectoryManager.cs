@@ -63,9 +63,9 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         internal DirectoryManager() {
-            _localContentLocation = GameContext.ContentLoader.RootDirectory;
+            _localContentLocation = new DirectoryInfo(GameContext.ContentLoader.RootDirectory).Parent.FullName;
             _root = _localContentLocation;
-            Folder = "content";
+            Folder = new DirectoryInfo(GameContext.ContentLoader.RootDirectory).Parent.Name;
         }
 
         public DirectoryManager FetchDirectory(string name) {

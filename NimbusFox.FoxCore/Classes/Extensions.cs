@@ -30,15 +30,14 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public static void SetObject(this Blob blob, string key, object obj) {
-            blob.Delete(key);
-            blob.FetchBlob(key).ReadJson(JsonConvert.SerializeObject(obj));
+            blob.FetchBlob(key).SetObject(obj);
         }
 
         public static void SetObject(this Blob blob, object obj) {
-            foreach (var entry in new List<string>(blob.KeyValueIteratable.Keys)) {
-                blob.Delete(entry);
-            }
-            blob.ReadJson(JsonConvert.SerializeObject(obj));
+            var tempBlob = BlobAllocator.Blob(true);
+            tempBlob.ReadJson(JsonConvert.SerializeObject(obj));
+            blob.MergeFrom(tempBlob);
+            Blob.Deallocate(ref tempBlob);
         }
 
         public static T GetObject<T>(this Blob blob, string key, T _default) where T : class {
