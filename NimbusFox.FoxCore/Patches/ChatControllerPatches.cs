@@ -24,8 +24,6 @@ namespace NimbusFox.FoxCore.Patches {
 
             var handleMessage = false;
 
-            Logger.WriteLine(str1);
-
             try {
                 var settings = BlobAllocator.Blob(true);
                 settings.ReadJson(str1);
@@ -33,11 +31,8 @@ namespace NimbusFox.FoxCore.Patches {
                 if (settings.Contains("settings")) {
                     foreach (var entry in settings.FetchBlob("settings").KeyValueIteratable) {
                         try {
-                            Logger.WriteLine("Updating settings for " + entry.Key);
                             SettingsManager.UpdateSettings(entry.Key, entry.Value.Blob());
                             handleMessage = true;
-
-                            Logger.WriteLine(entry.Value.Blob().ToString());
                         } catch {
                             // ignore
                         }

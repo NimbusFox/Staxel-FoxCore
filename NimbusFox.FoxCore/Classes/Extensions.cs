@@ -58,15 +58,7 @@ namespace NimbusFox.FoxCore.Classes {
             try {
                 var tempBlob = blob.FetchBlob(key);
 
-                using (var ms = new MemoryStream()) {
-                    tempBlob.SaveJsonStream(ms);
-
-                    ms.Seek(0L, SeekOrigin.Begin);
-
-                    var sr = new StreamReader(ms);
-
-                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
-                }
+                return JsonConvert.DeserializeObject<T>(tempBlob.ToString());
             } catch when (!Debugger.IsAttached) {
                 return null;
             }
@@ -84,22 +76,14 @@ namespace NimbusFox.FoxCore.Classes {
 
         public static T GetObject<T>(this Blob blob) where T : class {
             try {
-                using (var ms = new MemoryStream()) {
-                    blob.SaveJsonStream(ms);
-
-                    ms.Seek(0L, SeekOrigin.Begin);
-
-                    var sr = new StreamReader(ms);
-
-                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
-                }
+                return JsonConvert.DeserializeObject<T>(blob.ToString());
             } catch when (!Debugger.IsAttached) {
                 return null;
             }
         }
 
         public static T GetPrivatePropertyValue<T>(this object parentObject, string field) {
-            return (T) AccessTools.Property(parentObject.GetType(), field)?.GetValue(parentObject);
+            return (T)AccessTools.Property(parentObject.GetType(), field)?.GetValue(parentObject);
         }
 
         public static void SetPrivatePropertyValue(this object parentObject, string field, object value) {
@@ -107,7 +91,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public static T GetPrivateFieldValue<T>(this object parentObject, string field) {
-            return (T) AccessTools.Field(parentObject.GetType(), field)?.GetValue(parentObject);
+            return (T)AccessTools.Field(parentObject.GetType(), field)?.GetValue(parentObject);
         }
 
         public static void SetPrivateFieldValue(this object parentObject, string field, object value) {
@@ -115,7 +99,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public static T GetPrivatePropertyValue<T>(this object parentObject, string field, Type type) {
-            return (T) AccessTools.Property(type, field)?.GetValue(parentObject);
+            return (T)AccessTools.Property(type, field)?.GetValue(parentObject);
         }
 
         public static void SetPrivatePropertyValue(this object parentObject, string field, object value, Type type) {
@@ -123,7 +107,7 @@ namespace NimbusFox.FoxCore.Classes {
         }
 
         public static T GetPrivateFieldValue<T>(this object parentObject, string field, Type type) {
-            return (T) AccessTools.Field(type, field)?.GetValue(parentObject);
+            return (T)AccessTools.Field(type, field)?.GetValue(parentObject);
         }
 
         public static void SetPrivateFieldValue(this object parentObject, string field, object value, Type type) {

@@ -130,11 +130,6 @@ namespace NimbusFox {
         }
         public void GameContextInitializeBefore() { }
 
-        private class TestClass {
-            public string _test;
-            public int _testNum;
-        }
-
         public void GameContextInitializeAfter() {
             if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder")) {
                 var variantLoader = new VariantLoader();
@@ -153,13 +148,6 @@ namespace NimbusFox {
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveDisconnectingPlayer", null, null, typeof(CoreHook), nameof(OnDisconnect));
                 FxCore.PatchController.Add(typeof(ChatController), "ReceiveConsoleResponse",
                     typeof(ChatControllerPatches), nameof(ChatControllerPatches.ReceiveConsoleResponse));
-
-                var testSetting = new TestClass();
-
-                testSetting._test = "Hello";
-                testSetting._testNum = 1996;
-
-                FxCore.SettingsManager.Update(testSetting);
 
                 FxCore.ProcessReportingMods();
             }
