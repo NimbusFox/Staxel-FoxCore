@@ -427,7 +427,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Dynamic.snk" />
     <None Include="Scripts\jquery-2.2.4.min.map" />

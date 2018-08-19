@@ -42,12 +42,20 @@ namespace NimbusFox.FoxCore.Managers {
             return _settings.GetObject<T>();
         }
 
+        public Blob GetBlob() {
+            return _settings;
+        }
+
         internal static void UpdateSettings(string id, Blob blob) {
             if (!ModsSettings.ContainsKey(id)) {
                 ModsSettings.Add(id, BlobAllocator.Blob(true));
             }
 
             ModsSettings[id].MergeFrom(blob);
+        }
+
+        public bool Exists() {
+            return ModsSettings.ContainsKey(ID);
         }
     }
 }
