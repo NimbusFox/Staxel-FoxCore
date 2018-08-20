@@ -41,7 +41,7 @@ namespace NimbusFox.FoxCore.Managers {
             }
         }
 
-        internal string GetPath(char seperator) {
+        public string GetPath(char seperator) {
             return Regex.Replace(_localContentLocation, @"\/|\\", seperator.ToString()) + seperator;
         }
 
