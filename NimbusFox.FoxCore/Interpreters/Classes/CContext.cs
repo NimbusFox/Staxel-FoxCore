@@ -11,15 +11,13 @@ using Staxel.Player;
 using Staxel.Rendering;
 using Staxel.Sky;
 using Staxel.Sound;
-using Staxel.Steam;
 using Staxel.Translation;
 using Staxel.Weather;
 
 namespace NimbusFox.FoxCore.Interpreters.Classes {
     internal class CContext {
         public List<ResolutionOption> SupportedResolutions => ClientContext.SupportedResolutions;
-
-        public SteamManager SteamManager => ClientContext.SteamManager;
+        
         public PlayerFacade PlayerFacade => ClientContext.PlayerFacade;
         public LastPlayedCharacterStorage LastPlayedCharacter => ClientContext.LastPlayedCharacter;
         public UserInput UserInput => ClientContext.UserInput;
