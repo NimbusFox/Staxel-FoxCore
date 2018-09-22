@@ -129,5 +129,29 @@ namespace NimbusFox.FoxCore {
         public static void VectorLoop(VectorCubeD region, Action<int, int, int> coordFunction) {
             VectorLoop(region.Start, region.End, coordFunction);
         }
+
+        public static double CalculatePercentage(double value, double maximum) {
+            return value / maximum * 100;
+        }
+
+        public enum Round {
+            Down,
+            Up,
+            Nearest
+        }
+
+        public static int CalculatePercentage(int value, int maximum, Round round = Round.Nearest) {
+            var result = (double)value / maximum * 100;
+
+            if (round == Round.Up) {
+                result = Math.Ceiling(result);
+            } else if (round == Round.Down) {
+                result = Math.Floor(result);
+            } else if (round == Round.Nearest) {
+                result = Math.Round(result);
+            }
+
+            return (int)result;
+        }
     }
 }

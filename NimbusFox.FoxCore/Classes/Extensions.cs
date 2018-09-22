@@ -113,5 +113,9 @@ namespace NimbusFox.FoxCore.Classes {
         public static void SetPrivateFieldValue(this object parentObject, string field, object value, Type type) {
             AccessTools.Field(type, field)?.SetValue(parentObject, value);
         }
+
+        public static void RunPrivateVoid(this object parentObject, string method) {
+            AccessTools.Method(parentObject.GetType(), method).Invoke(parentObject, new object[0]);
+        }
     }
 }
