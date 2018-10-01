@@ -41,7 +41,7 @@ namespace NimbusFox.FoxCore.Patches {
             } catch {
                 // ignore
             }
-            return !handleMessage;
+            return handleMessage;
         }
     }
 }

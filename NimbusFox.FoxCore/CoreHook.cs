@@ -62,7 +62,7 @@ namespace NimbusFox {
                     }
                 }
             }
-            
+
         }
 
         internal static void AfterSave(PlayerEntityLogic __instance, Blob __state) {
@@ -128,9 +128,7 @@ namespace NimbusFox {
         public void GameContextInitializeInit() {
             UserManager = new UserManager();
         }
-        public void GameContextInitializeBefore() { }
-
-        public void GameContextInitializeAfter() {
+        public void GameContextInitializeBefore() {
             if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder")) {
                 var variantLoader = new VariantLoader();
 
@@ -151,6 +149,9 @@ namespace NimbusFox {
 
                 FxCore.ProcessReportingMods();
             }
+        }
+
+        public void GameContextInitializeAfter() {
         }
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }
@@ -182,7 +183,7 @@ namespace NimbusFox {
                     foreach (var item in SettingsManager.UpdateList) {
                         settings.FetchBlob(item).MergeFrom(SettingsManager.ModsSettings[item]);
                     }
-                    
+
                     using (var ms = new MemoryStream()) {
                         blob.Write(ms);
                         ms.Seek(0, SeekOrigin.Begin);
@@ -248,9 +249,7 @@ namespace NimbusFox {
                 settings.FetchBlob(setting.Key).MergeFrom(setting.Value);
             }
 
-            using (var ms = new MemoryStream()) {
-                blob.Write(ms);
-                ms.Seek(0, SeekOrigin.Begin);
+            if (settings.KeyValueIteratable.Count > 0) {
                 FxCore.MessagePlayerByEntity(entity, blob.ToString());
             }
 
