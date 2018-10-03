@@ -116,6 +116,18 @@ namespace NimbusFox.FoxCore {
             VectorLoop(start.From3Dto3I(), end.From3Dto3I(), coordFunction);
         }
 
+        public static void VectorLoop(Vector3D start, Vector3D end, Action<double, double, double> coordFunction,
+            double iteration) {
+            var region = new VectorCubeD(start, end);
+            for (var y = region.Start.Y; y <= region.End.Y; y += iteration) {
+                for (var z = region.Start.Z; z <= region.End.Z; z += iteration) {
+                    for (var x = region.Start.X; x < region.End.X; x += iteration) {
+                        coordFunction(x, y, z);
+                    }
+                }
+            }
+        }
+
         public static void VectorLoop(VectorCubeI region, Action<int, int, int> coordFunction) {
             for (var y = region.Start.Y; y <= region.End.Y; y++) {
                 for (var z = region.Start.Z; z <= region.End.Z; z++) {

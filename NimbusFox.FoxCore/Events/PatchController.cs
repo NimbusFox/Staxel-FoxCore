@@ -78,9 +78,7 @@ namespace NimbusFox.FoxCore.Events {
 
                 e = new Exception(exceptionMessage, e);
             } catch (Exception ex) {
-                if (CoreHook.FxCore != null) {
-                    CoreHook.FxCore.ExceptionManager.HandleException(ex, new Dictionary<string, object> { { "message", message }, { "exception", e } });
-                }
+                // ignore
             }
         }
 

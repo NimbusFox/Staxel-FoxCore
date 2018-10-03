@@ -95,5 +95,9 @@ namespace NimbusFox.FoxCore.Managers {
         public Vector3D GetEntityVector(Entity entity) {
             return entity.Physics.BottomPosition();
         }
+
+        public bool IsUserOnline(string uid) {
+            return GetPlayerEntities().Any(x => x.PlayerEntityLogic.Uid() == uid);
+        }
     }
 }

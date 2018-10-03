@@ -7,10 +7,15 @@ namespace NimbusFox.FoxCore.Classes {
         public Vector3I Start { get; private set; }
         public Vector3I End { get; private set; }
 
+        public Vector3I OrigStart { get; }
+        public Vector3I OrigEnd { get; }
+
         public VectorCubeI(Vector3I start, Vector3I end) {
             Helpers.Sort3I(start, end, out var first, out var second);
             Start = first;
             End = second;
+            OrigStart = start;
+            OrigEnd = end;
         }
 
         private VectorCubeI() { }
