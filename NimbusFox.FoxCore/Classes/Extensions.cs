@@ -6,6 +6,7 @@ using NimbusFox.FoxCore.Dependencies.Harmony;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
+using Staxel.Draw;
 using Staxel.Items;
 using Staxel.Tiles;
 
