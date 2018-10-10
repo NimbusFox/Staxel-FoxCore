@@ -46,16 +46,7 @@
       <HintPath>..\NimbusFox.FoxCore.Tests\bin\Debug\FNA.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NeoLua.1.2.25\lib\net45\Neo.Lua.dll</HintPath>
-    </Reference>
-    <Reference Include="Neo.Lua.Desktop, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NeoLua.1.2.25\lib\net45\Neo.Lua.Desktop.dll</HintPath>
-    </Reference>
     <Reference Include="Plukit.Base">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
       <Private>False</Private>
@@ -85,7 +76,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\BaseRecord.cs" />

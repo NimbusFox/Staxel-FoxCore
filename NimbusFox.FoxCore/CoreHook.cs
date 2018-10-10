@@ -129,7 +129,7 @@ namespace NimbusFox {
             UserManager = new UserManager();
         }
         public void GameContextInitializeBefore() {
-            if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder")) {
+            if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder") && !Process.GetCurrentProcess().StartInfo.Arguments.Contains("--stopVariantCheck")) {
                 var variantLoader = new VariantLoader();
 
                 Application.Run(variantLoader);

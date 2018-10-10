@@ -5,9 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Jint;
 using Microsoft.Xna.Framework;
-using Neo.IronLua;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using NimbusFox.FoxCore.Classes;
 using Plukit.Base;
@@ -24,8 +22,6 @@ namespace NimbusFox.FoxCore.Managers {
         private string _root;
         internal bool ContentFolder = false;
         private DirectoryManager _parent { get; set; }
-        internal Engine _jsEngine { get; set; }
-        internal LuaGlobalPortable _luaEngine { get; set; }
         
         public string Folder { get; private set; }
 
