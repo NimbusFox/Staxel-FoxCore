@@ -126,9 +126,12 @@ namespace NimbusFox {
         }
 
         public void GameContextInitializeInit() {
-            UserManager = new UserManager();
         }
         public void GameContextInitializeBefore() {
+            
+        }
+
+        public void GameContextInitializeAfter() {
             if (Process.GetCurrentProcess().ProcessName.Contains("ContentBuilder") && !Process.GetCurrentProcess().StartInfo.Arguments.Contains("--stopVariantCheck")) {
                 var variantLoader = new VariantLoader();
 
@@ -148,10 +151,8 @@ namespace NimbusFox {
                     typeof(ChatControllerPatches), nameof(ChatControllerPatches.ReceiveConsoleResponse));
 
                 FxCore.ProcessReportingMods();
+                UserManager = new UserManager();
             }
-        }
-
-        public void GameContextInitializeAfter() {
         }
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }

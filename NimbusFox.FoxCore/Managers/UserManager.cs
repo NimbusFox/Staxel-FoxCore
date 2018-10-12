@@ -7,23 +7,22 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Managers {
     public class UserManager {
-        private static readonly DirectoryManager FileManager = new DirectoryManager("NimbusFox", "FoxCore");
-        private const string CacheFile = "User.2.1.cache";
+        private const string CacheFile = "User.cache";
         private Blob _cache;
 
         internal UserManager() {
-            if (!FileManager.FileExists(CacheFile)) {
+            if (!CoreHook.FxCore.ConfigDirectory.FileExists(CacheFile)) {
                 _cache = BlobAllocator.Blob(true);
                 Flush();
             } else {
-                _cache = FileManager.ReadFile<Blob>(CacheFile);
+                _cache = CoreHook.FxCore.ConfigDirectory.ReadFile<Blob>(CacheFile);
             }
         }
 
         private void Flush() {
             var blob = BlobAllocator.Blob(true);
             blob.SetObject("userCache", _cache);
-            FileManager.WriteFile(CacheFile, blob, false, true);
+            CoreHook.FxCore.ConfigDirectory.WriteFile(CacheFile, blob, false, true);
             Blob.Deallocate(ref blob);
         }
 

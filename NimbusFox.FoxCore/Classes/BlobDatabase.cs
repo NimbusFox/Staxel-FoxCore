@@ -114,8 +114,8 @@ namespace NimbusFox.FoxCore.Classes {
             foreach (var key in _database.KeyValueIteratable.Keys) {
                 var current = _database.GetBlob(key);
 
-                if (current.Contains("type")) {
-                    if (current.GetString("type") == typeof(T).FullName) {
+                if (current.Contains("_type")) {
+                    if (current.GetString("_type") == typeof(T).FullName) {
                         var record = GetRecord<T>(Guid.Parse(key));
 
                         if (func(record)) {

@@ -16,8 +16,11 @@ namespace NimbusFox.FoxCore.Classes {
         protected readonly Blob _blob;
         [JsonIgnore]
         private Timer _timer;
-        [JsonProperty("type")]
-        protected string _type { get; set; }
+        
+        protected string _type {
+            get => _blob.GetString("_type", "");
+            set => _blob.SetString("_type", value);
+        }
 
         public BaseRecord(BlobDatabase database, Blob blob) {
             _database = database;

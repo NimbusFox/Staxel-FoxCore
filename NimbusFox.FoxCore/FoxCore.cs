@@ -23,6 +23,7 @@ namespace NimbusFox.FoxCore {
         public DirectoryManager ModsDirectory { get; }
         public DirectoryManager ConfigDirectory { get; }
         public DirectoryManager ContentDirectory { get; }
+        // ReSharper disable once MemberCanBeMadeStatic.Global
         public ServerMainLoop ServerMainLoop => CoreHook.ServerMainLoop;
         public SettingsManager SettingsManager { get; }
 
@@ -53,11 +54,11 @@ namespace NimbusFox.FoxCore {
             _version = modVersion;
             ExceptionManager = new ExceptionManager(author, mod, modVersion, errorEmail);
             WorldManager = new WorldManager();
-            SaveDirectory = new DirectoryManager(author, mod);
+            SaveDirectory = new DirectoryManager(author, mod).FetchDirectoryNoParent(modVersion);
             ModDirectory = new DirectoryManager(mod) {ContentFolder = true};
             ModsDirectory = new DirectoryManager {ContentFolder = true}.FetchDirectoryNoParent("content");
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
-            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("modConfigs").FetchDirectoryNoParent(mod);
+            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("modConfigs").FetchDirectoryNoParent(mod).FetchDirectoryNoParent(modVersion);
             ContentDirectory = new DirectoryManager {ContentFolder = true}.FetchDirectoryNoParent("content");
             _patchControllerId = $"{_author}.{_mod}";
             SettingsManager = new SettingsManager(author, mod, modVersion);

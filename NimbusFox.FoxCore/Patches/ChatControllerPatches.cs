@@ -19,10 +19,10 @@ namespace NimbusFox.FoxCore.Patches {
 
         public static bool ReceiveConsoleResponse(Blob blob) {
             string str1 = blob.GetString("response");
-            if (str1.IsNullOrEmpty())
-                return true;
-
             var handleMessage = false;
+            if (str1.IsNullOrEmpty())
+                return handleMessage;
+
 
             try {
                 var settings = BlobAllocator.Blob(true);
@@ -41,7 +41,7 @@ namespace NimbusFox.FoxCore.Patches {
             } catch {
                 // ignore
             }
-            return handleMessage;
+            return !handleMessage;
         }
     }
 }
