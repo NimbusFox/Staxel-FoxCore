@@ -32,7 +32,7 @@ namespace NimbusFox.FoxCore.Classes {
                 using (var ms = new MemoryStream()) {
                     _databaseFile.CopyTo(ms);
                     ms.Seek(0, SeekOrigin.Begin);
-                    _database.Read(ms);
+                    _database.LoadJsonStream(ms);
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
@@ -79,7 +79,7 @@ namespace NimbusFox.FoxCore.Classes {
                 throw new BlobDatabaseRecordException("No record with this guid exists");
             }
 
-            return (T)Activator.CreateInstance(typeof(T), this, _database.FetchBlob(guid.ToString()));
+            return (T)Activator.CreateInstance(typeof(T), this, _database.FetchBlob(guid.ToString()), guid);
         }
 
         public void RemoveRecord(Guid guid) {
@@ -133,7 +133,7 @@ namespace NimbusFox.FoxCore.Classes {
                 _databaseFile.SetLength(0);
                 _databaseFile.Position = 0;
                 using (var ms = new MemoryStream()) {
-                    _database.WriteFull(ms);
+                    _database.SaveJsonStream(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     ms.CopyTo(_databaseFile);
                 }

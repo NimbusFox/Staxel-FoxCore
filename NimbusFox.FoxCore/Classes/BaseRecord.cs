@@ -16,15 +16,18 @@ namespace NimbusFox.FoxCore.Classes {
         protected readonly Blob _blob;
         [JsonIgnore]
         private Timer _timer;
+
+        public Guid ID { get; }
         
         protected string _type {
             get => _blob.GetString("_type", "");
             set => _blob.SetString("_type", value);
         }
 
-        public BaseRecord(BlobDatabase database, Blob blob) {
+        public BaseRecord(BlobDatabase database, Blob blob, Guid id) {
             _database = database;
             _blob = blob;
+            ID = id;
         }
 
         public void Save() {

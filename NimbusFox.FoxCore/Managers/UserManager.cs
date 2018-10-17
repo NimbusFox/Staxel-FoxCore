@@ -63,11 +63,11 @@ namespace NimbusFox.FoxCore.Managers {
         }
 
         public string GetUidByName(string name) {
-            return CloneCache().FirstOrDefault(x => string.Equals(x.DisplayName, name, StringComparison.CurrentCultureIgnoreCase))?.Uid;
+            return CloneCache().FirstOrDefault(x => string.Equals(x.DisplayName, name, StringComparison.CurrentCultureIgnoreCase))?.Uid ?? "";
         }
 
         public string GetNameByUid(string uid) {
-            return CloneCache().FirstOrDefault(x => x.Uid == uid)?.DisplayName;
+            return CloneCache().FirstOrDefault(x => x.Uid == uid)?.DisplayName ?? "";
         }
 
         public IReadOnlyList<string> GetPlayerNames() {
