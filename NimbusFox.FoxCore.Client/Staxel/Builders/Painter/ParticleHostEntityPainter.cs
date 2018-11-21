@@ -29,9 +29,9 @@ namespace NimbusFox.FoxCore.Client.Staxel.Builders.Painter {
         public override void BeforeRender(DeviceContext graphics, Vector3D renderOrigin, Entity entity, AvatarController avatarController,
             Timestep renderTimestep) { }
 
-        public override void Render(DeviceContext graphics, Matrix4F matrix, Vector3D renderOrigin, Entity entity,
+        public override void Render(DeviceContext graphics, ref Matrix4F matrix, Vector3D renderOrigin, Entity entity,
             AvatarController avatarController, Timestep renderTimestep, RenderMode renderMode) {
-            _effectRenderer.Render(entity, this, renderTimestep, graphics, matrix, renderOrigin, renderMode);
+            _effectRenderer.Render(entity, this, renderTimestep, graphics, ref matrix, renderOrigin, renderMode);
         }
 
         public override void StartEmote(Entity entity, Timestep renderTimestep, EmoteConfiguration emote) { }

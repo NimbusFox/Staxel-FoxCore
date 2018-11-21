@@ -141,7 +141,7 @@ namespace NimbusFox {
             }
 
             if (FxCore == null) {
-                FxCore = new Fox_Core("NimbusFox", "FoxCore", "V2.1", "nimbusfox.foxcore@nimbusfox.uk");
+                FxCore = new Fox_Core("NimbusFox", "FoxCore", "V2.1");
 
                 //FxCore.PatchController.Add(typeof(PlayerEntityLogic), "PersistOtherPlayerData", typeof(CoreHook), nameof(BeforeSave), typeof(CoreHook), nameof(AfterSave));
                 //FxCore.PatchController.Add(typeof(PlayerEntityLogic), "Construct", null, null, typeof(CoreHook), nameof(AfterLoad));
@@ -149,8 +149,7 @@ namespace NimbusFox {
                 FxCore.PatchController.Add(typeof(PlayerPersistence), "SaveDisconnectingPlayer", null, null, typeof(CoreHook), nameof(OnDisconnect));
                 FxCore.PatchController.Add(typeof(ChatController), "ReceiveConsoleResponse",
                     typeof(ChatControllerPatches), nameof(ChatControllerPatches.ReceiveConsoleResponse));
-
-                FxCore.ProcessReportingMods();
+                
                 UserManager = new UserManager();
             }
         }
