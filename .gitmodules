@@ -7,3 +7,9 @@
 [submodule "NimbusFox.FoxCore/Personal-Harmony"]
 	path = NimbusFox.FoxCore/Personal-Harmony
 	url = git@gitlab.com:Nimbus-Fox/Personal-Harmony.git
+[submodule "NimbusFox.FoxCore.V3/Personal-Newtonsoft.Json"]
+	path = NimbusFox.FoxCore.V3/Personal-Newtonsoft.Json
+	url = git@gitlab.com:Nimbus-Fox/Personal-Newtonsoft.Json.git
+[submodule "NimbusFox.FoxCore.V3/Personal-Harmony"]
+	path = NimbusFox.FoxCore.V3/Personal-Harmony
+	url = git@gitlab.com:Nimbus-Fox/Personal-Harmony.git
