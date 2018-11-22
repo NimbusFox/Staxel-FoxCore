@@ -13,3 +13,6 @@
 [submodule "NimbusFox.FoxCore.V3/Personal-Harmony"]
 	path = NimbusFox.FoxCore.V3/Personal-Harmony
 	url = git@gitlab.com:Nimbus-Fox/Personal-Harmony.git
+[submodule "NimbusFox.FoxCore.V3/Personal-JsonNet-Bson"]
+	path = NimbusFox.FoxCore.V3/Personal-JsonNet-Bson
+	url = git@gitlab.com:Nimbus-Fox/Personal-JsonNet-Bson.git

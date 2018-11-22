@@ -6,13 +6,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.Bson;
+using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
-
 namespace NimbusFox.FoxCore.V3.Classes {
     public class BlobFile : IDisposable {
         private readonly bool _binary;
         private readonly FileStream _fileStream;
-        protected readonly Blob Blob;
+        protected readonly FoxBlob Blob;
         private Timer _timer;
         private readonly BinaryFormatter _bf = new BinaryFormatter();
 
@@ -25,7 +27,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
             _binary = binary;
             _fileStream.Seek(0, SeekOrigin.Begin);
 
-            Blob = BlobAllocator.Blob(true);
+            Blob = new FoxBlob();
 
             if (_fileStream.Length == 0) {
                 ForceSave();
@@ -34,12 +36,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
 
             try {
                 if (binary) {
-                    var bytes = Convert.FromBase64String((string)_bf.Deserialize(_fileStream));
-
-                    using (var ms = new MemoryStream(bytes)) {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        Blob.ReadJson((string)_bf.Deserialize(ms));
-                    }
+                    Blob = (FoxBlob)_bf.Deserialize(_fileStream);
                 } else {
                     Blob.ReadJson(_fileStream.ReadAllText());
                 }
@@ -78,23 +75,30 @@ namespace NimbusFox.FoxCore.V3.Classes {
             _fileStream.SetLength(0);
             _fileStream.Position = 0;
             if (_binary) {
-                using (var ms = new MemoryStream()) {
-                    _bf.Serialize(ms, Blob.ToString());
-                    ms.Seek(0, SeekOrigin.Begin);
-                    _bf.Serialize(_fileStream, Convert.ToBase64String(ms.ToArray()));
-                }
+                _bf.Serialize(_fileStream, Blob);
             } else {
-                Blob.SaveJsonStream(_fileStream);
+                using (var ms = new MemoryStream()) {
+                    using (var sw = new StreamWriter(ms)) {
+                        sw.Write(Blob.ToString());
+                        sw.Flush();
+                        ms.Seek(0, SeekOrigin.Begin);
+                        ms.CopyTo(_fileStream);
+                    }
+                }
             }
             _fileStream.Flush(true);
         }
 
-        public Blob CopyBlob() {
-            var tempBlob = BlobAllocator.Blob(true);
+        public FoxBlob CopyBlob() {
+            return Blob.Clone();
+        }
 
-            tempBlob.AssignFrom(Blob);
+        public Blob ToStaxelBlob() {
+            var temp = BlobAllocator.Blob(true);
 
-            return tempBlob;
+            temp.ReadJson(Blob.ToString());
+
+            return temp;
         }
     }
 }

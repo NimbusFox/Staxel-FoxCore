@@ -66,14 +66,14 @@ namespace NimbusFox.FoxCore.Managers {
                                 mail.Body += "Data:" + Environment.NewLine + JsonConvert.SerializeObject(extras);
                             }
 
-                        smtpClient.Send(mail);
-                    } catch {
-                        smtpClient.Dispose();
+                            smtpClient.Send(mail);
+                        } catch {
+                            smtpClient.Dispose();
 
-                        mail.Dispose();
-                        // if mail fails to send do nothing
+                            mail.Dispose();
+                            // if mail fails to send do nothing
+                        }
                     }
-                }
                 }
             }
         }

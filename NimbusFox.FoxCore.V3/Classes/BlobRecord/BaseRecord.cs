@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
+using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
 
 namespace NimbusFox.FoxCore.V3.Classes.BlobRecord {
@@ -12,7 +13,7 @@ namespace NimbusFox.FoxCore.V3.Classes.BlobRecord {
         [JsonIgnore]
         private readonly BlobDatabase _database;
         [JsonIgnore]
-        protected readonly Blob _blob;
+        protected readonly FoxBlob _blob;
         [JsonIgnore]
         private Timer _timer;
 
@@ -23,7 +24,7 @@ namespace NimbusFox.FoxCore.V3.Classes.BlobRecord {
             set => _blob.SetString("_type", value);
         }
 
-        public BaseRecord(BlobDatabase database, Blob blob, Guid id) {
+        public BaseRecord(BlobDatabase database, FoxBlob blob, Guid id) {
             _database = database;
             _blob = blob;
             ID = id;
@@ -42,16 +43,17 @@ namespace NimbusFox.FoxCore.V3.Classes.BlobRecord {
         }
 
         public void Load(Blob blob) {
-            _blob.AssignFrom(blob);
+            _blob.MergeFrom(blob);
             Save();
         }
 
-        public Blob CopyBlob() {
-            var tempBlob = BlobAllocator.Blob(true);
+        public void Load(FoxBlob blob) {
+            _blob.MergeFrom(blob);
+            Save();
+        }
 
-            tempBlob.AssignFrom(_blob);
-
-            return tempBlob;
+        public FoxBlob CopyBlob() {
+            return _blob.Clone();
         }
     }
 }

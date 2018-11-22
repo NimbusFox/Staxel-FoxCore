@@ -1,50 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
+using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.Bson;
 using NimbusFox.FoxCore.V3.Classes.BlobRecord;
+using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
 
 namespace NimbusFox.FoxCore.V3.Classes {
     public class BlobDatabase : IDisposable {
-        private Blob _database;
+        private FoxBlob _database;
         private bool _needsStore;
         private readonly FileStream _databaseFile;
+        private BinaryFormatter _bf = new BinaryFormatter();
 
         public void Dispose() {
             NeedsStore();
             Save();
-            Blob.Deallocate(ref _database);
+            _database.Dispose();
             _databaseFile.Dispose();
         }
 
         public BlobDatabase(FileStream stream, Action<string> errorLogger) {
             _databaseFile = stream;
-            _database = BlobAllocator.Blob(true);
+            _database = new FoxBlob();
 
             _databaseFile.Seek(0L, SeekOrigin.Begin);
 
             try {
-                using (var ms = new MemoryStream()) {
-                    _databaseFile.CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    _database.LoadJsonStream(ms);
-                }
+                _database = (FoxBlob)_bf.Deserialize(_databaseFile);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                _databaseFile.Seek(0, SeekOrigin.Begin);
 
-                File.WriteAllBytes(stream.Name + ".bak", stream.ReadAllBytes());
+                File.WriteAllBytes(_databaseFile.Name + ".bak", _databaseFile.ReadAllBytes());
             } catch {
-                if (File.Exists(stream.Name + ".bak")) {
+                if (File.Exists(_databaseFile.Name + ".bak")) {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    errorLogger($"{stream.Name} was corrupt. Will revert to backup file");
+                    errorLogger($"{_databaseFile.Name} was corrupt. Will revert to backup file");
                     Console.ResetColor();
 
-                    using (var ms = new MemoryStream(File.ReadAllBytes(stream.Name + ".bak"))) {
-                        _database.LoadJsonStream(ms);
+                    using (var ms = new MemoryStream(File.ReadAllBytes(_databaseFile.Name + ".bak"))) {
+                        _database = (FoxBlob)_bf.Deserialize(ms);
                     }
                 }
             }
@@ -110,7 +112,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
         public List<T> SearchRecords<T>(Expression<Func<T, bool>> expression) where T : BaseRecord {
             var output = new List<T>();
             var func = expression.Compile();
-            foreach (var key in _database.KeyValueIteratable.Keys) {
+            foreach (var key in _database.Entries.Keys) {
                 var current = _database.GetBlob(key);
 
                 if (current.Contains("_type")) {
@@ -131,11 +133,9 @@ namespace NimbusFox.FoxCore.V3.Classes {
             if (_needsStore) {
                 _databaseFile.SetLength(0);
                 _databaseFile.Position = 0;
-                using (var ms = new MemoryStream()) {
-                    _database.SaveJsonStream(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    ms.CopyTo(_databaseFile);
-                }
+                
+                _bf.Serialize(_databaseFile, _database.ToString());
+
                 _databaseFile.Flush(true);
                 _needsStore = false;
             }

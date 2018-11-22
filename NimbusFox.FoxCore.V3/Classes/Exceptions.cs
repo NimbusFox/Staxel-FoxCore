@@ -36,4 +36,20 @@ namespace NimbusFox.FoxCore.V3.Classes {
 
         public BlobDatabaseRecordTypeException(string message, Exception innerException) : base(message, innerException) { }
     }
+
+    public class BlobKindException : Exception {
+        public BlobKindException() { }
+
+        public BlobKindException(string message) : base(message) { }
+
+        public BlobKindException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class BlobValueException : Exception {
+        public BlobValueException() { }
+
+        public BlobValueException(string message) : base(message) { }
+
+        public BlobValueException(string message, Exception innerException) : base(message, innerException) { }
+    }
 }
