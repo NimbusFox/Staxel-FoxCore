@@ -173,7 +173,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
             if (Universe.Server) {
                 var blob = BlobAllocator.Blob(true);
                 var storeBlob = blob.FetchBlob("store");
-                var hasVal = true;
+                var hasVal = false;
                 foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                     if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHook mod) {
                         if (!storeBlob.Contains(mod.GetType().FullName)) {

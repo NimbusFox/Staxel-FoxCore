@@ -14,11 +14,12 @@ namespace NimbusFox.FoxCore.V3.Classes {
     public class BlobFile : IDisposable {
         private readonly bool _binary;
         private readonly FileStream _fileStream;
-        protected readonly FoxBlob Blob;
+        protected FoxBlob Blob { get; private set; }
         private Timer _timer;
         private readonly BinaryFormatter _bf = new BinaryFormatter();
 
         protected BlobFile(FileStream stream, bool binary = false) {
+            Blob = new FoxBlob();
             if (stream == null) {
                 return;
             }
@@ -26,8 +27,6 @@ namespace NimbusFox.FoxCore.V3.Classes {
             _fileStream = stream;
             _binary = binary;
             _fileStream.Seek(0, SeekOrigin.Begin);
-
-            Blob = new FoxBlob();
 
             if (_fileStream.Length == 0) {
                 ForceSave();
@@ -72,6 +71,9 @@ namespace NimbusFox.FoxCore.V3.Classes {
         }
 
         protected void ForceSave() {
+            if (_fileStream == null) {
+                return;
+            }
             _fileStream.SetLength(0);
             _fileStream.Position = 0;
             if (_binary) {

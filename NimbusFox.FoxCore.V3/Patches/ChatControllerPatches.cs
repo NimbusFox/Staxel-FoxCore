@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,13 +21,19 @@ namespace NimbusFox.FoxCore.V3.Patches {
             try {
                 var data = BlobAllocator.Blob(true);
 
-                data.ReadJson(blob.GetString("response"));
+                try {
+                    data.ReadJson(blob.GetString("response"));
+                } catch {
+                    // ignore
+                }
 
-                var storeBlob = data.FetchBlob("store");
-                CoreHook.StartRestore(storeBlob);
-                Blob.Deallocate(ref data);
-                return false;
-            } catch {
+                if (data.Contains("store")) {
+                    var storeBlob = data.FetchBlob("store");
+                    CoreHook.StartRestore(storeBlob);
+                    Blob.Deallocate(ref data);
+                    return false;
+                }
+            } catch when (!Debugger.IsAttached) {
                 // ignore
             }
             return true;
