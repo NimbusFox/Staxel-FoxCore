@@ -59,7 +59,8 @@ namespace NimbusFox.FoxCore.V3.Classes {
             return guid == Guid.Empty || _database.Contains(guid.ToString());
         }
 
-        public T CreateRecord<T>(Guid guid) where T : BaseRecord {
+        public T CreateRecord<T>() where T : BaseRecord {
+            var guid = Guid.NewGuid();
             if (!typeof(BaseRecord).IsAssignableFrom(typeof(T))) {
                 throw new BlobDatabaseRecordTypeException("The type given for T does not inherit BaseRecord");
             }
@@ -95,7 +96,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
                 throw new BlobDatabaseRecordTypeException("The type given for T does not inherit BaseRecord");
             }
 
-            var record = RecordExists(guid) ? CreateRecord<T>(guid) : GetRecord<T>(guid);
+            var record = RecordExists(guid) ? CreateRecord<T>() : GetRecord<T>(guid);
 
             record.Load(newRecord.CopyBlob());
 
