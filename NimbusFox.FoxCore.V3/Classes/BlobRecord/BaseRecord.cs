@@ -32,14 +32,8 @@ namespace NimbusFox.FoxCore.V3.Classes.BlobRecord {
 
         public void Save() {
             _type = GetType().DeclaringType?.FullName ?? GetType().FullName;
-            _timer?.Stop();
-            _timer?.Dispose();
-            _timer = new Timer(5000) { AutoReset = false };
-            _timer.Start();
-            _timer.Elapsed += (sender, args) => {
-                _database.NeedsStore();
-                _database.Save();
-            };
+            _database.NeedsStore();
+            _database.Save();
         }
 
         public void Load(Blob blob) {

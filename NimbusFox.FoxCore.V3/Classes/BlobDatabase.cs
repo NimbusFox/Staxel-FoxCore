@@ -7,11 +7,13 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.Bson;
 using NimbusFox.FoxCore.V3.Classes.BlobRecord;
 using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
+using Staxel.Core;
 
 namespace NimbusFox.FoxCore.V3.Classes {
     public class BlobDatabase : IDisposable {
@@ -19,12 +21,14 @@ namespace NimbusFox.FoxCore.V3.Classes {
         private bool _needsStore;
         private readonly FileStream _databaseFile;
         private BinaryFormatter _bf = new BinaryFormatter();
+        private Timer _timer;
 
         public void Dispose() {
-            NeedsStore();
-            Save();
+            ForceSave();
             _database.Dispose();
             _databaseFile.Dispose();
+            _timer?.Stop();
+            _timer?.Dispose();
         }
 
         public BlobDatabase(FileStream stream, Action<string> errorLogger) {
@@ -69,7 +73,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
                 throw new BlobDatabaseRecordException("A record already exists with this guid");
             }
             NeedsStore();
-            return (T)Activator.CreateInstance(typeof(T), this, _database.FetchBlob(guid.ToString()));
+            return (T)Activator.CreateInstance(typeof(T), new object[] { this, _database.FetchBlob(guid.ToString()), guid });
         }
 
         public T GetRecord<T>(Guid guid) where T : BaseRecord {
@@ -132,14 +136,26 @@ namespace NimbusFox.FoxCore.V3.Classes {
 
         public void Save() {
             if (_needsStore) {
-                _databaseFile.SetLength(0);
-                _databaseFile.Position = 0;
-                
-                _bf.Serialize(_databaseFile, _database.ToString());
-
-                _databaseFile.Flush(true);
-                _needsStore = false;
+                _timer?.Stop();
+                _timer?.Dispose();
+                _timer = new Timer(5000) { AutoReset = false };
+                _timer.Start();
+                _timer.Elapsed += (sender, args) => {
+                    ForceSave();
+                    _timer?.Stop();
+                };
             }
+        }
+
+        private void ForceSave() {
+            _databaseFile.SetLength(0);
+            _databaseFile.Position = 0;
+            _databaseFile.Flush(true);
+
+            _bf.Serialize(_databaseFile, _database);
+
+            _databaseFile.Flush(true);
+            _needsStore = false;
         }
     }
 }
