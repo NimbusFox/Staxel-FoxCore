@@ -18,6 +18,8 @@ namespace NimbusFox.FoxCore.V3.Classes {
         private Timer _timer;
         private readonly BinaryFormatter _bf = new BinaryFormatter();
 
+        protected bool IsStream => _fileStream == null;
+
         protected BlobFile(FileStream stream, bool binary = false) {
             Blob = new FoxBlob();
             if (stream == null) {
