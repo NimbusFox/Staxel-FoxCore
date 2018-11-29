@@ -27,7 +27,6 @@ namespace NimbusFox.FoxCore.V3.Classes {
         internal static Universe Universe;
         internal static ServerMainLoop ServerMainLoop;
         internal static FoxCore FxCore;
-        private static long _cacheTick;
         internal static Entity _settingEntity;
 
         internal static void AfterLoad(PlayerEntityLogic __instance) {
@@ -128,7 +127,6 @@ namespace NimbusFox.FoxCore.V3.Classes {
         }
 
         public void Dispose() {
-            _cacheTick = 0;
             _settingEntity?.Dispose();
             _settingEntity = null;
         }
@@ -153,12 +151,6 @@ namespace NimbusFox.FoxCore.V3.Classes {
             if (universe.Server) {
                 if (UserManager == null) {
                     UserManager = new UserManager();
-                }
-                if (_cacheTick <= DateTime.Now.Ticks) {
-                    foreach (var player in UserManager.GetPlayerEntities()) {
-                        UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
-                    }
-                    _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
                 }
 
                 if (ServerMainLoop == null) {

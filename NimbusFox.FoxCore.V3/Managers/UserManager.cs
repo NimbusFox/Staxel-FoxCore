@@ -6,20 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NimbusFox.FoxCore.V3.Classes;
 using Plukit.Base;
+using Staxel;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.Managers {
     public class UserManager {
-        private const string CacheFile = "User.cache";
-        private readonly UserCacheFile _cacheFile;
 
         internal UserManager() {
-            _cacheFile = new UserCacheFile(
-                CoreHook.FxCore.ConfigDirectory.ObtainFileStream(CacheFile, FileMode.OpenOrCreate));
-        }
-
-        private void Flush() {
-            _cacheFile.InteralSave();
         }
 
         private Universe Universe => CoreHook.Universe;
@@ -32,38 +25,12 @@ namespace NimbusFox.FoxCore.V3.Managers {
             return output;
         }
 
-        internal void AddUpdateEntry(string uid, string name) {
-            if (string.IsNullOrEmpty(GetNameByUid(uid))) {
-                var newUser = new UserCache {
-                    DisplayName = name,
-                    Uid = uid
-                };
-                _cacheFile.Blob.FromObject(uid, newUser);
-            } else {
-                var user = _cacheFile.Blob.ToObject<UserCache>(uid);
-                user.DisplayName = name;
-                _cacheFile.Blob.FromObject(uid, user);
-            }
-
-            Flush();
-        }
-
-        private List<UserCache> CloneCache() {
-            var list = new List<UserCache>();
-
-            foreach (var blob in _cacheFile.Blob.Entries) {
-                list.Add(_cacheFile.Blob.ToObject<UserCache>(blob.Key));
-            }
-
-            return list;
-        }
-
         public string GetUidByName(string name) {
-            return CloneCache().FirstOrDefault(x => string.Equals(x.DisplayName, name, StringComparison.CurrentCultureIgnoreCase))?.Uid ?? "";
+            return ServerContext.RightsManager.TryGetUIDByUsername(name, out var uid) ? uid : null;
         }
 
         public string GetNameByUid(string uid) {
-            return CloneCache().FirstOrDefault(x => x.Uid == uid)?.DisplayName ?? "";
+            return GetPlayerEntityByUid(uid).PlayerEntityLogic.DisplayName();
         }
 
         public IReadOnlyList<string> GetPlayerNames() {
