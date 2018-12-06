@@ -24,11 +24,11 @@ namespace NimbusFox.FoxCore.V3.Classes {
         private Timer _timer;
 
         public void Dispose() {
+            _timer?.Stop();
+            _timer?.Dispose();
             ForceSave();
             _database.Dispose();
             _databaseFile.Dispose();
-            _timer?.Stop();
-            _timer?.Dispose();
         }
 
         public BlobDatabase(FileStream stream, Action<string> errorLogger) {
@@ -138,7 +138,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
             if (_needsStore) {
                 _timer?.Stop();
                 _timer?.Dispose();
-                _timer = new Timer(5000) { AutoReset = false };
+                _timer = new Timer(1000) { AutoReset = false };
                 _timer.Start();
                 _timer.Elapsed += (sender, args) => {
                     ForceSave();
