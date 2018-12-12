@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Costura.Fody.3.2.1\build\Costura.Fody.props" Condition="Exists('..\..\packages\Costura.Fody.3.2.1\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +38,13 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=3.2.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Costura.Fody.3.2.1\lib\net40\Costura.dll</HintPath>
+    </Reference>
+    <Reference Include="FNA">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Staxel\bin\FNA.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Plukit.Base">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
       <Private>False</Private>
@@ -48,12 +58,14 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +84,7 @@
     <Compile Include="Classes\VectorCubeI.cs" />
     <Compile Include="Classes\VectorSquareD.cs" />
     <Compile Include="Classes\VectorSquareI.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FoxCore.cs" />
     <Compile Include="Helpers.cs" />
@@ -82,6 +95,7 @@
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Patches\ChatControllerPatches.cs" />
     <Compile Include="Patches\ClientServerConnectionPatches.cs" />
+    <Compile Include="Patches\OverlayRendererPatches.cs" />
     <Compile Include="Patches\PatchController.cs" />
     <Compile Include="Personal-Harmony\Harmony\Attributes.cs" />
     <Compile Include="Personal-Harmony\Harmony\CodeInstruction.cs" />
@@ -336,12 +350,51 @@
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FoxUIHook.cs" />
+    <Compile Include="UI\Classes\UiBackground.cs" />
+    <Compile Include="UI\Classes\UiContainer.cs" />
+    <Compile Include="UI\Classes\UiElement.cs" />
+    <Compile Include="UI\Classes\UiTextBlock.cs" />
+    <Compile Include="UI\Classes\UiWindow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Dynamic.snk" />
     <None Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Newtonsoft.Json.ruleset" />
+    <None Include="Staxel\Fonts\bin\MyFirstCrush.12.xnb" />
+    <None Include="Staxel\Fonts\bin\MyFirstCrush.24.xnb" />
+    <None Include="Staxel\Fonts\bin\MyFirstCrush.36.xnb" />
+    <None Include="Staxel\Fonts\Fonts.mgcb" />
+    <None Include="Staxel\Fonts\MyFirstCrush.12.spritefont" />
+    <None Include="Staxel\Fonts\MyFirstCrush.12.uifont">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.12.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.24.spritefont" />
+    <None Include="Staxel\Fonts\MyFirstCrush.24.uifont">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.24.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.36.spritefont" />
+    <None Include="Staxel\Fonts\MyFirstCrush.36.uifont">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.36.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\Fonts\MyFirstCrush.ttf" />
+    <None Include="Staxel\Fonts\obj\.mgcontent" />
+    <None Include="Staxel\Fonts\obj\MyFirstCrush.12.mgcontent" />
+    <None Include="Staxel\Fonts\obj\MyFirstCrush.24.mgcontent" />
+    <None Include="Staxel\Fonts\obj\MyFirstCrush.36.mgcontent" />
+    <None Include="Staxel\Fonts\obj\MyFirstCrush.font.mgcontent" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
     <Content Include="Licenses\FoxCore.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -359,4 +412,12 @@
   <PropertyGroup>
     <PostBuildEvent>echo {}  &gt; $(TargetDir)$(TargetName).mod</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\Fody.3.3.3\build\Fody.targets" Condition="Exists('..\..\packages\Fody.3.3.3\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Fody.3.3.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.3.3.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Costura.Fody.3.2.1\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Costura.Fody.3.2.1\build\Costura.Fody.props'))" />
+  </Target>
 </Project>
