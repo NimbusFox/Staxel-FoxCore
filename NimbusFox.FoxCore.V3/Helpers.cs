@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Plukit.Base;
 using Staxel;
 using Staxel.Items;
@@ -73,6 +74,13 @@ namespace NimbusFox.FoxCore.V3 {
             }
 
             return config.MakeTile(config.BuildRotationVariant(rotation));
+        }
+
+        public static bool VectorContains(Vector2 start, Vector2 end, Vector2 location) {
+            return start.X < location.X &&
+                   end.X > location.X &&
+                   start.Y < location.Y &&
+                   end.Y > location.Y;
         }
     }
 }

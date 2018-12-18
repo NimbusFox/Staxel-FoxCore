@@ -4,10 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NimbusFox.FoxCore.V3.Events;
+using NimbusFox.FoxCore.V3.Events.Builders;
 using NimbusFox.FoxCore.V3.Patches;
 using NimbusFox.FoxCore.V3.UI.Classes;
 using Plukit.Base;
 using Staxel;
+using Staxel.Effects;
+using Staxel.Input;
 using Staxel.Items;
 using Staxel.Logic;
 using Staxel.Modding;
@@ -84,7 +88,9 @@ namespace NimbusFox.FoxCore.V3 {
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }
         public void GameContextReloadAfter() { }
-        public void UniverseUpdateBefore(Universe universe, Timestep step) { }
+
+        public void UniverseUpdateBefore(Universe universe, Timestep step) {
+        }
         public void UniverseUpdateAfter() { }
         public bool CanPlaceTile(Entity entity, Vector3I location, Tile tile, TileAccessFlags accessFlags) {
             return true;

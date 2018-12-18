@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NimbusFox.FoxCore.V3.UI.Enums;
 using Plukit.Base;
 using Staxel.Client;
 using Staxel.Draw;
@@ -21,13 +22,16 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public event Action OnShow;
         public event Action OnHide;
 
-        public UiWindow() {
+        private UiAlignment _alignment;
+
+        public UiWindow(UiAlignment alignment = UiAlignment.MiddleCenter) {
             FoxUIHook.Instance.Windows.Add(this);
             Container = new UiContainer();
+            _alignment = alignment;
         }
 
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
-            AvatarController avatarController) {
+            AvatarController avatarController, Vector2I mousePosition) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             }
@@ -36,16 +40,47 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
             var size = Container.GetSize();
 
-            var origin = new Vector2((graphics.Graphics.GraphicsDevice.Viewport.Width / 2) - (size.X / 2),
-                graphics.Graphics.GraphicsDevice.Viewport.Height - size.Y);
+            Vector2 origin;
+            var viewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch);
+            switch (_alignment) {
+                case UiAlignment.TopLeft:
+                    origin = new Vector2(0, 0);
+                    break;
+                case UiAlignment.TopCenter:
+                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), 0);
+                    break;
+                case UiAlignment.TopRight:
+                    origin = new Vector2(viewPort.Width - size.X, 0);
+                    break;
+                case UiAlignment.MiddleLeft:
+                    origin = new Vector2(0, (viewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleCenter:
+                default:
+                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), (viewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleRight:
+                    origin = new Vector2(viewPort.Width - size.X, (viewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.BottomLeft:
+                    origin = new Vector2(0, viewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomCenter:
+                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), viewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomRight:
+                    origin = new Vector2(viewPort.Width - size.X, viewPort.Height - size.Y);
+                    break;
+            }
+
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mousePosition);
 
             _spriteBatch.End();
         }
 
         internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
-            EntityPainter avatarPainter, Universe universe, Timestep timestep) {
+            EntityPainter avatarPainter, Universe universe, Timestep timestep, Vector2I mousePosition) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             }
@@ -57,7 +92,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var origin = new Vector2((graphics.Graphics.GraphicsDevice.Viewport.Width / 2) - (size.X / 2),
                 graphics.Graphics.GraphicsDevice.Viewport.Height - size.Y);
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch);
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mousePosition);
 
             _spriteBatch.End();
         }
@@ -83,8 +118,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void Update(Universe universe, AvatarController avatar, ScanCode? input,
-            Vector2I mousePosition, IReadOnlyList<InterfaceLogicalButton> inputPressed) {
-            Container.Update(universe, avatar, input, mousePosition, inputPressed);
+            IReadOnlyList<InterfaceLogicalButton> inputPressed) {
+            Container.Update(universe, avatar, input, inputPressed);
         }
 
         public void AddChild(UiElement element) {

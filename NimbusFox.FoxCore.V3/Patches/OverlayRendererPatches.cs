@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
+using NimbusFox.FoxCore.V3.Events;
+using NimbusFox.FoxCore.V3.Events.Builders;
 using Plukit.Base;
 using Staxel;
 using Staxel.Client;
 using Staxel.Draw;
+using Staxel.Effects;
 using Staxel.Input;
 using Staxel.Logic;
 using Staxel.Rendering;
@@ -17,14 +20,28 @@ namespace NimbusFox.FoxCore.V3.Patches {
             FoxUIHook.PatchController.Add(typeof(OverlayRenderer), "Update", typeof(OverlayRendererPatches), "Update");
         }
 
+        private static ModOptionsEvent modSettingsWindow;
+
         private static void Update(Universe universe, AvatarController avatarController) {
             ScanCode? input = null;
             if (ClientContext.InputSource.IsAnyScanCodeDownClick(out var keyInput)) {
                 input = keyInput;
+
+                if (keyInput == ScanCode.O) {
+                    if (modSettingsWindow == null || modSettingsWindow.Completed()) {
+                        modSettingsWindow = (ModOptionsEvent)GameContext.EffectDatabase.Instance(ModOptionsEventBuilder.KindCode, EffectMode.Sustain,
+                            Timestep.Null, null, null, null, null);
+                    } else {
+                        modSettingsWindow.Complete();
+                        modSettingsWindow = null;
+                    }
+                }
             }
 
-            var mouseState = ClientContext.InputSource.GetMouseState();
-            var mousePosition = Vector2I.Zero;
+            if (ClientContext.InputSource.IsCancelDownClicked()) {
+                modSettingsWindow?.Complete();
+                modSettingsWindow = null;
+            }
 
             var interfacePressed = new List<InterfaceLogicalButton>();
 
@@ -34,20 +51,22 @@ namespace NimbusFox.FoxCore.V3.Patches {
                 }
             }
 
-            mousePosition.Y = mouseState.Y;
-            mousePosition.X = mouseState.X;
-
             foreach (var window in FoxUIHook.Instance.Windows) {
-                window.Update(universe, avatarController, input, mousePosition, interfacePressed);
+                window.Update(universe, avatarController, input, interfacePressed);
             }
         }
 
         private static void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
             AvatarController avatarController) {
             InitializeContentManager(graphics);
+            var mouseState = ClientContext.InputSource.GetMouseState();
+            var mousePosition = Vector2I.Zero;
+
+            mousePosition.Y = mouseState.Y;
+            mousePosition.X = mouseState.X;
             foreach (var window in FoxUIHook.Instance.Windows) {
                 if (window.Visible && !window.AlwaysOnTop) {
-                    window.Draw(graphics, ref matrix, avatar, universe, avatarController);
+                    window.Draw(graphics, ref matrix, avatar, universe, avatarController, mousePosition);
                 }
             }
         }
@@ -55,9 +74,14 @@ namespace NimbusFox.FoxCore.V3.Patches {
         private static void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Vector3D renderOrigin, Entity avatar,
             EntityPainter avatarPainter, Universe universe, Timestep timestep) {
             InitializeContentManager(graphics);
+            var mouseState = ClientContext.InputSource.GetMouseState();
+            var mousePosition = Vector2I.Zero;
+
+            mousePosition.Y = mouseState.Y;
+            mousePosition.X = mouseState.X;
             foreach (var window in FoxUIHook.Instance.Windows) {
                 if (window.Visible && window.AlwaysOnTop) {
-                    window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep);
+                    window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep, mousePosition);
                 }
             }
         }

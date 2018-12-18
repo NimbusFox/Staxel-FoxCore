@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plukit.Base;
 using Staxel.Draw;
 using Staxel.Logic;
 
@@ -8,7 +9,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private string _text = "";
         private Color _color = Color.White;
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe,
-            Vector2 origin, SpriteBatch spriteBatch) {
+            Vector2 origin, SpriteBatch spriteBatch, Vector2I mousePosition) {
             var font = FoxUIHook.Instance.GetFont();
 
             spriteBatch.DrawString(font, _text, origin, _color);

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plukit.Base;
 using Staxel.Draw;
 using Staxel.Logic;
 
@@ -30,9 +31,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             return size;
         }
 
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch) {
-            base.Draw(graphics, entity, universe, origin, spriteBatch);
-
+        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, Vector2I mousePosition) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
@@ -44,9 +43,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     element.SetWindow(Window);
                 }
 
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mousePosition);
                 offset = offset + new Vector2(element.GetElementSize().X, 0);
             }
+
+            base.Draw(graphics, entity, universe, origin, spriteBatch, mousePosition);
         }
     }
 }

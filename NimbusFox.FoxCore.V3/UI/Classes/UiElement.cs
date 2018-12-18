@@ -20,9 +20,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public UiElement Parent { get; private set; }
 
         protected List<UiElement> Elements { get; } = new List<UiElement>();
+        protected int MinHeight = 0;
+        protected int MinWidth = 0;
 
         public virtual void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch) {
+            SpriteBatch spriteBatch, Vector2I mousePosition) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
                 if (element.Parent == null) {
@@ -32,7 +34,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 if (element.Window == null) {
                     element.Window = Window;
                 }
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mousePosition);
                 offset = offset + new Vector2(0, element.GetElementSize().Y);
             }
         }
@@ -51,13 +53,16 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
             size.Y = largestX;
 
+            size.X = size.X > MinWidth ? size.X : MinWidth;
+            size.Y = size.Y > MinHeight ? size.Y : MinHeight;
+
             return size;
         }
 
         public virtual void Update(Universe universe, AvatarController avatar, ScanCode? input,
-            Vector2I mousePosition, IReadOnlyList<InterfaceLogicalButton> inputPressed) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed) {
             foreach (var element in Elements) {
-                element.Update(universe, avatar, input, mousePosition, inputPressed);
+                element.Update(universe, avatar, input, inputPressed);
             }
         }
 
@@ -76,5 +81,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public abstract Vector2 GetElementSize();
+
+        public virtual void Deselect() {
+            foreach (var element in Elements) {
+                element.Deselect();
+            }
+        }
+
+        public void SetMinHeight(int height) {
+            MinHeight = height;
+        }
+
+        public void SetMinWidth(int width) {
+            MinWidth = width;
+        }
     }
 }
