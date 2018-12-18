@@ -354,6 +354,8 @@
     <Compile Include="UI\Classes\UiBackground.cs" />
     <Compile Include="UI\Classes\UiContainer.cs" />
     <Compile Include="UI\Classes\UiElement.cs" />
+    <Compile Include="UI\Classes\UiRow.cs" />
+    <Compile Include="UI\Classes\UiSpacer.cs" />
     <Compile Include="UI\Classes\UiTextBlock.cs" />
     <Compile Include="UI\Classes\UiWindow.cs" />
   </ItemGroup>
@@ -392,6 +394,9 @@
     <None Include="Staxel\Fonts\obj\MyFirstCrush.24.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.36.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.font.mgcontent" />
+    <None Include="Staxel\UI\Backgrounds\Dark\DarkBackground.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
@@ -402,6 +407,33 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Licenses\Json.NET.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkBottomLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkBottomMiddle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkBottomRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkMiddleLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkMiddleMiddle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkMiddleRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkTopLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkTopMiddle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Dark\DarkTopRight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

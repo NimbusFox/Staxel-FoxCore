@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
 using Staxel.Client;
 using Staxel.Draw;
+using Staxel.Input;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
@@ -28,7 +26,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Container = new UiContainer();
         }
 
-        public void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
+        internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
             AvatarController avatarController) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
@@ -46,7 +44,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             _spriteBatch.End();
         }
 
-        public void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
+        internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
             EntityPainter avatarPainter, Universe universe, Timestep timestep) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
@@ -66,12 +64,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void Dispose() {
             Hide();
+            OnClose?.Invoke();
             Container.Dispose();
 
             FoxUIHook.Instance.Windows.Remove(this);
 
             IsDisposed = true;
-            OnClose?.Invoke();
         }
 
         public void Show() {
@@ -84,8 +82,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             OnHide?.Invoke();
         }
 
-        public void Update(Universe universe, Entity entity) {
-            Container.Update(universe, entity);
+        internal void Update(Universe universe, AvatarController avatar, ScanCode? input,
+            Vector2I mousePosition, IReadOnlyList<InterfaceLogicalButton> inputPressed) {
+            Container.Update(universe, avatar, input, mousePosition, inputPressed);
         }
 
         public void AddChild(UiElement element) {

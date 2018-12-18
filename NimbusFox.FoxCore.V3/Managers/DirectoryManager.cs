@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
-using Staxel.Core;
-using Staxel.Items;
-using Staxel.Tiles;
-using Staxel.Voxel;
 
 namespace NimbusFox.FoxCore.V3.Managers {
     public class DirectoryManager {

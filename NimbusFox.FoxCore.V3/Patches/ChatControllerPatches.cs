@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NimbusFox.FoxCore.Dependencies.Harmony;
+﻿using System.Diagnostics;
 using NimbusFox.FoxCore.V3.Classes;
 using Plukit.Base;
 using Staxel.Client;
-using Staxel.Core;
 
 namespace NimbusFox.FoxCore.V3.Patches {
     internal static class ChatControllerPatches {

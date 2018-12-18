@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plukit.Base;
+using Staxel.Client;
 using Staxel.Draw;
+using Staxel.Input;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
@@ -16,8 +16,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
         }
 
-        protected UiWindow Window { get; private set; }
-        protected UiElement Parent { get; private set; }
+        public UiWindow Window { get; private set; }
+        public UiElement Parent { get; private set; }
 
         protected List<UiElement> Elements { get; } = new List<UiElement>();
 
@@ -33,30 +33,35 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     element.Window = Window;
                 }
                 element.Draw(graphics, entity, universe, origin + offset, spriteBatch);
-                offset = offset + new Vector2(0, element.GetSize().Y);
+                offset = offset + new Vector2(0, element.GetElementSize().Y);
             }
         }
 
         public virtual Vector2 GetSize() {
             var size = new Vector2(0, 0);
 
+            var largestX = 0F;
+
             foreach (var element in Elements) {
                 var eleSize = element.GetSize();
 
-                size.X += eleSize.X;
                 size.Y += eleSize.Y;
+                largestX = largestX < eleSize.Y ? eleSize.Y : largestX;
             }
+
+            size.Y = largestX;
 
             return size;
         }
 
-        public virtual void Update(Universe universe, Entity entity) {
+        public virtual void Update(Universe universe, AvatarController avatar, ScanCode? input,
+            Vector2I mousePosition, IReadOnlyList<InterfaceLogicalButton> inputPressed) {
             foreach (var element in Elements) {
-                element.Update(universe, entity);
+                element.Update(universe, avatar, input, mousePosition, inputPressed);
             }
         }
 
-        public void AddChild(UiElement element) {
+        public virtual void AddChild(UiElement element) {
             Elements.Add(element);
             element.SetParent(Parent);
             element.SetWindow(Window);
@@ -69,5 +74,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         internal void SetParent(UiElement element) {
             Parent = element;
         }
+
+        public abstract Vector2 GetElementSize();
     }
 }

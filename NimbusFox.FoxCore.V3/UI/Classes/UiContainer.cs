@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
@@ -23,7 +18,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Dispose() {
-            _background.Dispose();
+            _background?.Dispose();
             base.Dispose();
         }
 
@@ -35,6 +30,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     stream.Seek(0L, SeekOrigin.Begin);
                     var blob = BlobAllocator.Blob(false);
                     blob.ReadJson(stream.ReadAllText());
+                    _background?.Dispose();
                     _background = new UiBackground(graphics.Graphics.GraphicsDevice, blob);
                     _currentBackground = _backgroundLocation;
                 }
@@ -50,7 +46,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override Vector2 GetSize() {
-            var size = base.GetSize();
+            var size = Vector2.Zero;
+
+            foreach (var element in Elements) {
+                size += element.GetElementSize();
+            }
 
             var calcSize = size + TopLeftOffset + BottomRightOffset;
 
@@ -66,6 +66,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
 
             return calcSize;
+        }
+
+        public override Vector2 GetElementSize() {
+            return GetSize();
         }
     }
 }

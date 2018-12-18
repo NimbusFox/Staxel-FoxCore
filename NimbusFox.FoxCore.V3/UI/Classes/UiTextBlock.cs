@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Staxel.Draw;
 using Staxel.Logic;
@@ -35,6 +30,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void SetColor(Color color) {
             _color = color;
+        }
+
+        public override Vector2 GetElementSize() {
+            return GetSize();
         }
     }
 }

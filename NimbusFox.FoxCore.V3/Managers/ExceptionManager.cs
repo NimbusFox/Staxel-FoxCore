@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
-using Plukit.Base;
 
 namespace NimbusFox.FoxCore.V3.Managers {
     public class ExceptionManager {

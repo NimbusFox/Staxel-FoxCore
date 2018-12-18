@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NimbusFox.FoxCore.V3.Classes;
 using NimbusFox.FoxCore.V3.Managers;
 using NimbusFox.FoxCore.V3.Patches;

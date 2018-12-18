@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
-using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Events;
 using NimbusFox.FoxCore.Managers;
 using Plukit.Base;

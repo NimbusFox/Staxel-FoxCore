@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
-using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.Bson;
 using NimbusFox.FoxCore.V3.Classes.BlobRecord;
 using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
-using Staxel.Core;
 
 namespace NimbusFox.FoxCore.V3.Classes {
     public class BlobDatabase : IDisposable {

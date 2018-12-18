@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
-using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json.Bson;
 using NimbusFox.FoxCore.V3.Classes.FxBlob;
 using Plukit.Base;
 namespace NimbusFox.FoxCore.V3.Classes {

@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NimbusFox.FoxCore.Classes;
-using NimbusFox.FoxCore.Dependencies.Harmony;
-using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
-using NimbusFox.FoxCore.Managers;
+﻿using NimbusFox.FoxCore.Managers;
 using Plukit.Base;
-using Staxel;
-using Staxel.Client;
-using Staxel.Rendering;
-using Staxel.Translation;
 
 namespace NimbusFox.FoxCore.Patches {
     internal static class ChatControllerPatches {

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Security;
-using System.Windows.Forms;
-using NimbusFox.FoxCore.Classes;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 

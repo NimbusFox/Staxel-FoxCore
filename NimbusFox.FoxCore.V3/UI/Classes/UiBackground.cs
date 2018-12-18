@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
 using Staxel;
-using Staxel.Draw;
-using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiBackground : IDisposable {
@@ -49,11 +43,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var sizeI = new Vector2I((int)Math.Ceiling(size.X), (int)Math.Ceiling(size.Y));
             var minI = new Vector2I((int)Math.Ceiling(minSize.X), (int)Math.Ceiling(minSize.Y));
 
-            if (minI.X != sizeI.X) {
+            if (minI.X < sizeI.X) {
                 stretchWidth = sizeI.X - minI.X;
             }
 
-            if (minI.Y != sizeI.Y) {
+            if (minI.Y < sizeI.Y) {
                 stretchHeight = sizeI.Y - minI.Y;
             }
 
@@ -87,7 +81,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
 
             spriteBatch.Draw(BottomRight,
-                new Vector2(originI.X + stretchWidth + TopLeft.Width, originI.Y + stretchHeight + TopLeft.Height),
+                new Vector2(originI.X + stretchWidth + BottomLeft.Width, originI.Y + stretchHeight + TopLeft.Height),
                 color);
         }
 

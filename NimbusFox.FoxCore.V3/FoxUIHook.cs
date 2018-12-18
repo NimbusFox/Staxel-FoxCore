@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NimbusFox.FoxCore.V3.Patches;
 using NimbusFox.FoxCore.V3.UI.Classes;
 using Plukit.Base;
 using Staxel;
-using Staxel.Core;
 using Staxel.Items;
 using Staxel.Logic;
 using Staxel.Modding;
