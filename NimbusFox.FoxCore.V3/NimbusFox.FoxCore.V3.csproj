@@ -357,6 +357,7 @@
     <Compile Include="UI\Classes\UiBackground.cs" />
     <Compile Include="UI\Classes\UiContainer.cs" />
     <Compile Include="UI\Classes\UiElement.cs" />
+    <Compile Include="UI\Classes\UiPicture.cs" />
     <Compile Include="UI\Classes\UiRow.cs" />
     <Compile Include="UI\Classes\UiSelectable.cs" />
     <Compile Include="UI\Classes\UiSpacer.cs" />
