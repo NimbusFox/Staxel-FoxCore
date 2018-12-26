@@ -65,7 +65,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             OverrideSize = true;
         }
 
-        public void SetColor(Color color) {
+        public void RenderColor(Color color) {
             Color = color;
         }
     }
