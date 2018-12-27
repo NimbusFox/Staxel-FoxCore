@@ -27,7 +27,7 @@ namespace NimbusFox.FoxCore.V3.Patches {
             if (ClientContext.InputSource.IsAnyScanCodeDownClick(out var keyInput)) {
                 input = keyInput;
 
-                if (keyInput == ScanCode.O) {
+                if (keyInput == ScanCode.O && !ClientContext.WebOverlayRenderer.HasInputControl()) {
                     if (modSettingsWindow == null || modSettingsWindow.Completed()) {
                         modSettingsWindow = (ModOptionsEvent)GameContext.EffectDatabase.Instance(ModOptionsEventBuilder.KindCode, EffectMode.Sustain,
                             Timestep.Null, null, null, null, null);
