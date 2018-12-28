@@ -55,7 +55,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            Vector2I mousePosition) {
+            MouseState mouseState) {
             if (!ColorWheelImage.IsNullOrEmpty()) {
                 if (ColorWheelImage != _currentImage) {
                     _colorWheel = Texture2D.FromStream(graphics.Graphics.GraphicsDevice,
@@ -77,10 +77,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
 
             return new Vector2(_colorWheel.Width, _colorWheel.Height);
-        }
-
-        public override Vector2 GetElementSize() {
-            return GetSize();
         }
     }
 }

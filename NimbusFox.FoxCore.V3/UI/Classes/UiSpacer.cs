@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plukit.Base;
 using Staxel.Draw;
 using Staxel.Logic;
@@ -13,10 +14,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiSpacer : UiElement {
         public override Vector2 GetSize() {
             return new Vector2(Width, Height);
-        }
-
-        public override Vector2 GetElementSize() {
-            return GetSize();
         }
 
         private uint Width = 10;
@@ -30,12 +27,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Width = width;
         }
 
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, Vector2I mousePosition) {
-            
+        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState) {
+            // do nothing
         }
 
         public override void AddChild(UiElement element) {
-            
+            // do nothing
         }
     }
 }

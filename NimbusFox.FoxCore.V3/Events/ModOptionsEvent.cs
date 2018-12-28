@@ -33,15 +33,10 @@ namespace NimbusFox.FoxCore.V3.Events {
             _window.Container.SetMinWidth(250);
             _window.Container.SetMinHeight(250);
 
-            _window.Container.TopLeftOffset = new Vector2(35, 40);
-            _window.Container.BottomRightOffset = new Vector2(35, 20);
-
             var selectable = new UiSelectable();
             selectable.SetActiveBackgroundColor(Color.Green);
             selectable.SetActiveTextColor(Color.Red);
             selectable.SetBackground("mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBackground.json");
-            selectable.TopLeftOffset = new Vector2(35, 40);
-            selectable.BottomRightOffset = new Vector2(35, 35);
 
             var text = new UiTextBlock();
 

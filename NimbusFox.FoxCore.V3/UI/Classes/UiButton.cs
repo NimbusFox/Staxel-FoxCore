@@ -16,11 +16,18 @@ using Staxel.Input;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
-    public class UiSelectable : UiContainer {
-        protected Color _activeColor = Color.White;
-        protected Color _color = Color.White;
-        protected Color _activeTextColor = Color.White;
-        protected Color _textColor = Color.White;
+    public class UiButton : UiSelectable {
+
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input, IReadOnlyList<InterfaceLogicalButton> inputPressed,
+            MouseState mouseState) {
+            var size = GetSize();
+            var range = origin + size;
+            if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
+                if (mouseState.LeftButton == ButtonState.Pressed) {
+                    OnClick?.Invoke();
+                }
+            }
+        }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
             SpriteBatch spriteBatch, MouseState mouseState) {
@@ -42,7 +49,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
                     foreach (var element in Elements) {
                         if (element is UiTextBlock textElement) {
-                            textElement.SetColor(_activeTextColor);
+                            textElement.SetColor( _activeTextColor);
                         }
                     }
                 } else {
@@ -59,20 +66,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
         }
 
-        public void SetActiveBackgroundColor(Color color) {
-            _activeColor = color;
-        }
-
-        public void SetBackgroundColor(Color color) {
-            _color = color;
-        }
-
-        public void SetActiveTextColor(Color color) {
-            _activeTextColor = color;
-        }
-
-        public void SetTextColor(Color color) {
-            _textColor = color;
-        }
+        public event Action OnClick;
     }
 }

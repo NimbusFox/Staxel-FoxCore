@@ -1,9 +1,13 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plukit.Base;
 using Staxel;
+using Staxel.Client;
 using Staxel.Draw;
+using Staxel.Input;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
@@ -11,8 +15,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected UiBackground Background;
         protected string BackgroundLocation = "";
         protected string CurrentBackground = "None";
-        public Vector2 TopLeftOffset = Vector2.Zero;
-        public Vector2 BottomRightOffset = Vector2.Zero;
 
         public UiContainer() {
         }
@@ -23,7 +25,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, Vector2I mousePosition) {
+            SpriteBatch spriteBatch, MouseState mouseState) {
             if (!BackgroundLocation.IsNullOrEmpty()) {
                 if (BackgroundLocation != CurrentBackground) {
                     var stream = GameContext.ContentLoader.ReadStream(BackgroundLocation);
@@ -38,12 +40,21 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
                 Background.Draw(origin, size, spriteBatch);
             }
-            base.Draw(graphics, entity, universe, origin + TopLeftOffset, spriteBatch, mousePosition);
+            base.Draw(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
         }
 
         protected void DrawChildren(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, Vector2I mousePosition) {
-            base.Draw(graphics, entity, universe, origin, spriteBatch, mousePosition);
+            SpriteBatch spriteBatch, MouseState mouseState) {
+            base.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
+        }
+
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input,
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            var offset = Vector2.Zero;
+            foreach (var element in Elements) {
+                element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, inputPressed, mouseState);
+                offset = offset + new Vector2(0, element.GetSize().Y);
+            }
         }
 
         public void SetBackground(string location) {
@@ -54,10 +65,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Vector2.Zero;
 
             foreach (var element in Elements) {
-                size += element.GetElementSize();
+                var eleSize = element.GetSize();
+                size.X = size.X < eleSize.X ? eleSize.X : size.X;
+                size.Y += eleSize.Y;
             }
 
-            var calcSize = size + TopLeftOffset + BottomRightOffset;
+            var calcSize = size + (Background?.TopLeftOffset ?? Vector2.Zero) + (Background?.BottomRightOffset ?? Vector2.Zero);
 
             if (Background != null) {
                 var min = Background.GetMinSize();
@@ -74,10 +87,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             calcSize.Y = MinHeight < calcSize.Y ? calcSize.Y : MinHeight;
 
             return calcSize;
-        }
-
-        public override Vector2 GetElementSize() {
-            return GetSize();
         }
     }
 }

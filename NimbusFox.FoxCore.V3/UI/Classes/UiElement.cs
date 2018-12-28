@@ -25,7 +25,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected int MinWidth = 0;
 
         public virtual void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, Vector2I mousePosition) {
+            SpriteBatch spriteBatch, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
                 if (element.Parent == null) {
@@ -35,8 +35,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 if (element.Window == null) {
                     element.Window = Window;
                 }
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mousePosition);
-                offset = offset + new Vector2(0, element.GetElementSize().Y);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState);
+                offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }
 
@@ -49,10 +49,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 var eleSize = element.GetSize();
 
                 size.Y += eleSize.Y;
-                largestX = largestX < eleSize.Y ? eleSize.Y : largestX;
+                largestX = largestX < eleSize.X ? eleSize.X : largestX;
             }
 
-            size.Y = largestX;
+            size.X = largestX;
 
             size.X = size.X > MinWidth ? size.X : MinWidth;
             size.Y = size.Y > MinHeight ? size.Y : MinHeight;
@@ -62,8 +62,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public virtual void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            var offset = Vector2.Zero;
             foreach (var element in Elements) {
-                element.Update(universe, origin, avatar, input, inputPressed, mouseState);
+                element.Update(universe, origin + offset, avatar, input, inputPressed, mouseState);
+                offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }
 
@@ -80,8 +82,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         internal void SetParent(UiElement element) {
             Parent = element;
         }
-
-        public abstract Vector2 GetElementSize();
 
         public virtual void Deselect() {
             foreach (var element in Elements) {

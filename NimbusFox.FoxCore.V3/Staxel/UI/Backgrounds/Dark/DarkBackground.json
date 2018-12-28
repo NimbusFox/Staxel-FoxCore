@@ -7,5 +7,13 @@
     "middleRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkMiddleRight.png",
     "bottomLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBottomLeft.png",
     "bottomMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBottomMiddle.png",
-    "bottomRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBottomRight.png"
+    "bottomRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBottomRight.png",
+    "topLeftOffset": {
+        "x": 35,
+        "y": 40
+    },
+    "bottomRightOffset": {
+        "x": 35,
+        "y": 40 
+    } 
 }

@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plukit.Base;
+using Staxel.Client;
 using Staxel.Draw;
+using Staxel.Input;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiRow : UiElement {
-        public override Vector2 GetElementSize() {
-            return GetSize();
-        }
 
         public override Vector2 GetSize() {
             var size = Vector2.Zero;
@@ -31,7 +31,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             return size;
         }
 
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, Vector2I mousePosition) {
+        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
@@ -43,11 +43,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     element.SetWindow(Window);
                 }
 
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mousePosition);
-                offset = offset + new Vector2(element.GetElementSize().X, 0);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState);
+                offset = offset + new Vector2(element.GetSize().X, 0);
             }
+        }
 
-            base.Draw(graphics, entity, universe, origin, spriteBatch, mousePosition);
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input, IReadOnlyList<InterfaceLogicalButton> inputPressed,
+            MouseState mouseState) {
+            var offset = Vector2.Zero;
+
+            foreach (var element in Elements) {
+                element.Update(universe, origin + offset, avatar, input, inputPressed, mouseState);
+                offset = offset + new Vector2(element.GetSize().X, 0);
+            }
         }
     }
 }

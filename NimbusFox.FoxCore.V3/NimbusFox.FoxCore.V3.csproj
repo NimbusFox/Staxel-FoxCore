@@ -355,14 +355,18 @@
     <Compile Include="FoxUIHook.cs" />
     <Compile Include="UI\Classes\FoxCore\UiModSettings.cs" />
     <Compile Include="UI\Classes\UiBackground.cs" />
+    <Compile Include="UI\Classes\UiButton.cs" />
     <Compile Include="UI\Classes\UiColorPicker.cs" />
+    <Compile Include="UI\Classes\UiColumn.cs" />
     <Compile Include="UI\Classes\UiContainer.cs" />
     <Compile Include="UI\Classes\UiElement.cs" />
+    <Compile Include="UI\Classes\UiInput.cs" />
     <Compile Include="UI\Classes\UiPicture.cs" />
     <Compile Include="UI\Classes\UiRow.cs" />
     <Compile Include="UI\Classes\UiSelectable.cs" />
     <Compile Include="UI\Classes\UiSpacer.cs" />
     <Compile Include="UI\Classes\UiTextBlock.cs" />
+    <Compile Include="UI\Classes\UiTexture2D.cs" />
     <Compile Include="UI\Classes\UiWindow.cs" />
     <Compile Include="UI\Enums\UiAlignment.cs" />
   </ItemGroup>
@@ -401,6 +405,9 @@
     <None Include="Staxel\Fonts\obj\MyFirstCrush.24.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.36.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.font.mgcontent" />
+    <None Include="Staxel\UI\Backgrounds\Button\ButtonBackground.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Staxel\UI\Backgrounds\Dark\DarkBackground.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -414,6 +421,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Licenses\Json.NET.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Button\ButtonBottomLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Button\ButtonBottomRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Button\ButtonStretch.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Button\ButtonTopLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Backgrounds\Button\ButtonTopRight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\Backgrounds\Dark\DarkBottomLeft.png">

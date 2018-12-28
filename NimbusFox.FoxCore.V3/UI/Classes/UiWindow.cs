@@ -20,10 +20,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private SpriteBatch _spriteBatch;
         public bool IsDisposed { get; private set; } = false;
         internal Viewport ViewPort;
+        internal bool Remove = false;
 
         public event Action OnClose;
         public event Action OnShow;
         public event Action OnHide;
+
+        private bool _escape = false;
 
         private UiAlignment _alignment;
 
@@ -34,9 +37,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
-            AvatarController avatarController, Vector2I mousePosition) {
+            AvatarController avatarController, MouseState mouseState) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+            }
+
+            if (_escape) {
+                if (!graphics.IsActive()) {
+                    Dispose();
+                    return;
+                }
+            }
+
+            try {
+                _spriteBatch.End();
+            } catch {
+                // ignore
             }
 
             _spriteBatch.Begin();
@@ -77,25 +93,62 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mousePosition);
-
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
             _spriteBatch.End();
         }
 
         internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
-            EntityPainter avatarPainter, Universe universe, Timestep timestep, Vector2I mousePosition) {
+            EntityPainter avatarPainter, Universe universe, Timestep timestep, MouseState mouseState) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+            }
+
+            if (_escape) {
+                if (!graphics.IsActive()) {
+                    Dispose();
+                    return;
+                }
             }
 
             _spriteBatch.Begin();
 
             var size = Container.GetSize();
 
-            var origin = new Vector2((graphics.Graphics.GraphicsDevice.Viewport.Width / 2) - (size.X / 2),
-                graphics.Graphics.GraphicsDevice.Viewport.Height - size.Y);
+            Vector2 origin;
+            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mousePosition);
+            switch (_alignment) {
+                case UiAlignment.TopLeft:
+                    origin = new Vector2(0, 0);
+                    break;
+                case UiAlignment.TopCenter:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), 0);
+                    break;
+                case UiAlignment.TopRight:
+                    origin = new Vector2(ViewPort.Width - size.X, 0);
+                    break;
+                case UiAlignment.MiddleLeft:
+                    origin = new Vector2(0, (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleCenter:
+                default:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleRight:
+                    origin = new Vector2(ViewPort.Width - size.X, (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.BottomLeft:
+                    origin = new Vector2(0, ViewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomCenter:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), ViewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomRight:
+                    origin = new Vector2(ViewPort.Width - size.X, ViewPort.Height - size.Y);
+                    break;
+            }
+
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
 
             _spriteBatch.End();
         }
@@ -105,7 +158,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             OnClose?.Invoke();
             Container.Dispose();
 
-            FoxUIHook.Instance.Windows.Remove(this);
+            Remove = true;
 
             IsDisposed = true;
         }
@@ -122,6 +175,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         internal void Update(Universe universe, AvatarController avatar, ScanCode? input,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            if (_escape) {
+                if (ClientContext.InputSource.IsCancelDownClicked()) {
+                    Dispose();
+                    return;
+                }
+            }
             var size = Container.GetSize();
 
             Vector2 origin;
@@ -163,6 +222,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Container.AddChild(element);
             element.SetWindow(this);
             element.SetParent(Container);
+        }
+
+        public void ListenForEscape(bool value) {
+            _escape = value;
         }
     }
 }

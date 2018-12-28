@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
 using Staxel;
+using Staxel.Core;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiBackground : IDisposable {
@@ -15,6 +16,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private Texture2D BottomLeft;
         private Texture2D BottomMiddle;
         private Texture2D BottomRight;
+        public Vector2 TopLeftOffset { get; } = Vector2.Zero;
+        public Vector2 BottomRightOffset { get; } = Vector2.Zero;
 
         public UiBackground(GraphicsDevice graphics, Blob images) {
             TopLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("topLeft")));
@@ -26,6 +29,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             BottomLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomLeft")));
             BottomMiddle = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomMiddle")));
             BottomRight = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomRight")));
+
+            if (images.Contains("topLeftOffset")) {
+                TopLeftOffset = images.GetBlob("topLeftOffset").GetVector2F().ToVector2();
+            }
+
+            if (images.Contains("bottomRightOffset")) {
+                BottomRightOffset = images.GetBlob("bottomRightOffset").GetVector2F().ToVector2();
+            }
         }
 
         public void Draw(Vector2 origin, Vector2 size, SpriteBatch spriteBatch) {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plukit.Base;
 using Staxel;
 using Staxel.Client;
@@ -20,12 +21,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected bool OverrideSize = false;
         protected Vector2 Size = Vector2.Zero;
         protected Color Color = Color.White;
-        public override Vector2 GetElementSize() {
-            return GetSize();
-        }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            Vector2I mousePosition) {
+            MouseState mouseState) {
             if (!PictureLocation.IsNullOrEmpty()) {
                 if (PictureLocation != CurrentPictureLocation) {
                     Picture?.Dispose();

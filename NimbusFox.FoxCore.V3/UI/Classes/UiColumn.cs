@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace NimbusFox.FoxCore.V3.UI.Classes.FoxCore {
-    public class UiModSettings : UiElement {
+namespace NimbusFox.FoxCore.V3.UI.Classes {
+    public class UiColumn : UiElement {
     }
 }

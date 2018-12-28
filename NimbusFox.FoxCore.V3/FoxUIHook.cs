@@ -82,11 +82,15 @@ namespace NimbusFox.FoxCore.V3 {
 
         public void GameContextInitializeInit() {
         }
-        public void GameContextInitializeBefore() { }
+        public void GameContextInitializeBefore() {
+            Windows.Clear();
+        }
         public void GameContextInitializeAfter() {
         }
         public void GameContextDeinitialize() { }
-        public void GameContextReloadBefore() { }
+
+        public void GameContextReloadBefore() {
+        }
         public void GameContextReloadAfter() { }
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
@@ -106,7 +110,10 @@ namespace NimbusFox.FoxCore.V3 {
 
         public void ClientContextInitializeInit() {
         }
-        public void ClientContextInitializeBefore() { }
+
+        public void ClientContextInitializeBefore() {
+            Windows.Clear();
+        }
 
         public void ClientContextInitializeAfter() {
 
@@ -114,7 +121,10 @@ namespace NimbusFox.FoxCore.V3 {
         public void ClientContextDeinitialize() { }
         public void ClientContextReloadBefore() { }
         public void ClientContextReloadAfter() { }
-        public void CleanupOldSession() { }
+
+        public void CleanupOldSession() {
+            Windows.Clear();
+        }
         public bool CanInteractWithTile(Entity entity, Vector3F location, Tile tile) {
             return true;
         }
