@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using NimbusFox.FoxCore.V3.UI.Enums;
 using Plukit.Base;
+using Staxel;
 using Staxel.Client;
 using Staxel.Draw;
 using Staxel.Input;
@@ -17,6 +19,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public UiContainer Container { get; }
         private SpriteBatch _spriteBatch;
         public bool IsDisposed { get; private set; } = false;
+        internal Viewport ViewPort;
 
         public event Action OnClose;
         public event Action OnShow;
@@ -41,36 +44,36 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Container.GetSize();
 
             Vector2 origin;
-            var viewPort = graphics.Graphics.GraphicsDevice.Viewport;
+            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
             switch (_alignment) {
                 case UiAlignment.TopLeft:
                     origin = new Vector2(0, 0);
                     break;
                 case UiAlignment.TopCenter:
-                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), 0);
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), 0);
                     break;
                 case UiAlignment.TopRight:
-                    origin = new Vector2(viewPort.Width - size.X, 0);
+                    origin = new Vector2(ViewPort.Width - size.X, 0);
                     break;
                 case UiAlignment.MiddleLeft:
-                    origin = new Vector2(0, (viewPort.Height / 2) - (size.Y / 2));
+                    origin = new Vector2(0, (ViewPort.Height / 2) - (size.Y / 2));
                     break;
                 case UiAlignment.MiddleCenter:
                 default:
-                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), (viewPort.Height / 2) - (size.Y / 2));
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), (ViewPort.Height / 2) - (size.Y / 2));
                     break;
                 case UiAlignment.MiddleRight:
-                    origin = new Vector2(viewPort.Width - size.X, (viewPort.Height / 2) - (size.Y / 2));
+                    origin = new Vector2(ViewPort.Width - size.X, (ViewPort.Height / 2) - (size.Y / 2));
                     break;
                 case UiAlignment.BottomLeft:
-                    origin = new Vector2(0, viewPort.Height - size.Y);
+                    origin = new Vector2(0, ViewPort.Height - size.Y);
                     break;
                 case UiAlignment.BottomCenter:
-                    origin = new Vector2((viewPort.Width / 2) - (size.X / 2), viewPort.Height - size.Y);
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), ViewPort.Height - size.Y);
                     break;
                 case UiAlignment.BottomRight:
-                    origin = new Vector2(viewPort.Width - size.X, viewPort.Height - size.Y);
+                    origin = new Vector2(ViewPort.Width - size.X, ViewPort.Height - size.Y);
                     break;
             }
 
@@ -118,8 +121,42 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void Update(Universe universe, AvatarController avatar, ScanCode? input,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed) {
-            Container.Update(universe, avatar, input, inputPressed);
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            var size = Container.GetSize();
+
+            Vector2 origin;
+
+            switch (_alignment) {
+                case UiAlignment.TopLeft:
+                    origin = new Vector2(0, 0);
+                    break;
+                case UiAlignment.TopCenter:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), 0);
+                    break;
+                case UiAlignment.TopRight:
+                    origin = new Vector2(ViewPort.Width - size.X, 0);
+                    break;
+                case UiAlignment.MiddleLeft:
+                    origin = new Vector2(0, (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleCenter:
+                default:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.MiddleRight:
+                    origin = new Vector2(ViewPort.Width - size.X, (ViewPort.Height / 2) - (size.Y / 2));
+                    break;
+                case UiAlignment.BottomLeft:
+                    origin = new Vector2(0, ViewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomCenter:
+                    origin = new Vector2((ViewPort.Width / 2) - (size.X / 2), ViewPort.Height - size.Y);
+                    break;
+                case UiAlignment.BottomRight:
+                    origin = new Vector2(ViewPort.Width - size.X, ViewPort.Height - size.Y);
+                    break;
+            }
+            Container.Update(universe, origin, avatar, input, inputPressed, mouseState);
         }
 
         public void AddChild(UiElement element) {

@@ -51,8 +51,9 @@ namespace NimbusFox.FoxCore.V3.Patches {
                 }
             }
 
+            var mouseState = ClientContext.InputSource.GetMouseState();
             foreach (var window in FoxUIHook.Instance.Windows) {
-                window.Update(universe, avatarController, input, interfacePressed);
+                window.Update(universe, avatarController, input, interfacePressed, mouseState);
             }
         }
 

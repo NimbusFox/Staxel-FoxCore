@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plukit.Base;
 using Staxel.Client;
 using Staxel.Draw;
@@ -59,10 +60,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             return size;
         }
 
-        public virtual void Update(Universe universe, AvatarController avatar, ScanCode? input,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed) {
+        public virtual void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input,
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             foreach (var element in Elements) {
-                element.Update(universe, avatar, input, inputPressed);
+                element.Update(universe, origin, avatar, input, inputPressed, mouseState);
             }
         }
 

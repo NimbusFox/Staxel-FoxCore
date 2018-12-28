@@ -355,6 +355,7 @@
     <Compile Include="FoxUIHook.cs" />
     <Compile Include="UI\Classes\FoxCore\UiModSettings.cs" />
     <Compile Include="UI\Classes\UiBackground.cs" />
+    <Compile Include="UI\Classes\UiColorPicker.cs" />
     <Compile Include="UI\Classes\UiContainer.cs" />
     <Compile Include="UI\Classes\UiElement.cs" />
     <Compile Include="UI\Classes\UiPicture.cs" />
@@ -440,6 +441,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\Backgrounds\Dark\DarkTopRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\ColorWheel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

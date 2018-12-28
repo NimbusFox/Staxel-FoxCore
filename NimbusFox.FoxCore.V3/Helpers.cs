@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
 using Staxel;
+using Staxel.Core;
 using Staxel.Items;
 using Staxel.Tiles;
 
@@ -81,6 +83,27 @@ namespace NimbusFox.FoxCore.V3 {
                    end.X > location.X &&
                    start.Y < location.Y &&
                    end.Y > location.Y;
+        }
+
+        public static Vector2I VectorLocation(Vector2I start, Vector2I end, Vector2I location) {
+            if (!VectorContains(start.ToVector2F().ToVector2(), end.ToVector2F().ToVector2(), location.ToVector2F().ToVector2())) {
+                return new Vector2I(-1, -1);
+            }
+
+            return location - start;
+        }
+
+        public static Vector2I VectorLocation(Vector2 start, Vector2 end, Vector2 location) {
+            return VectorLocation(new Vector2I((int) Math.Round(start.X), (int) Math.Round(start.Y)),
+                new Vector2I((int) Math.Round(end.X), (int) Math.Round(end.Y)),
+                new Vector2I((int) Math.Round(location.X), (int) Math.Round(location.Y)));
+        }
+
+        public static Color GetColorByCoordinate(Texture2D image, Vector2I location) {
+            var data = new Color[image.Width * image.Height];
+            image.GetData(data);
+
+            return data[(image.Width * location.Y) + location.X];
         }
     }
 }
