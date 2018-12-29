@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NimbusFox.FoxCore.V3.Classes;
 using Plukit.Base;
 using Staxel;
 using Staxel.Core;
@@ -104,6 +105,20 @@ namespace NimbusFox.FoxCore.V3 {
             image.GetData(data);
 
             return data[(image.Width * location.Y) + location.X];
+        }
+
+        public static void VectorLoop(Vector3I start, Vector3I end, Action<int, int, int> coordFunction) {
+            VectorLoop(new VectorCubeI(start, end), coordFunction);
+        }
+
+        public static void VectorLoop(VectorCubeI region, Action<int, int, int> coordFunction) {
+            for (var y = region.Start.Y; y <= region.End.Y; y++) {
+                for (var z = region.Start.Z; z <= region.End.Z; z++) {
+                    for (var x = region.Start.X; x <= region.End.X; x++) {
+                        coordFunction(x, y, z);
+                    }
+                }
+            }
         }
     }
 }
