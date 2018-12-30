@@ -14,9 +14,9 @@ namespace NimbusFox.FoxCore.V3 {
             return tile.Configuration.MakeItem();
         }
 
-        public static Item MakeItem(this TileConfiguration tile) {
+        public static Item MakeItem(this TileConfiguration tile, string kind = "staxel.item.placer") {
             var itemBlob = BlobAllocator.Blob(true);
-            itemBlob.SetString("kind", "staxel.item.Placer");
+            itemBlob.SetString("kind", kind);
             itemBlob.SetString("tile", tile.Code);
             var item = GameContext.ItemDatabase.SpawnItemStack(itemBlob, null);
             Blob.Deallocate(ref itemBlob);
