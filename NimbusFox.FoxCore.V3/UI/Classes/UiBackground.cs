@@ -18,6 +18,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private Texture2D BottomRight;
         public Vector2 TopLeftOffset { get; } = Vector2.Zero;
         public Vector2 BottomRightOffset { get; } = Vector2.Zero;
+        public Vector2 TopLeftPadding { get; } = Vector2.Zero;
+        public Vector2 BottomRightPadding { get; } = Vector2.Zero;
 
         public UiBackground(GraphicsDevice graphics, Blob images) {
             TopLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("topLeft")));
@@ -37,10 +39,24 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             if (images.Contains("bottomRightOffset")) {
                 BottomRightOffset = images.GetBlob("bottomRightOffset").GetVector2F().ToVector2();
             }
+
+            if (images.Contains("topLeftPadding")) {
+                TopLeftPadding = images.GetBlob("topLeftPadding").GetVector2F().ToVector2();
+            }
+
+            if (images.Contains("bottomRightPadding")) {
+                BottomRightPadding = images.GetBlob("bottomRightPadding").GetVector2F().ToVector2();
+            }
         }
 
         public void Draw(Vector2 origin, Vector2 size, SpriteBatch spriteBatch) {
             Draw(origin, size, spriteBatch, Color.White);
+        }
+
+        public bool IsDisposed() {
+            return TopLeft.IsDisposed || TopMiddle.IsDisposed || TopRight.IsDisposed || MiddleLeft.IsDisposed ||
+                   MiddleMiddle.IsDisposed || MiddleRight.IsDisposed || BottomLeft.IsDisposed ||
+                   BottomMiddle.IsDisposed || BottomRight.IsDisposed;
         }
 
         public void Draw(Vector2 origin, Vector2 size, SpriteBatch spriteBatch, Color color) {
@@ -97,20 +113,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public Vector2 GetMinSize() {
-            return new Vector2(TopLeft.Width + TopRight.Width, TopLeft.Height + BottomLeft.Height);
+            return new Vector2(TopLeft.Width + TopRight.Width + TopLeftPadding.X + BottomRightPadding.X,
+                TopLeft.Height + BottomLeft.Height + TopLeftPadding.Y + BottomRightPadding.Y);
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose() {
-            TopLeft?.Dispose();
-            TopMiddle?.Dispose();
-            TopRight?.Dispose();
-            MiddleLeft?.Dispose();
-            MiddleMiddle?.Dispose();
-            MiddleRight?.Dispose();
-            BottomLeft?.Dispose();
-            BottomMiddle?.Dispose();
-            BottomRight?.Dispose();
         }
     }
 }

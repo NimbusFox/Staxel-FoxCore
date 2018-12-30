@@ -33,5 +33,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public void SetColor(Color color) {
             _color = color;
         }
+
+        public override string ToString() {
+            return _text;
+        }
     }
 }

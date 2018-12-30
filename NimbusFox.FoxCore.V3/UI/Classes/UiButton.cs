@@ -18,7 +18,7 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiButton : UiSelectable {
 
-        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input, IReadOnlyList<InterfaceLogicalButton> inputPressed,
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
             MouseState mouseState) {
             var size = GetSize();
             var range = origin + size;
@@ -33,17 +33,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             SpriteBatch spriteBatch, MouseState mouseState) {
             var size = GetSize();
             var range = origin + size;
-            if (!BackgroundLocation.IsNullOrEmpty()) {
-                if (BackgroundLocation != CurrentBackground) {
-                    var stream = GameContext.ContentLoader.ReadStream(BackgroundLocation);
-                    stream.Seek(0L, SeekOrigin.Begin);
-                    var blob = BlobAllocator.Blob(false);
-                    blob.ReadJson(stream.ReadAllText());
-                    Background?.Dispose();
-                    Background = new UiBackground(graphics.Graphics.GraphicsDevice, blob);
-                    CurrentBackground = BackgroundLocation;
-                }
-
+            if (Background != null) {
                 if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
                     Background.Draw(origin, size, spriteBatch, _activeColor);
 

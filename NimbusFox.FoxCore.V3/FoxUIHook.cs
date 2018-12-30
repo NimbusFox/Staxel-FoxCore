@@ -28,9 +28,11 @@ namespace NimbusFox.FoxCore.V3 {
 
         internal ContentManager ContentManager;
 
-        public event Action LoadUIContent;
+        public event Action<GraphicsDevice> LoadUIContent;
 
         private Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
+        private Dictionary<string, UiBackground> _backgrounds = new Dictionary<string, UiBackground>();
+        private Dictionary<string, Texture2D> _images = new Dictionary<string, Texture2D>();
 
         static FoxUIHook() {
             OverlayRendererPatches.Initialize();
@@ -38,24 +40,6 @@ namespace NimbusFox.FoxCore.V3 {
 
         public FoxUIHook() {
             Instance = this;
-
-            LoadUIContent += () => {
-                foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uifont")) {
-                    using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
-                        stream.Seek(0L, SeekOrigin.Begin);
-                        var blob = BlobAllocator.Blob(true);
-
-                        blob.LoadJsonStream(stream);
-
-                        if (Process.GetCurrentProcess().ProcessName.Contains("Staxel.Client")) {
-                            _fonts.Add(blob.GetString("code"), ContentManager.Load<SpriteFont>(blob.GetString("xnb")));
-                        } else {
-                            blob.GetString("code");
-                            blob.GetString("xnb");
-                        }
-                    }
-                }
-            };
 
             if (Process.GetCurrentProcess().ProcessName.Contains("Staxel.ContentBuilder")) {
                 foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uifont")) {
@@ -70,6 +54,68 @@ namespace NimbusFox.FoxCore.V3 {
 
                         if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("xnb")))) {
                             throw new FileNotFoundException("Could not find file: " + blob.GetString("xnb"));
+                        }
+                    }
+                }
+
+                foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uiBackground")) {
+                    using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
+                        stream.Seek(0L, SeekOrigin.Begin);
+                        var blob = BlobAllocator.Blob(true);
+
+                        blob.LoadJsonStream(stream);
+
+                        blob.GetString("code");
+                        blob.GetString("topLeft");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("topLeft")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("topLeft"));
+                        }
+                        blob.GetString("topMiddle");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("topMiddle")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("topMiddle"));
+                        }
+                        blob.GetString("topRight");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("topRight")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("topRight"));
+                        }
+                        blob.GetString("middleLeft");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("middleLeft")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("middleLeft"));
+                        }
+                        blob.GetString("middleMiddle");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("middleMiddle")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("middleMiddle"));
+                        }
+                        blob.GetString("middleRight");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("middleRight")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("middleRight"));
+                        }
+                        blob.GetString("bottomLeft");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("bottomLeft")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("bottomLeft"));
+                        }
+                        blob.GetString("bottomMiddle");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("bottomMiddle")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("bottomMiddle"));
+                        }
+                        blob.GetString("bottomRight");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("bottomRight")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("bottomRight"));
+                        }
+                    }
+                }
+
+                foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uiPicture")) {
+                    using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
+                        stream.Seek(0L, SeekOrigin.Begin);
+                        var blob = BlobAllocator.Blob(true);
+
+                        blob.LoadJsonStream(stream);
+
+                        blob.GetString("code");
+                        blob.GetString("picture");
+                        if (!File.Exists(Path.Combine(GameContext.ContentLoader.RootDirectory, blob.GetString("picture")))) {
+                            throw new FileNotFoundException("Could not find file: " + blob.GetString("picture"));
                         }
                     }
                 }
@@ -133,12 +179,66 @@ namespace NimbusFox.FoxCore.V3 {
             return true;
         }
 
-        internal void LoadContent() {
-            LoadUIContent?.Invoke();
+        internal void LoadContent(GraphicsDevice graphics) {
+            foreach (var window in Windows) {
+                window.Dispose();
+            }
+
+            Windows.Clear();
+            _fonts.Clear();
+            _backgrounds.Clear();
+            _images.Clear();
+
+            foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uifont")) {
+                using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    var blob = BlobAllocator.Blob(true);
+
+                    blob.LoadJsonStream(stream);
+
+                    if (Process.GetCurrentProcess().ProcessName.Contains("Staxel.Client")) {
+                        _fonts.Add(blob.GetString("code"), ContentManager.Load<SpriteFont>(blob.GetString("xnb")));
+                    }
+                }
+            }
+
+            foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uiBackground")) {
+                using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    var blob = BlobAllocator.Blob(true);
+
+                    blob.LoadJsonStream(stream);
+
+                    _backgrounds.Add(blob.GetString("code"), new UiBackground(graphics, blob));
+                }
+            }
+
+            foreach (var asset in GameContext.AssetBundleManager.FindByExtension("uiPicture")) {
+                using (var stream = GameContext.ContentLoader.ReadStream(asset)) {
+                    stream.Seek(0L, SeekOrigin.Begin);
+                    var blob = BlobAllocator.Blob(true);
+
+                    blob.LoadJsonStream(stream);
+
+                    _images.Add(blob.GetString("code"),
+                        Texture2D.FromStream(graphics,
+                            GameContext.ContentLoader.ReadStream(blob.GetString("picture"))));
+                }
+            }
+
+            LoadUIContent?.Invoke(graphics);
         }
 
         public SpriteFont GetFont(string code = Constants.Fonts.MyFirstCrush24) {
             return !_fonts.ContainsKey(code) ? null : _fonts[code];
+        }
+
+        public UiBackground GetBackground(string code) {
+            return !_backgrounds.ContainsKey(code) ? null : _backgrounds[code];
+        }
+
+        public Texture2D GetPicture(string code) {
+            return !_images.ContainsKey(code) ? null : _images[code];
         }
     }
 }

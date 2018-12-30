@@ -14,6 +14,8 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public sealed class UiWindow : IDisposable {
 
+        internal static DeviceContext _graphics;
+
         public bool AlwaysOnTop { get; protected set; } = false;
         public bool Visible { get; private set; }
         public UiContainer Container { get; }
@@ -39,11 +41,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
             AvatarController avatarController, MouseState mouseState) {
             if (_spriteBatch == null) {
-                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+                _spriteBatch = new SpriteBatch(_graphics.Graphics.GraphicsDevice);
             }
 
             if (_escape) {
-                if (!graphics.IsActive()) {
+                if (!_graphics.IsActive()) {
                     Dispose();
                     return;
                 }
@@ -60,7 +62,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Container.GetSize();
 
             Vector2 origin;
-            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
+            ViewPort = _graphics.Graphics.GraphicsDevice.Viewport;
 
             switch (_alignment) {
                 case UiAlignment.TopLeft:
@@ -93,21 +95,27 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
+            Container.Draw(_graphics, avatar, universe, origin, _spriteBatch, mouseState);
             _spriteBatch.End();
         }
 
         internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
             EntityPainter avatarPainter, Universe universe, Timestep timestep, MouseState mouseState) {
             if (_spriteBatch == null) {
-                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+                _spriteBatch = new SpriteBatch(_graphics.Graphics.GraphicsDevice);
             }
 
             if (_escape) {
-                if (!graphics.IsActive()) {
+                if (!_graphics.IsActive()) {
                     Dispose();
                     return;
                 }
+            }
+
+            try {
+                _spriteBatch.End();
+            } catch {
+                // ignore
             }
 
             _spriteBatch.Begin();
@@ -115,7 +123,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Container.GetSize();
 
             Vector2 origin;
-            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
+            ViewPort = _graphics.Graphics.GraphicsDevice.Viewport;
 
             switch (_alignment) {
                 case UiAlignment.TopLeft:
@@ -148,8 +156,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
-
+            Container.Draw(_graphics, avatar, universe, origin, _spriteBatch, mouseState);
             _spriteBatch.End();
         }
 
@@ -173,7 +180,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             OnHide?.Invoke();
         }
 
-        internal void Update(Universe universe, AvatarController avatar, ScanCode? input,
+        internal void Update(Universe universe, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             if (_escape) {
                 if (ClientContext.InputSource.IsCancelDownClicked()) {
@@ -215,7 +222,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     origin = new Vector2(ViewPort.Width - size.X, ViewPort.Height - size.Y);
                     break;
             }
-            Container.Update(universe, origin, avatar, input, inputPressed, mouseState);
+            Container.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseState);
         }
 
         public void AddChild(UiElement element) {

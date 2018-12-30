@@ -13,29 +13,13 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiContainer : UiElement {
         protected UiBackground Background;
-        protected string BackgroundLocation = "";
-        protected string CurrentBackground = "None";
 
         public UiContainer() {
         }
 
-        public override void Dispose() {
-            Background?.Dispose();
-            base.Dispose();
-        }
-
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
             SpriteBatch spriteBatch, MouseState mouseState) {
-            if (!BackgroundLocation.IsNullOrEmpty()) {
-                if (BackgroundLocation != CurrentBackground) {
-                    var stream = GameContext.ContentLoader.ReadStream(BackgroundLocation);
-                    stream.Seek(0L, SeekOrigin.Begin);
-                    var blob = BlobAllocator.Blob(false);
-                    blob.ReadJson(stream.ReadAllText());
-                    Background?.Dispose();
-                    Background = new UiBackground(graphics.Graphics.GraphicsDevice, blob);
-                    CurrentBackground = BackgroundLocation;
-                }
+            if (Background != null) {
                 var size = GetSize();
 
                 Background.Draw(origin, size, spriteBatch);
@@ -48,17 +32,17 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             base.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
         }
 
-        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input,
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
-                element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, inputPressed, mouseState);
+                element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }
 
-        public void SetBackground(string location) {
-            BackgroundLocation = location;
+        public void SetBackground(string code) {
+            Background = FoxUIHook.Instance.GetBackground(code);
         }
 
         public override Vector2 GetSize() {

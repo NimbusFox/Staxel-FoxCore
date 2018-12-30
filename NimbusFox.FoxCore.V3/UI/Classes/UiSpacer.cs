@@ -34,5 +34,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public override void AddChild(UiElement element) {
             // do nothing
         }
+
+        public static UiSpacer GetSpacer(uint width = 10, uint height = 10) {
+            var spacer = new UiSpacer();
+            spacer.SetWidth(width);
+            spacer.SetHeight(height);
+            return spacer;
+        }
     }
 }

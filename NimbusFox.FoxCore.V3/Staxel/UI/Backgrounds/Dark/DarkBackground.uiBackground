@@ -1,4 +1,5 @@
 {
+    "code": "nimbusfox.ui.background.dark",
     "topLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkTopLeft.png",
     "topMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkTopMiddle.png",
     "topRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkTopRight.png",
@@ -14,6 +15,6 @@
     },
     "bottomRightOffset": {
         "x": 35,
-        "y": 40 
-    } 
+        "y": 40
+    }
 }

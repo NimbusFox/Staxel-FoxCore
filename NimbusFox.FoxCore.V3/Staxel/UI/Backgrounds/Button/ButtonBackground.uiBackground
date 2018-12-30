@@ -1,4 +1,5 @@
 {
+    "code": "nimbusfox.ui.background.button",
     "topLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonTopLeft.png",
     "topMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
     "topRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonTopRight.png",

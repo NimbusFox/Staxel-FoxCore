@@ -60,11 +60,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             return size;
         }
 
-        public virtual void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input,
+        public virtual void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
-                element.Update(universe, origin + offset, avatar, input, inputPressed, mouseState);
+                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }

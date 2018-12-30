@@ -48,12 +48,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
         }
 
-        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input, IReadOnlyList<InterfaceLogicalButton> inputPressed,
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
             MouseState mouseState) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
-                element.Update(universe, origin + offset, avatar, input, inputPressed, mouseState);
+                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
                 offset = offset + new Vector2(element.GetSize().X, 0);
             }
         }

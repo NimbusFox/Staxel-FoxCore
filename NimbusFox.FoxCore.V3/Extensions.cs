@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using NimbusFox.FoxCore.Dependencies.Harmony;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;
+using Staxel.Input;
 using Staxel.Items;
 using Staxel.Tiles;
 
@@ -115,6 +119,37 @@ namespace NimbusFox.FoxCore.V3 {
 
         public static void RunPrivateVoid(this object parentObject, string method) {
             AccessTools.Method(parentObject.GetType(), method).Invoke(parentObject, new object[0]);
+        }
+
+        public static Vector2 Vector2(this MouseState mousestate) {
+            return new Vector2(mousestate.X, mousestate.Y);
+        }
+
+        public static char? GetFirstPressedKey(this IEnumerable<ScanCode> keys) {
+            foreach (var key in keys) {
+                var text = Enum.GetName(typeof(ScanCode), key);
+                if (text?.Length <= 2 && text.Length > 0) {
+                    var ch = text.Length == 2 && text[0] == 'D' ? text[1] : text[0];
+                    if (char.IsLetterOrDigit(ch) || char.IsSymbol(ch)) {
+                        return ch;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static ScanCode? GetDirectionKey(this IEnumerable<ScanCode> keys) {
+            foreach (var key in keys) {
+                if (key == ScanCode.Left ||
+                    key == ScanCode.Right ||
+                    key == ScanCode.Up ||
+                    key == ScanCode.Down) {
+                    return key;
+                }
+            }
+
+            return null;
         }
     }
 }

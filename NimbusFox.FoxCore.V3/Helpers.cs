@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NimbusFox.FoxCore.V3.Classes;
 using Plukit.Base;
 using Staxel;
 using Staxel.Core;
+using Staxel.Input;
 using Staxel.Items;
 using Staxel.Tiles;
 
@@ -118,6 +122,39 @@ namespace NimbusFox.FoxCore.V3 {
                         coordFunction(x, y, z);
                     }
                 }
+            }
+        }
+
+        public static List<ScanCode> GetAllKeysPressed() {
+            var keys = new List<ScanCode>();
+
+            ClientContext.UserInput.EnableDebugKeys = true;
+
+            foreach (ScanCode enu in Enum.GetValues(typeof(ScanCode))) {
+                if (ClientContext.InputSource.IsDebugKeyDown(enu)) {
+                    keys.Add(enu);
+                }
+            }
+
+            ClientContext.UserInput.EnableDebugKeys = false;
+
+            return keys;
+        }
+
+        private static string _clipboard = "";
+        public static string GetClipboardText() {
+            var t = new Thread(GetClipboard);
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            while (t.IsAlive) {
+            }
+            return _clipboard;
+        }
+
+        [STAThread]
+        private static void GetClipboard() {
+            if (Clipboard.ContainsText()) {
+                _clipboard = Clipboard.GetText(TextDataFormat.UnicodeText);
             }
         }
     }

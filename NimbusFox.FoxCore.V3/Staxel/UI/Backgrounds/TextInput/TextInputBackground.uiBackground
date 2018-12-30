@@ -1,0 +1,20 @@
+{
+    "code": "nimbusfox.ui.background.textInput",
+    "topLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonTopLeft.png",
+    "topMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
+    "topRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonTopRight.png",
+    "middleLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
+    "middleMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
+    "middleRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
+    "bottomLeft": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonBottomLeft.png",
+    "bottomMiddle": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonStretch.png",
+    "bottomRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Button/ButtonBottomRight.png",
+    "topLeftOffset": {
+        "x": 5,
+        "y": 5
+    },
+    "bottomRightOffset": {
+        "x": 5,
+        "y": 5
+    }
+}

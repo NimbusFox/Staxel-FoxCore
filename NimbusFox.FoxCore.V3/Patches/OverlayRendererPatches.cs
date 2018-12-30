@@ -25,12 +25,12 @@ namespace NimbusFox.FoxCore.V3.Patches {
         private static ModOptionsEvent modSettingsWindow;
 
         private static void Update(Universe universe, AvatarController avatarController) {
-            ScanCode? input = null;
+            var input = new List<ScanCode>();
 
-            if (ClientContext.InputSource.IsAnyScanCodeDownClick(out var keyInput)) {
-                input = keyInput;
+            if (ClientContext.InputSource.IsAnyScanCodeDownClick(out _)) {
+                input = Helpers.GetAllKeysPressed();
 
-                if (keyInput == ScanCode.O && !ClientContext.WebOverlayRenderer.HasInputControl()) {
+                if (input.Any(x => x == ScanCode.O) && !ClientContext.WebOverlayRenderer.HasInputControl()) {
                     if (modSettingsWindow == null || modSettingsWindow.Completed()) {
                         modSettingsWindow = (ModOptionsEvent)GameContext.EffectDatabase.Instance(ModOptionsEventBuilder.KindCode, EffectMode.Sustain,
                             Timestep.Null, null, null, null, null);
@@ -59,7 +59,9 @@ namespace NimbusFox.FoxCore.V3.Patches {
             var remove = new List<UiWindow>();
 
             foreach (var window in FoxUIHook.Instance.Windows) {
-                window.Update(universe, avatarController, input, interfacePressed, mouseState);
+                window.Update(universe, avatarController, input, ClientContext.InputSource.IsControlKeyDown(),
+                    input.Contains(ScanCode.LeftShift) || input.Contains(ScanCode.RightShift), interfacePressed,
+                    mouseState);
 
                 if (window.Remove || window.IsDisposed) {
                     remove.Add(window);
@@ -96,7 +98,14 @@ namespace NimbusFox.FoxCore.V3.Patches {
             if (FoxUIHook.Instance.ContentManager == null) {
                 FoxUIHook.Instance.ContentManager = graphics.GetPrivateFieldValue<ContentManager>("Content");
 
-                FoxUIHook.Instance.LoadContent();
+                FoxUIHook.Instance.LoadContent(graphics.Graphics.GraphicsDevice);
+                UiWindow._graphics = graphics;
+
+                graphics.Graphics.DeviceCreated += (sender, args) => {
+                    FoxUIHook.Instance.ContentManager = graphics.GetPrivateFieldValue<ContentManager>("Content");
+                    FoxUIHook.Instance.LoadContent(graphics.Graphics.GraphicsDevice);
+                    UiWindow._graphics = graphics;
+                };
             }
         }
     }

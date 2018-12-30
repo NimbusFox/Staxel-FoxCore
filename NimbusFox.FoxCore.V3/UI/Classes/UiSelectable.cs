@@ -17,25 +17,16 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiSelectable : UiContainer {
-        protected Color _activeColor = Color.White;
-        protected Color _color = Color.White;
-        protected Color _activeTextColor = Color.White;
-        protected Color _textColor = Color.White;
+        protected Color _activeColor = new Color(247, 240, 91);
+        protected Color _color = new Color(255, 133, 46);
+        protected Color _activeTextColor = new Color(18, 26, 32);
+        protected Color _textColor = new Color(18, 26, 32);
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
             SpriteBatch spriteBatch, MouseState mouseState) {
             var size = GetSize();
             var range = origin + size;
-            if (!BackgroundLocation.IsNullOrEmpty()) {
-                if (BackgroundLocation != CurrentBackground) {
-                    var stream = GameContext.ContentLoader.ReadStream(BackgroundLocation);
-                    stream.Seek(0L, SeekOrigin.Begin);
-                    var blob = BlobAllocator.Blob(false);
-                    blob.ReadJson(stream.ReadAllText());
-                    Background?.Dispose();
-                    Background = new UiBackground(graphics.Graphics.GraphicsDevice, blob);
-                    CurrentBackground = BackgroundLocation;
-                }
+            if (Background != null) {
 
                 if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
                     Background.Draw(origin, size, spriteBatch, _activeColor);

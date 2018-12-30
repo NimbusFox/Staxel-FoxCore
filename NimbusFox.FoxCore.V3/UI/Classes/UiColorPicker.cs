@@ -24,13 +24,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private Texture2D _colorWheel;
 
         public UiColorPicker() {
-            ColorWheelImage = "mods/Fox Core V3/Staxel/UI/ColorWheel.png";
+            ColorWheelImage = Constants.Images.ColorWheel;
+            _currentImage = ColorWheelImage;
         }
 
-        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, ScanCode? input, IReadOnlyList<InterfaceLogicalButton> inputPressed,
+        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
             MouseState mouseState) {
             if (_colorWheel == null) {
-                return;
+                _colorWheel = FoxUIHook.Instance.GetPicture(ColorWheelImage);
+            }
+
+            if (ColorWheelImage != _currentImage) {
+                _colorWheel = FoxUIHook.Instance.GetPicture(ColorWheelImage);
+                _currentImage = ColorWheelImage;
             }
 
             var location = Helpers.VectorLocation(origin,
@@ -56,13 +62,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
             MouseState mouseState) {
-            if (!ColorWheelImage.IsNullOrEmpty()) {
-                if (ColorWheelImage != _currentImage) {
-                    _colorWheel = Texture2D.FromStream(graphics.Graphics.GraphicsDevice,
-                        GameContext.ContentLoader.ReadStream(ColorWheelImage));
-                    _currentImage = ColorWheelImage;
-                }
-            }
 
             if (_colorWheel == null) {
                 return;
