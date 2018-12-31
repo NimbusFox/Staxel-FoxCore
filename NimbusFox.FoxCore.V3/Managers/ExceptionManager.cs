@@ -20,11 +20,11 @@ namespace NimbusFox.FoxCore.V3.Managers {
         public void HandleException(Exception ex, Dictionary<string, object> extras = null) {
             var filename = DateTime.Now.Ticks;
 
-            _errorsDir.WriteFile($"{filename}.{_modVersion}.error", JsonConvert.SerializeObject(ex, Formatting.Indented), null, true);
+            _errorsDir.WriteFile($"{filename}.{_modVersion ?? ""}error", JsonConvert.SerializeObject(ex, Formatting.Indented), null, true);
 
             if (extras != null) {
                 if (extras.Any()) {
-                    _errorsDir.WriteFile($"{filename}.{_modVersion}.data", JsonConvert.SerializeObject(extras, Formatting.Indented), null, true);
+                    _errorsDir.WriteFile($"{filename}.{_modVersion ?? ""}data", JsonConvert.SerializeObject(extras, Formatting.Indented), null, true);
                 }
             }
         }

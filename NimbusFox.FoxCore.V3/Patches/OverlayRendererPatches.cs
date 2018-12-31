@@ -58,7 +58,10 @@ namespace NimbusFox.FoxCore.V3.Patches {
 
             var remove = new List<UiWindow>();
 
-            foreach (var window in FoxUIHook.Instance.Windows) {
+            foreach (var window in new List<UiWindow>(FoxUIHook.Instance.Windows)) {
+                if (!window.CallUpdates) {
+                    continue;
+                }
                 window.Update(universe, avatarController, input, ClientContext.InputSource.IsControlKeyDown(),
                     input.Contains(ScanCode.LeftShift) || input.Contains(ScanCode.RightShift), interfacePressed,
                     mouseState);

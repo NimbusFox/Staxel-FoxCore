@@ -41,17 +41,23 @@ namespace NimbusFox.FoxCore.V3 {
         /// <param name="author"></param>
         /// <param name="mod">Must match your mod directory name</param>
         /// <param name="modVersion"></param>
-        public FoxCore(string author, string mod, string modVersion) {
+        public FoxCore(string author, string mod, string modVersion = null) {
             _author = author;
             _mod = mod;
             _version = modVersion;
             ExceptionManager = new ExceptionManager(author, mod, modVersion);
             WorldManager = new WorldManager();
-            SaveDirectory = new DirectoryManager(author, mod).FetchDirectoryNoParent(modVersion);
+            SaveDirectory = new DirectoryManager(author, mod);
+            if (!modVersion.IsNullOrEmpty()) {
+                SaveDirectory = SaveDirectory.FetchDirectoryNoParent(modVersion);
+            }
             ModDirectory = new DirectoryManager(mod) { ContentFolder = true };
             ModsDirectory = new DirectoryManager { ContentFolder = true }.FetchDirectoryNoParent("content");
             ModsDirectory = ModsDirectory.FetchDirectoryNoParent("mods");
-            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("modConfigs").FetchDirectoryNoParent(mod).FetchDirectoryNoParent(modVersion);
+            ConfigDirectory = new DirectoryManager().FetchDirectoryNoParent("modConfigs").FetchDirectoryNoParent(mod);
+            if (!modVersion.IsNullOrEmpty()) {
+                ConfigDirectory = ConfigDirectory.FetchDirectoryNoParent(modVersion);
+            }
             ContentDirectory = new DirectoryManager { ContentFolder = true }.FetchDirectoryNoParent("content");
             _patchControllerId = $"{_author}.{_mod}";
         }

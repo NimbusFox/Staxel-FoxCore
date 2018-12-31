@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -21,6 +22,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public bool IsDisposed { get; private set; } = false;
         internal Viewport ViewPort;
         internal bool Remove = false;
+        internal bool CallUpdates = true;
+
+        private List<UiWindow> _childrenWindows = new List<UiWindow>();
 
         public event Action OnClose;
         public event Action OnShow;
@@ -171,6 +175,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public void Dispose() {
+            foreach (var window in _childrenWindows) {
+                window.Dispose();
+            }
             Hide();
             _spriteBatch.Dispose();
             OnClose?.Invoke();
@@ -244,6 +251,27 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void ListenForEscape(bool value) {
             _escape = value;
+        }
+
+        public void AddChildWindow(UiWindow window) {
+            _childrenWindows.Add(window);
+        }
+
+        public void RemoveChildWindow(UiWindow window) {
+            _childrenWindows.Remove(window);
+        }
+
+        public void StopUpdateCalls() {
+            CallUpdates = false;
+        }
+
+        public void StartUpdateCalls() {
+            var timer = new Timer {Interval = 400};
+            timer.Elapsed += (sender, args) => {
+                CallUpdates = true; 
+                timer.Dispose();
+            };
+            timer.Start();
         }
     }
 }
