@@ -9,6 +9,7 @@ using NimbusFox.FoxCore.V3.Classes;
 using Plukit.Base;
 using Staxel;
 using Staxel.Core;
+using Staxel.Draw;
 using Staxel.Input;
 using Staxel.Items;
 using Staxel.Tiles;
@@ -156,6 +157,20 @@ namespace NimbusFox.FoxCore.V3 {
             if (Clipboard.ContainsText()) {
                 _clipboard = Clipboard.GetText(TextDataFormat.UnicodeText);
             }
+        }
+
+        public static Texture2D GetTexture(DeviceContext graphics, uint width = 25, uint height = 25) {
+            var square = new Texture2D(graphics.Graphics.GraphicsDevice, (int)width, (int)height);
+
+            var colors = new Color[25 * 25];
+
+            for (var i = 0; i < colors.Length; i++) {
+                colors[i] = Color.White;
+            }
+
+            square.SetData(colors);
+
+            return square;
         }
     }
 }

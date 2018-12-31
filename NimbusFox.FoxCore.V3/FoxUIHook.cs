@@ -215,8 +215,7 @@ namespace NimbusFox.FoxCore.V3 {
 
                     blob.LoadJsonStream(stream);
 
-                    var image = new UiTexture2D();
-                    image.SetTexture(context => 
+                    var image = new UiTexture2D(context =>
                         Texture2D.FromStream(context.Graphics.GraphicsDevice,
                             GameContext.ContentLoader.ReadStream(blob.GetString("picture"))));
 

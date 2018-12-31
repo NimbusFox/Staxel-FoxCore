@@ -19,6 +19,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public int Height => _texture?.Height ?? 0;
         public int Width => _texture?.Width ?? 0;
 
+        public UiTexture2D(Func<DeviceContext, Texture2D> textureInit) {
+            _textureInit = textureInit;
+        }
+
         public override Vector2 GetSize() {
             return _texture == null ? Vector2.Zero : new Vector2(_texture.Width, _texture.Height);
         }
@@ -55,10 +59,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             _selfRender = false;
         }
 
-        public void SetTexture(Func<DeviceContext, Texture2D> textureInit) {
-            _textureInit = textureInit;
-        }
-
         public void SetColor(Color color) {
             _color = color;
         }
@@ -69,6 +69,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+        }
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public override void Dispose() {
+            _texture?.Dispose();
+            base.Dispose();
         }
     }
 }

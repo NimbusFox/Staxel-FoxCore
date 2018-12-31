@@ -25,40 +25,31 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public UiBackground(GraphicsDevice graphics, Blob images) {
             _images = images;
-            TopLeft = new UiTexture2D();
-            TopLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topLeft"))));
+            TopLeft = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topLeft"))));
             TopLeft.TakeRender();
 
-            TopMiddle = new UiTexture2D();
-            TopMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topMiddle"))));
+            TopMiddle = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topMiddle"))));
             TopMiddle.TakeRender();
 
-            TopRight = new UiTexture2D();
-            TopRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topRight"))));
+            TopRight = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topRight"))));
             TopRight.TakeRender();
 
-            MiddleLeft = new UiTexture2D();
-            MiddleLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleLeft"))));
+            MiddleLeft = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleLeft"))));
             MiddleLeft.TakeRender();
 
-            MiddleMiddle = new UiTexture2D();
-            MiddleMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleMiddle"))));
+            MiddleMiddle = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleMiddle"))));
             MiddleMiddle.TakeRender();
 
-            MiddleRight = new UiTexture2D();
-            MiddleRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleRight"))));
+            MiddleRight = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleRight"))));
             MiddleRight.TakeRender();
 
-            BottomLeft = new UiTexture2D();
-            BottomLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomLeft"))));
+            BottomLeft = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomLeft"))));
             BottomLeft.TakeRender();
 
-            BottomMiddle = new UiTexture2D();
-            BottomMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomMiddle"))));
+            BottomMiddle = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomMiddle"))));
             BottomMiddle.TakeRender();
 
-            BottomRight = new UiTexture2D();
-            BottomRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomRight"))));
+            BottomRight = new UiTexture2D(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomRight"))));
             BottomRight.TakeRender();
 
             if (images.Contains("topLeftOffset")) {

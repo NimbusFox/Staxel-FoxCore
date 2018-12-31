@@ -24,6 +24,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
         private int _cursorIndex = 0;
         public UiTextInput() {
             _textBlock = new UiTextBlock();
+            _textBlock.SetCaret();
 
             base.AddChild(_textBlock);
         }
@@ -36,6 +37,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
 
         }
 
+        private DateTime _lastTick = DateTime.MinValue;
+
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
             MouseState mouseState) {
             base.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseState);
@@ -46,7 +49,16 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             }
 
             if (!_selected) {
+                _textBlock.RemoveCaret();
                 return;
+            }
+
+            if ((DateTime.Now - _lastTick).Milliseconds > 500) {
+                if (!_textBlock.HasCaret()) {
+                    _textBlock.SetCaret();
+                }
+                _textBlock.ToggleCaret();
+                _lastTick = DateTime.Now;
             }
 
             if (!input.Any()) {
@@ -56,7 +68,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             if (ctrl) {
                 if (input.Contains(ScanCode.V)) {
                     try {
-                        SetValue(GetValue() + Helpers.GetClipboardText(), true);
+                        ForceSetValue(GetValue() + Helpers.GetClipboardText(), true);
                     } catch {
                         // ignore
                     }
@@ -80,16 +92,18 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
 
                 if (direction != null) {
                     if (direction == ScanCode.Left) {
-                        if (_cursorIndex != 0) {
+                        if (_cursorIndex > 0) {
                             _cursorIndex--;
+                            _textBlock.SetCaretIndex((uint)_cursorIndex);
                         }
 
                         return;
                     }
 
                     if (direction == ScanCode.Right) {
-                        if (_cursorIndex != GetValue().Length) {
+                        if (_cursorIndex < GetValue().Length) {
                             _cursorIndex++;
+                            _textBlock.SetCaretIndex((uint)_cursorIndex);
                         }
 
                         return;
@@ -99,11 +113,29 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                 var current = GetValue();
 
                 if (input.Contains(ScanCode.Backspace)) {
-                    if (_cursorIndex != 0 && current.Length != 0) {
+                    if (current.Length == 0) {
+                        return;
+                    }
+                    if (_cursorIndex != 0 && _cursorIndex != current.Length) {
                         SetValue(current.Substring(0, _cursorIndex - 1) + current.Substring(_cursorIndex), true);
+                        _cursorIndex--;
+                        if (_cursorIndex < 0) {
+                            _cursorIndex = 0;
+                        }
                         if (_cursorIndex >= current.Length) {
                             _cursorIndex = GetValue().Length;
                         }
+                        _textBlock.SetCaretIndex((uint)_cursorIndex);
+                    } else if (_cursorIndex >= current.Length) {
+                        SetValue(current.Substring(0, current.Length - 1), true);
+                        _cursorIndex--;
+                        if (_cursorIndex < 0) {
+                            _cursorIndex = 0;
+                        }
+                        if (_cursorIndex >= current.Length) {
+                            _cursorIndex = GetValue().Length;
+                        }
+                        _textBlock.SetCaretIndex((uint)_cursorIndex);
                     }
 
                     return;
@@ -114,6 +146,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                         SetValue(current.Substring(0, _cursorIndex) + (_cursorIndex == current.Length ? "" : current.Substring(_cursorIndex + 1)), true);
                     }
 
+                    return;
+                }
+
+                if (current.Length >= _limit) {
                     return;
                 }
 
@@ -132,6 +168,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                         _cursorIndex++;
                         if (_cursorIndex >= GetValue().Length) {
                             _cursorIndex = GetValue().Length;
+                            _textBlock.SetCaretIndex((uint)_cursorIndex);
                         }
                     }
                 }
@@ -181,11 +218,36 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
 
             if (validText.Length > _limit) {
                 _textBlock.SetString(validText.Substring(0, _limit));
+                return;
+            }
+            _textBlock.SetString(validText);
+            _textBlock.SetCaretIndex((uint)_cursorIndex);
+            if (update) {
+                OnChange?.Invoke(GetValue());
+            }
+        }
+
+        public void ForceSetValue(string text, bool update = false) {
+            var validText = "";
+
+            if (InputCheck == null) {
+                validText = text;
+            } else {
+                foreach (var ch in text) {
+                    if (InputCheck.Invoke(ch)) {
+                        validText += ch;
+                    }
+                }
+            }
+
+            if (validText.Length > _limit) {
+                _textBlock.SetString(validText.Substring(0, _limit));
                 _cursorIndex = _textBlock.ToString().Length;
                 return;
             }
             _textBlock.SetString(validText);
             _cursorIndex = _textBlock.ToString().Length;
+            _textBlock.SetCaretIndex((uint)_cursorIndex);
             if (update) {
                 OnChange?.Invoke(GetValue());
             }
