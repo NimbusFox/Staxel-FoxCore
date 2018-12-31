@@ -35,6 +35,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
+                if (!element.Visible) {
+                    continue;
+                }
                 if (element.Parent == null) {
                     element.SetParent(this);
                 }

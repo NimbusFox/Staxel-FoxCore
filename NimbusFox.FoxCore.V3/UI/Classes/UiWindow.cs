@@ -176,7 +176,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void Dispose() {
             foreach (var window in _childrenWindows) {
-                window.Dispose();
+                if (!window.IsDisposed) {
+                    window.Dispose();
+                }
             }
             Hide();
             _spriteBatch.Dispose();

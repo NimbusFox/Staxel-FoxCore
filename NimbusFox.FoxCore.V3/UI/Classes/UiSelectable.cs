@@ -32,6 +32,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
 
                     foreach (var element in Elements) {
+                        if (!element.Visible) {
+                            continue;
+                        }
                         if (element is UiTextBlock textElement) {
                             textElement.SetColor(_activeTextColor);
                         }
@@ -40,6 +43,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     Background.Draw(graphics, origin, size, spriteBatch, _color);
 
                     foreach (var element in Elements) {
+                        if (!element.Visible) {
+                            continue;
+                        }
                         if (element is UiTextBlock textElement) {
                             textElement.SetColor(_textColor);
                         }

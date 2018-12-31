@@ -370,6 +370,7 @@
     <Compile Include="UI\Classes\UiTexture2D.cs" />
     <Compile Include="UI\Classes\UiWindow.cs" />
     <Compile Include="UI\Enums\UiAlignment.cs" />
+    <Compile Include="UI\Enums\UiContainerAlignment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

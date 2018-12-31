@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NimbusFox.FoxCore.V3.UI.Enums;
 using Plukit.Base;
 using Staxel;
 using Staxel.Client;
@@ -14,9 +15,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiContainer : UiElement {
         protected UiBackground Background;
 
-        public UiContainer() {
-        }
-
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
             SpriteBatch spriteBatch, MouseState mouseState) {
             if (Background != null) {
@@ -24,7 +22,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
                 Background.Draw(graphics, origin, size, spriteBatch);
             }
-            base.Draw(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
         }
 
         protected void DrawChildren(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
@@ -36,6 +34,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
+                if (!element.Visible) {
+                    continue;
+                }
                 element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
@@ -49,6 +50,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Vector2.Zero;
 
             foreach (var element in Elements) {
+                if (!element.Visible) {
+                    continue;
+                }
                 var eleSize = element.GetSize();
                 size.X = size.X < eleSize.X ? eleSize.X : size.X;
                 size.Y += eleSize.Y;
@@ -66,6 +70,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     calcSize.Y = min.Y;
                 }
             }
+
 
             calcSize.X = MinWidth < calcSize.X ? calcSize.X : MinWidth;
             calcSize.Y = MinHeight < calcSize.Y ? calcSize.Y : MinHeight;

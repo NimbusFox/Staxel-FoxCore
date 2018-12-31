@@ -11,6 +11,7 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public abstract class UiElement : IDisposable {
+        public bool Visible { get; private set; } = true;
         public virtual void Dispose() {
             foreach (var element in Elements) {
                 element.Dispose();
@@ -27,6 +28,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public virtual void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
             SpriteBatch spriteBatch, MouseState mouseState) {
             var offset = Vector2.Zero;
+
             foreach (var element in Elements) {
                 if (element.Parent == null) {
                     element.Parent = this;
@@ -35,6 +37,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 if (element.Window == null) {
                     element.Window = Window;
                 }
+
+                if (!element.Visible) {
+                    continue;
+                }
+
                 element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
@@ -46,6 +53,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var largestX = 0F;
 
             foreach (var element in Elements) {
+                if (!element.Visible) {
+                    continue;
+                }
                 var eleSize = element.GetSize();
 
                 size.Y += eleSize.Y;
@@ -64,6 +74,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
+                if (!element.Visible) {
+                    continue;
+                }
                 element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
@@ -95,6 +108,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void SetMinWidth(int width) {
             MinWidth = width;
+        }
+
+        public void Show() {
+            Visible = true;
+        }
+
+        public void Hide() {
+            Visible = false;
         }
     }
 }
