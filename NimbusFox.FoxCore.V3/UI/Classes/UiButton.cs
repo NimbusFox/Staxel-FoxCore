@@ -35,7 +35,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var range = origin + size;
             if (Background != null) {
                 if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
-                    Background.Draw(origin, size, spriteBatch, _activeColor);
+                    Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
 
                     foreach (var element in Elements) {
                         if (element is UiTextBlock textElement) {
@@ -43,7 +43,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                         }
                     }
                 } else {
-                    Background.Draw(origin, size, spriteBatch, _color);
+                    Background.Draw(graphics, origin, size, spriteBatch, _color);
 
                     foreach (var element in Elements) {
                         if (element is UiTextBlock textElement) {

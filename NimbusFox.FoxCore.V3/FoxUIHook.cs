@@ -32,7 +32,7 @@ namespace NimbusFox.FoxCore.V3 {
 
         private Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
         private Dictionary<string, UiBackground> _backgrounds = new Dictionary<string, UiBackground>();
-        private Dictionary<string, Texture2D> _images = new Dictionary<string, Texture2D>();
+        private Dictionary<string, UiTexture2D> _images = new Dictionary<string, UiTexture2D>();
 
         static FoxUIHook() {
             OverlayRendererPatches.Initialize();
@@ -180,11 +180,6 @@ namespace NimbusFox.FoxCore.V3 {
         }
 
         internal void LoadContent(GraphicsDevice graphics) {
-            foreach (var window in Windows) {
-                window.Dispose();
-            }
-
-            Windows.Clear();
             _fonts.Clear();
             _backgrounds.Clear();
             _images.Clear();
@@ -220,9 +215,12 @@ namespace NimbusFox.FoxCore.V3 {
 
                     blob.LoadJsonStream(stream);
 
-                    _images.Add(blob.GetString("code"),
-                        Texture2D.FromStream(graphics,
+                    var image = new UiTexture2D();
+                    image.SetTexture(context => 
+                        Texture2D.FromStream(context.Graphics.GraphicsDevice,
                             GameContext.ContentLoader.ReadStream(blob.GetString("picture"))));
+
+                    _images.Add(blob.GetString("code"), image);
                 }
             }
 
@@ -237,7 +235,7 @@ namespace NimbusFox.FoxCore.V3 {
             return !_backgrounds.ContainsKey(code) ? null : _backgrounds[code];
         }
 
-        public Texture2D GetPicture(string code) {
+        public UiTexture2D GetPicture(string code) {
             return !_images.ContainsKey(code) ? null : _images[code];
         }
     }

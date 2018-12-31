@@ -14,8 +14,6 @@ using Staxel.Logic;
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public sealed class UiWindow : IDisposable {
 
-        internal static DeviceContext _graphics;
-
         public bool AlwaysOnTop { get; protected set; } = false;
         public bool Visible { get; private set; }
         public UiContainer Container { get; }
@@ -41,11 +39,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
             AvatarController avatarController, MouseState mouseState) {
             if (_spriteBatch == null) {
-                _spriteBatch = new SpriteBatch(_graphics.Graphics.GraphicsDevice);
+                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+            } else if (_spriteBatch.IsDisposed) {
+                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             }
 
             if (_escape) {
-                if (!_graphics.IsActive()) {
+                if (!graphics.IsActive()) {
                     Dispose();
                     return;
                 }
@@ -62,7 +62,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Container.GetSize();
 
             Vector2 origin;
-            ViewPort = _graphics.Graphics.GraphicsDevice.Viewport;
+            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
             switch (_alignment) {
                 case UiAlignment.TopLeft:
@@ -95,18 +95,26 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(_graphics, avatar, universe, origin, _spriteBatch, mouseState);
-            _spriteBatch.End();
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
+            if (!_spriteBatch.IsDisposed) {
+                try {
+                    _spriteBatch.End();
+                } catch {
+                    _spriteBatch.Dispose();
+                }
+            }
         }
 
         internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
             EntityPainter avatarPainter, Universe universe, Timestep timestep, MouseState mouseState) {
             if (_spriteBatch == null) {
-                _spriteBatch = new SpriteBatch(_graphics.Graphics.GraphicsDevice);
+                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
+            } else if (_spriteBatch.IsDisposed) {
+                _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             }
 
             if (_escape) {
-                if (!_graphics.IsActive()) {
+                if (!graphics.IsActive()) {
                     Dispose();
                     return;
                 }
@@ -123,7 +131,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = Container.GetSize();
 
             Vector2 origin;
-            ViewPort = _graphics.Graphics.GraphicsDevice.Viewport;
+            ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
             switch (_alignment) {
                 case UiAlignment.TopLeft:
@@ -156,12 +164,15 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(_graphics, avatar, universe, origin, _spriteBatch, mouseState);
-            _spriteBatch.End();
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
+            if (!_spriteBatch.IsDisposed) {
+                _spriteBatch.End();
+            }
         }
 
         public void Dispose() {
             Hide();
+            _spriteBatch.Dispose();
             OnClose?.Invoke();
             Container.Dispose();
 

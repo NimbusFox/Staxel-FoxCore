@@ -142,7 +142,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             SpriteBatch spriteBatch, MouseState mouseState) {
             var size = GetSize();
             if (_selected) {
-                Background.Draw(origin, size, spriteBatch, _activeColor);
+                Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
 
                 foreach (var element in Elements) {
                     if (element is UiTextBlock textElement) {
@@ -150,7 +150,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                     }
                 }
             } else {
-                Background.Draw(origin, size, spriteBatch, _color);
+                Background.Draw(graphics, origin, size, spriteBatch, _color);
 
                 foreach (var element in Elements) {
                     if (element is UiTextBlock textElement) {

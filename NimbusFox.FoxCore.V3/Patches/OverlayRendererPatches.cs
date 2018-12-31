@@ -99,12 +99,9 @@ namespace NimbusFox.FoxCore.V3.Patches {
                 FoxUIHook.Instance.ContentManager = graphics.GetPrivateFieldValue<ContentManager>("Content");
 
                 FoxUIHook.Instance.LoadContent(graphics.Graphics.GraphicsDevice);
-                UiWindow._graphics = graphics;
 
-                graphics.Graphics.DeviceCreated += (sender, args) => {
-                    FoxUIHook.Instance.ContentManager = graphics.GetPrivateFieldValue<ContentManager>("Content");
-                    FoxUIHook.Instance.LoadContent(graphics.Graphics.GraphicsDevice);
-                    UiWindow._graphics = graphics;
+                graphics.Graphics.DeviceReset += (sender, args) => {
+                    FoxUIHook.Instance.ContentManager = null;
                 };
             }
         }

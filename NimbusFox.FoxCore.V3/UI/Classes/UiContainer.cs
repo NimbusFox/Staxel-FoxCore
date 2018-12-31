@@ -22,7 +22,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             if (Background != null) {
                 var size = GetSize();
 
-                Background.Draw(origin, size, spriteBatch);
+                Background.Draw(graphics, origin, size, spriteBatch);
             }
             base.Draw(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
         }

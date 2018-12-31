@@ -21,7 +21,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public event Action<Color> ColorClick;
         protected string ColorWheelImage;
         private string _currentImage = "none";
-        private Texture2D _colorWheel;
+        private UiTexture2D _colorWheel;
 
         public UiColorPicker() {
             ColorWheelImage = Constants.Images.ColorWheel;
@@ -47,7 +47,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 return;
             }
 
-            var color = Helpers.GetColorByCoordinate(_colorWheel, location);
+            Color color;
+
+            try {
+                color = Helpers.GetColorByCoordinate(_colorWheel.GetTexture(null), location);
+            } catch {
+                return;
+            }
 
             if (color == Color.Transparent) {
                 return;
@@ -67,7 +73,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 return;
             }
 
-            spriteBatch.Draw(_colorWheel, origin, Color.White);
+            _colorWheel.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
         }
 
         public override Vector2 GetSize() {

@@ -4,33 +4,62 @@ using Microsoft.Xna.Framework.Graphics;
 using Plukit.Base;
 using Staxel;
 using Staxel.Core;
+using Staxel.Draw;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiBackground : IDisposable {
-        private Texture2D TopLeft;
-        private Texture2D TopMiddle;
-        private Texture2D TopRight;
-        private Texture2D MiddleLeft;
-        private Texture2D MiddleMiddle;
-        private Texture2D MiddleRight;
-        private Texture2D BottomLeft;
-        private Texture2D BottomMiddle;
-        private Texture2D BottomRight;
+        private UiTexture2D TopLeft;
+        private UiTexture2D TopMiddle;
+        private UiTexture2D TopRight;
+        private UiTexture2D MiddleLeft;
+        private UiTexture2D MiddleMiddle;
+        private UiTexture2D MiddleRight;
+        private UiTexture2D BottomLeft;
+        private UiTexture2D BottomMiddle;
+        private UiTexture2D BottomRight;
+        private Blob _images;
         public Vector2 TopLeftOffset { get; } = Vector2.Zero;
         public Vector2 BottomRightOffset { get; } = Vector2.Zero;
         public Vector2 TopLeftPadding { get; } = Vector2.Zero;
         public Vector2 BottomRightPadding { get; } = Vector2.Zero;
 
         public UiBackground(GraphicsDevice graphics, Blob images) {
-            TopLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("topLeft")));
-            TopMiddle = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("topMiddle")));
-            TopRight = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("topRight")));
-            MiddleLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("middleLeft")));
-            MiddleMiddle = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("middleMiddle")));
-            MiddleRight = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("middleRight")));
-            BottomLeft = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomLeft")));
-            BottomMiddle = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomMiddle")));
-            BottomRight = Texture2D.FromStream(graphics, GameContext.ContentLoader.ReadStream(images.GetString("bottomRight")));
+            _images = images;
+            TopLeft = new UiTexture2D();
+            TopLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topLeft"))));
+            TopLeft.TakeRender();
+
+            TopMiddle = new UiTexture2D();
+            TopMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topMiddle"))));
+            TopMiddle.TakeRender();
+
+            TopRight = new UiTexture2D();
+            TopRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("topRight"))));
+            TopRight.TakeRender();
+
+            MiddleLeft = new UiTexture2D();
+            MiddleLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleLeft"))));
+            MiddleLeft.TakeRender();
+
+            MiddleMiddle = new UiTexture2D();
+            MiddleMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleMiddle"))));
+            MiddleMiddle.TakeRender();
+
+            MiddleRight = new UiTexture2D();
+            MiddleRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("middleRight"))));
+            MiddleRight.TakeRender();
+
+            BottomLeft = new UiTexture2D();
+            BottomLeft.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomLeft"))));
+            BottomLeft.TakeRender();
+
+            BottomMiddle = new UiTexture2D();
+            BottomMiddle.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomMiddle"))));
+            BottomMiddle.TakeRender();
+
+            BottomRight = new UiTexture2D();
+            BottomRight.SetTexture(context => Texture2D.FromStream(context.Graphics.GraphicsDevice, GameContext.ContentLoader.ReadStream(_images.GetString("bottomRight"))));
+            BottomRight.TakeRender();
 
             if (images.Contains("topLeftOffset")) {
                 TopLeftOffset = images.GetBlob("topLeftOffset").GetVector2F().ToVector2();
@@ -49,18 +78,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
         }
 
-        public void Draw(Vector2 origin, Vector2 size, SpriteBatch spriteBatch) {
-            Draw(origin, size, spriteBatch, Color.White);
+        public void Draw(DeviceContext graphics, Vector2 origin, Vector2 size, SpriteBatch spriteBatch) {
+            Draw(graphics, origin, size, spriteBatch, Color.White);
         }
 
-        public bool IsDisposed() {
-            return TopLeft.IsDisposed || TopMiddle.IsDisposed || TopRight.IsDisposed || MiddleLeft.IsDisposed ||
-                   MiddleMiddle.IsDisposed || MiddleRight.IsDisposed || BottomLeft.IsDisposed ||
-                   BottomMiddle.IsDisposed || BottomRight.IsDisposed;
-        }
-
-        public void Draw(Vector2 origin, Vector2 size, SpriteBatch spriteBatch, Color color) {
-
+        public void Draw(DeviceContext graphics, Vector2 origin, Vector2 size, SpriteBatch spriteBatch, Color color) {
             var stretchWidth = 0;
             var stretchHeight = 0;
 
@@ -78,36 +100,36 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 stretchHeight = sizeI.Y - minI.Y;
             }
 
-            spriteBatch.Draw(TopLeft, new Vector2(originI.X, originI.Y), color);
+            spriteBatch.Draw(TopLeft.GetTexture(graphics), new Vector2(originI.X, originI.Y), color);
             if (stretchWidth != 0) {
-                spriteBatch.Draw(TopMiddle,
+                spriteBatch.Draw(TopMiddle.GetTexture(graphics),
                     new Rectangle(originI.X + TopLeft.Width, originI.Y, stretchWidth, TopLeft.Height), color);
             }
 
-            spriteBatch.Draw(TopRight, new Vector2(originI.X + TopLeft.Width + stretchWidth, originI.Y), color);
+            spriteBatch.Draw(TopRight.GetTexture(graphics), new Vector2(originI.X + TopLeft.Width + stretchWidth, originI.Y), color);
             if (stretchHeight != 0) {
-                spriteBatch.Draw(MiddleLeft,
+                spriteBatch.Draw(MiddleLeft.GetTexture(graphics),
                     new Rectangle(originI.X, originI.Y + TopLeft.Height, TopLeft.Width, stretchHeight), color);
                 if (stretchWidth != 0) {
-                    spriteBatch.Draw(MiddleMiddle,
+                    spriteBatch.Draw(MiddleMiddle.GetTexture(graphics),
                         new Rectangle(originI.X + TopLeft.Width, originI.Y + TopLeft.Height, stretchWidth,
                             stretchHeight), color);
                 }
 
-                spriteBatch.Draw(MiddleRight,
+                spriteBatch.Draw(MiddleRight.GetTexture(graphics),
                     new Rectangle(originI.X + TopLeft.Width + stretchWidth, originI.Y + TopLeft.Height, TopLeft.Width,
                         stretchHeight), color);
             }
 
-            spriteBatch.Draw(BottomLeft, new Vector2(originI.X, originI.Y + stretchHeight + TopLeft.Height),
+            spriteBatch.Draw(BottomLeft.GetTexture(graphics), new Vector2(originI.X, originI.Y + stretchHeight + TopLeft.Height),
                 color);
             if (stretchWidth != 0) {
-                spriteBatch.Draw(BottomMiddle,
+                spriteBatch.Draw(BottomMiddle.GetTexture(graphics),
                     new Rectangle(originI.X + TopLeft.Width, originI.Y + stretchHeight + TopLeft.Height, stretchWidth,
                         TopLeft.Height), color);
             }
 
-            spriteBatch.Draw(BottomRight,
+            spriteBatch.Draw(BottomRight.GetTexture(graphics),
                 new Vector2(originI.X + stretchWidth + BottomLeft.Width, originI.Y + stretchHeight + TopLeft.Height),
                 color);
         }
