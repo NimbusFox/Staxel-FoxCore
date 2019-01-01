@@ -364,6 +364,7 @@
     <Compile Include="UI\Classes\UiElement.cs" />
     <Compile Include="UI\Classes\Inputs\UiTextInput.cs" />
     <Compile Include="UI\Classes\UiRow.cs" />
+    <Compile Include="UI\Classes\UiScrollableContainer.cs" />
     <Compile Include="UI\Classes\UiSelectable.cs" />
     <Compile Include="UI\Classes\UiSpacer.cs" />
     <Compile Include="UI\Classes\UiTextBlock.cs" />

@@ -30,14 +30,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
-                if (element.Parent == null) {
-                    element.Parent = this;
-                }
-
-                if (element.Window == null) {
-                    element.Window = Window;
-                }
-
                 if (!element.Visible) {
                     continue;
                 }
@@ -74,6 +66,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
+                if (element.Parent == null) {
+                    element.Parent = this;
+                }
+
+                if (element.Window == null) {
+                    element.Window = Window;
+                }
+
                 if (!element.Visible) {
                     continue;
                 }
