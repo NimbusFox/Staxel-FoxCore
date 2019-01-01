@@ -11,10 +11,10 @@
     "bottomRight": "mods/Fox Core V3/Staxel/UI/Backgrounds/Dark/DarkBottomRight.png",
     "topLeftOffset": {
         "x": 35,
-        "y": 40
+        "y": 45
     },
     "bottomRightOffset": {
-        "x": 35,
-        "y": 40
+        "x": 40,
+        "y": 45
     }
 }

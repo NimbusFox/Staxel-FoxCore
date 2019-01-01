@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private uint _caretHeight = 0;
         private bool _drawCaret = false;
         private uint _caretIndex = 0;
+        private bool _drawUpsideDown = false;
 
         public UiTextBlock() {
             _font = FoxUIHook.Instance.GetFont();
@@ -57,22 +59,28 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                             _font.MeasureString(_text.Substring(0, (int) _caretIndex)).X + _caret.Width, 0), _color);
                 }
             } else {
-                spriteBatch.DrawString(_font, _text, origin, _color);
+                if (_drawUpsideDown) {
+                    spriteBatch.DrawString(_font, new StringBuilder(_text), origin, _color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.FlipHorizontally, 0.0f);
+                } else {
+                    spriteBatch.DrawString(_font, _text, origin, _color);
+                }
             }
         }
 
         public override Vector2 GetSize() {
             var size = base.GetSize();
 
-            var font = FoxUIHook.Instance.GetFont();
-
-            var fontSize = font.MeasureString(_text);
+            var fontSize = _font.MeasureString(_text);
 
             return size + fontSize;
         }
 
         public void SetString(string text) {
             _text = text;
+        }
+
+        public void SetString(object obj) {
+            SetString(obj.ToString());
         }
 
         public void SetColor(Color color) {
@@ -110,6 +118,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void SetCaretIndex(uint index) {
             _caretIndex = index;
+        }
+
+        public void DrawUpsideDown(bool value) {
+            _drawUpsideDown = value;
         }
     }
 }

@@ -168,8 +168,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                         _cursorIndex++;
                         if (_cursorIndex >= GetValue().Length) {
                             _cursorIndex = GetValue().Length;
-                            _textBlock.SetCaretIndex((uint)_cursorIndex);
                         }
+                        _textBlock.SetCaretIndex((uint)_cursorIndex);
                     }
                 }
             }
@@ -257,7 +257,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             _limit = limit;
         }
 
-        public void SetSize(uint width, uint height) {
+        public void SetSize(uint width = 150, uint height = 30) {
             _size = new Vector2(width, height);
         }
 

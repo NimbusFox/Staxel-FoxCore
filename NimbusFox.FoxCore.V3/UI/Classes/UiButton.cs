@@ -17,14 +17,40 @@ using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.V3.UI.Classes {
     public class UiButton : UiSelectable {
+        private bool _isEnabled = true;
+        private Color _disabledColor = Color.LightGray;
+        private Color _disabledTextColor = Color.Gray;
+
+        public UiButton() {
+            SetBackground(Constants.Backgrounds.Button);
+        }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
             MouseState mouseState) {
             var size = GetSize();
             var range = origin + size;
-            if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
-                if (mouseState.LeftButton == ButtonState.Pressed) {
-                    OnClick?.Invoke();
+            if (_isEnabled) {
+                if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
+                    if (mouseState.LeftButton == ButtonState.Pressed) {
+                        OnClick?.Invoke();
+                    }
+                    foreach (var element in Elements) {
+                        if (element is UiTextBlock textElement) {
+                            textElement.SetColor(_activeTextColor);
+                        }
+                    }
+                } else {
+                    foreach (var element in Elements) {
+                        if (element is UiTextBlock textElement) {
+                            textElement.SetColor(_textColor);
+                        }
+                    }
+                }
+            } else {
+                foreach (var element in Elements) {
+                    if (element is UiTextBlock textElement) {
+                        textElement.SetColor(_disabledTextColor);
+                    }
                 }
             }
         }
@@ -34,22 +60,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var size = GetSize();
             var range = origin + size;
             if (Background != null) {
-                if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
-                    Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
-
-                    foreach (var element in Elements) {
-                        if (element is UiTextBlock textElement) {
-                            textElement.SetColor( _activeTextColor);
-                        }
+                if (_isEnabled) {
+                    if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
+                        Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
+                    } else {
+                        Background.Draw(graphics, origin, size, spriteBatch, _color);
                     }
                 } else {
-                    Background.Draw(graphics, origin, size, spriteBatch, _color);
-
-                    foreach (var element in Elements) {
-                        if (element is UiTextBlock textElement) {
-                            textElement.SetColor(_textColor);
-                        }
-                    }
+                    Background.Draw(graphics, origin, size, spriteBatch, _disabledColor);
                 }
             }
 
@@ -57,5 +75,21 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public event Action OnClick;
+
+        public void Enable() {
+            _isEnabled = true;
+        }
+
+        public void Disable() {
+            _isEnabled = false;
+        }
+
+        public void SetDisabledColor(Color color) {
+            _disabledColor = color;
+        }
+
+        public void SetDisabledTextColor(Color color) {
+            _disabledTextColor = color;
+        }
     }
 }

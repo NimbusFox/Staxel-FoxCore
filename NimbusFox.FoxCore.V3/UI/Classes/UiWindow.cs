@@ -34,10 +34,15 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         private UiAlignment _alignment;
 
-        public UiWindow(UiAlignment alignment = UiAlignment.MiddleCenter) {
+        public UiWindow(UiAlignment alignment = UiAlignment.MiddleCenter, bool delayUpdate = true) {
             FoxUIHook.Instance.Windows.Add(this);
             Container = new UiContainer();
             _alignment = alignment;
+
+            if (delayUpdate) {
+                StopUpdateCalls();
+                StartUpdateCalls();
+            }
         }
 
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
