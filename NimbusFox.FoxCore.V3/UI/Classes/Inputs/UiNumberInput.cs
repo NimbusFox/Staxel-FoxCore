@@ -56,7 +56,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
 
             var downButton = new UiButton();
             downButton.SetBackground(Constants.Backgrounds.Button);
-            downButton.OnClick += () => {
+            downButton.OnHold += () => {
                 SetValue(_value - _itterations, true);
             };
             downButton.SetTextColor(Color.Black);
@@ -73,7 +73,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             base.AddChild(_displayRow);
             var upButton = new UiButton();
             upButton.SetBackground(Constants.Backgrounds.Button);
-            upButton.OnClick += () => {
+            upButton.OnHold += () => {
                 SetValue(_value + _itterations, true);
             };
 
@@ -99,16 +99,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             
         }
 
-        public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
-            _displayRow.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseState);
-        }
-
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState, Rectangle scissor) {
-            _displayRow.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
-        }
-
         public void SetMin(float min) {
             _min = min;
             if (_value <= min) {
@@ -120,6 +110,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
             _max = max;
             if (_value >= max) {
                 SetValue(max);
+            }
+        }
+
+        public void ForceSetValue(float value, bool update = false) {
+            _value = value;
+            if (value > _max) {
+                _value = _max;
+            }
+
+            if (value < _min) {
+                _value = _min;
+            }
+
+            _textInput.ForceSetValue(_value.ToString(_format));
+            if (update) {
+                OnChange?.Invoke(_value);
             }
         }
 

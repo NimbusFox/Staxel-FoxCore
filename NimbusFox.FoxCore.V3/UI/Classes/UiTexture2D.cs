@@ -28,7 +28,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState, Rectangle scissor) {
+            Vector2 mouseLocation, Rectangle scissor) {
             TextureCheck(graphics);
 
             if (_selfRender) {
@@ -68,7 +68,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, Vector2 mouseLocation, bool click, bool clickHold) {
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>

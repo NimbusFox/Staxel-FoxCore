@@ -26,7 +26,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected int MinWidth = 0;
 
         public virtual void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
@@ -34,7 +34,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     continue;
                 }
 
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState, scissor);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseLocation, scissor);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }
@@ -63,7 +63,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public virtual void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, Vector2 mouseLocation, bool click, bool clickHold) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
                 if (element.Parent == null) {
@@ -77,7 +77,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 if (!element.Visible) {
                     continue;
                 }
-                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
+                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }

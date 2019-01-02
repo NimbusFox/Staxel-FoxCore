@@ -19,29 +19,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public event Action<Color> ColorHover;
         public event Action<Color> ColorClick;
-        protected string ColorWheelImage;
-        private string _currentImage = "none";
         private UiTexture2D _colorWheel;
 
         public UiColorPicker() {
-            ColorWheelImage = Constants.Images.ColorWheel;
-            _currentImage = ColorWheelImage;
+            _colorWheel = FoxUIHook.Instance.GetPicture(Constants.Images.ColorWheel);
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
-            MouseState mouseState) {
-            if (_colorWheel == null) {
-                _colorWheel = FoxUIHook.Instance.GetPicture(ColorWheelImage);
-            }
+            Vector2 mouseLocation, bool click, bool clickHold) {
 
-            if (ColorWheelImage != _currentImage) {
-                _colorWheel = FoxUIHook.Instance.GetPicture(ColorWheelImage);
-                _currentImage = ColorWheelImage;
+            if (!Window.CallUpdates && !Window.Visible) {
+                return;
             }
 
             var location = Helpers.VectorLocation(origin,
                 new Vector2(origin.X + _colorWheel.Width, origin.Y + _colorWheel.Height),
-                new Vector2(mouseState.X, mouseState.Y));
+                mouseLocation);
 
             if (location.X == -1 || location.Y == -1) {
                 return;
@@ -61,19 +54,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
             ColorHover?.Invoke(color);
 
-            if (mouseState.LeftButton == ButtonState.Pressed) {
+            if (click || clickHold) {
                 ColorClick?.Invoke(color);
             }
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState, Rectangle scissor) {
+            Vector2 mouseLocation, Rectangle scissor) {
 
             if (_colorWheel == null) {
                 return;
             }
 
-            _colorWheel.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
+            _colorWheel.Draw(graphics, entity, universe, origin, spriteBatch, mouseLocation, scissor);
         }
 
         public override Vector2 GetSize() {

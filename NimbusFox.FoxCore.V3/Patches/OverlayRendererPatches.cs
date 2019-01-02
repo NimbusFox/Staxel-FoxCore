@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 using NimbusFox.FoxCore.V3.Events;
 using NimbusFox.FoxCore.V3.Events.Builders;
 using NimbusFox.FoxCore.V3.UI.Classes;
@@ -23,6 +24,9 @@ namespace NimbusFox.FoxCore.V3.Patches {
         }
 
         private static ModOptionsEvent modSettingsWindow;
+
+        private static bool _isClicked = false;
+        private static bool _isHeld = false;
 
         private static void Update(Universe universe, AvatarController avatarController) {
             var input = new List<ScanCode>();
@@ -56,12 +60,22 @@ namespace NimbusFox.FoxCore.V3.Patches {
 
             var mouseState = ClientContext.InputSource.GetMouseState();
 
+            var mainClick = mouseState.LeftButton == ButtonState.Pressed || mouseState.RightButton == ButtonState.Pressed;
+
+            if (_isClicked && mainClick) {
+                _isHeld = true;
+            } else {
+                _isHeld = false;
+            }
+
+            _isClicked = mainClick;
+
             var remove = new List<UiWindow>();
 
             foreach (var window in new List<UiWindow>(FoxUIHook.Instance.Windows)) {
                 window.Update(universe, avatarController, input, ClientContext.InputSource.IsControlKeyDown(),
                     input.Contains(ScanCode.LeftShift) || input.Contains(ScanCode.RightShift), interfacePressed,
-                    mouseState);
+                    mouseState.Vector2(), _isClicked, _isHeld);
 
                 if (window.Remove || window.IsDisposed) {
                     remove.Add(window);
@@ -79,10 +93,10 @@ namespace NimbusFox.FoxCore.V3.Patches {
             try {
                 foreach (var window in FoxUIHook.Instance.Windows) {
                     if (window.Visible && !window.AlwaysOnTop && !window.IsDisposed) {
-                        window.Draw(graphics, ref matrix, avatar, universe, avatarController, mouseState);
+                        window.Draw(graphics, ref matrix, avatar, universe, avatarController, mouseState.Vector2());
                     }
                 }
-            } catch {
+            } catch (InvalidOperationException) {
                 // stop enumeration bugs
             }
         }
@@ -94,10 +108,10 @@ namespace NimbusFox.FoxCore.V3.Patches {
             try {
                 foreach (var window in FoxUIHook.Instance.Windows) {
                     if (window.Visible && window.AlwaysOnTop && !window.IsDisposed) {
-                        window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep, mouseState);
+                        window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep, mouseState.Vector2());
                     }
                 }
-            } catch {
+            } catch (InvalidOperationException) {
                 // stop enumeration bugs
             }
         }

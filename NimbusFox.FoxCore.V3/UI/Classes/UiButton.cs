@@ -22,21 +22,38 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private Color _disabledColor = Color.LightGray;
         private Color _disabledTextColor = Color.Gray;
         private bool _update = true;
+        private bool _pressed = false;
+
+        public event Action OnClick;
+        public event Action OnHold;
+
+        private uint _interval = 50;
 
         public UiButton() {
             SetBackground(Constants.Backgrounds.Button);
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
-            MouseState mouseState) {
+            Vector2 mouseLocation, bool click, bool clickHold) {
             var size = GetSize();
             var range = origin + size;
             if (_isEnabled) {
-                if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
-                    if (mouseState.LeftButton == ButtonState.Pressed && Window?.CallUpdates != false && Window?.Visible != false) {
-                        if (_update) {
-                            Click();
+                if (Helpers.VectorContains(origin, range, mouseLocation)) {
+                    if (click && !clickHold && Window?.CallUpdates != false && Window?.Visible != false) {
+                        _pressed = true;
+                    }
+
+                    if (_pressed) {
+                        if (!click) {
+                            _pressed = false;
                             OnClick?.Invoke();
+                        }
+                    }
+
+                    if (clickHold && Window?.CallUpdates != false && Window?.Visible != false) {
+                        if (_update) {
+                            HoldTimer();
+                            OnHold?.Invoke();
                         }
                     }
                     foreach (var element in Elements) {
@@ -45,6 +62,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                         }
                     }
                 } else {
+                    _pressed = false;
                     foreach (var element in Elements) {
                         if (element is UiTextBlock textElement) {
                             textElement.SetColor(_textColor);
@@ -52,6 +70,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     }
                 }
             } else {
+                _pressed = false;
                 foreach (var element in Elements) {
                     if (element is UiTextBlock textElement) {
                         textElement.SetColor(_disabledTextColor);
@@ -60,10 +79,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
         }
 
-        private void Click() {
+        private void HoldTimer() {
             _update = false;
 
-            var timer = new Timer { Interval = 50 };
+            var timer = new Timer { Interval = _interval };
             timer.Elapsed += (sender, args) => {
                 _update = true;
                 timer.Dispose();
@@ -72,12 +91,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             var size = GetSize();
             var range = origin + size;
             if (Background != null) {
                 if (_isEnabled) {
-                    if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
+                    if (Helpers.VectorContains(origin, range, mouseLocation)) {
                         Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
                     } else {
                         Background.Draw(graphics, origin, size, spriteBatch, _color);
@@ -87,11 +106,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 }
             }
 
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseLocation, scissor);
         }
-
-        public event Action OnClick;
-
+        
         public void Enable() {
             _isEnabled = true;
         }
@@ -106,6 +123,10 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         public void SetDisabledTextColor(Color color) {
             _disabledTextColor = color;
+        }
+
+        public void SetHoldInterval(uint milliseconds) {
+            _interval = milliseconds;
         }
     }
 }

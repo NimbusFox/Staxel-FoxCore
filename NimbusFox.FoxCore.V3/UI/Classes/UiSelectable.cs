@@ -23,12 +23,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected Color _textColor = new Color(18, 26, 32);
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             var size = GetSize();
             var range = origin + size;
             if (Background != null) {
 
-                if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
+                if (Helpers.VectorContains(origin, range, mouseLocation)) {
                     Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
 
                     foreach (var element in Elements) {
@@ -67,7 +67,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 }
             }
 
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseLocation, scissor);
         }
 
         public void SetActiveBackgroundColor(Color color) {

@@ -42,7 +42,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
-            AvatarController avatarController, MouseState mouseState) {
+            AvatarController avatarController, Vector2 mouseLocation) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             } else if (_spriteBatch.IsDisposed) {
@@ -100,7 +100,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState, _spriteBatch.GraphicsDevice.ScissorRectangle);
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseLocation, _spriteBatch.GraphicsDevice.ScissorRectangle);
             if (!_spriteBatch.IsDisposed) {
                 try {
                     _spriteBatch.End();
@@ -111,7 +111,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void DrawTop(DeviceContext graphics, ref Matrix4F matrix, Entity avatar,
-            EntityPainter avatarPainter, Universe universe, Timestep timestep, MouseState mouseState) {
+            EntityPainter avatarPainter, Universe universe, Timestep timestep, Vector2 mouseLocation) {
             if (_spriteBatch == null) {
                 _spriteBatch = new SpriteBatch(graphics.Graphics.GraphicsDevice);
             } else if (_spriteBatch.IsDisposed) {
@@ -169,7 +169,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState, _spriteBatch.GraphicsDevice.ScissorRectangle);
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseLocation, _spriteBatch.GraphicsDevice.ScissorRectangle);
             if (!_spriteBatch.IsDisposed) {
                 _spriteBatch.End();
             }
@@ -202,7 +202,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         internal void Update(Universe universe, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, Vector2 mouseLocation, bool click, bool clickHold) {
             if (_escape) {
                 if (ClientContext.InputSource.IsCancelDownClicked()) {
                     Dispose();
@@ -243,7 +243,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     origin = new Vector2(ViewPort.Width - size.X, ViewPort.Height - size.Y);
                     break;
             }
-            Container.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseState);
+            Container.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
         }
 
         public void AddChild(UiElement element) {

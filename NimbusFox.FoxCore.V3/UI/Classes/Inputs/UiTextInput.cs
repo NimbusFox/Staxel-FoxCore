@@ -40,11 +40,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
         private DateTime _lastTick = DateTime.MinValue;
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
-            MouseState mouseState) {
-            base.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseState);
-            var inside = Helpers.VectorContains(origin, origin + GetSize(), mouseState.Vector2());
+            Vector2 mouseLocation, bool click, bool clickHold) {
+            base.Update(universe, origin, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
+            var inside = Helpers.VectorContains(origin, origin + GetSize(), mouseLocation);
 
-            if (mouseState.LeftButton == ButtonState.Pressed) {
+            if (click) {
                 _selected = inside;
             }
 
@@ -176,7 +176,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             var size = GetSize();
             if (_selected) {
                 Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
@@ -196,7 +196,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                 }
             }
 
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseLocation, scissor);
         }
 
         public string GetValue() {

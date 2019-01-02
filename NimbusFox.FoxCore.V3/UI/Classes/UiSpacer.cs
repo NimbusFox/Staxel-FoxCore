@@ -27,7 +27,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Width = width;
         }
 
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             // do nothing
         }
 

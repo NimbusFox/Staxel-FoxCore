@@ -16,22 +16,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected UiBackground Background;
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             if (Background != null) {
                 var size = GetSize();
 
                 Background.Draw(graphics, origin, size, spriteBatch);
             }
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseLocation, scissor);
         }
 
         protected void DrawChildren(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
-            base.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
+            SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
+            base.Draw(graphics, entity, universe, origin, spriteBatch, mouseLocation, scissor);
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, Vector2 mouseLocation, bool click, bool clickHold) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
                 if (element.Parent == null) {
@@ -45,7 +45,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 if (!element.Visible) {
                     continue;
                 }
-                element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
+                element.Update(universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero) + offset, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }

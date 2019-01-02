@@ -31,7 +31,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             return size;
         }
 
-        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+        public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch, Vector2 mouseLocation, Rectangle scissor) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
@@ -46,17 +46,17 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     element.SetWindow(Window);
                 }
 
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState, scissor);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseLocation, scissor);
                 offset = offset + new Vector2(element.GetSize().X, 0);
             }
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift, IReadOnlyList<InterfaceLogicalButton> inputPressed,
-            MouseState mouseState) {
+            Vector2 mouseLocation, bool click, bool clickHold) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
-                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseState);
+                element.Update(universe, origin + offset, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
                 offset = offset + new Vector2(element.GetSize().X, 0);
             }
         }

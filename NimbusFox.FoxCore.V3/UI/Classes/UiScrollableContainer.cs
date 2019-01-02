@@ -34,18 +34,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             _scrollUpButton.SetBackground(Constants.Backgrounds.Button);
             _scrollUpButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.upArrow"));
             _scrollUpButton.Hide();
+            _scrollUpButton.OnHold += () => { _scrollOffset.X -= _horizontalScrollAmount; };
             _scrollDownButton = new UiButton();
             _scrollDownButton.SetBackground(Constants.Backgrounds.Button);
             _scrollDownButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.downArrow"));
             _scrollDownButton.Hide();
+            _scrollDownButton.OnHold += () => { _scrollOffset.X += _horizontalScrollAmount; };
             _scrollLeftButton = new UiButton();
             _scrollLeftButton.SetBackground(Constants.Backgrounds.Button);
             _scrollLeftButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.leftArrow"));
             _scrollLeftButton.Hide();
+            _scrollLeftButton.OnHold += () => { _scrollOffset.Y-= _verticalScrollAmount; };
             _scrollRightButton = new UiButton();
             _scrollRightButton.SetBackground(Constants.Backgrounds.Button);
             _scrollRightButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.rightArrow"));
             _scrollRightButton.Hide();
+            _scrollRightButton.OnHold += () => { _scrollOffset.Y += _verticalScrollAmount; };
             ClientContext.InputSource.RegisterScrollHandler((change, state) => {
                 var innerSize = InternalGetSize();
                 var maxSize = GetSize() - innerSize;
@@ -59,28 +63,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
                 if (_shiftHeld) {
                     _scrollOffset.X += change;
-                    if (_scrollOffset.X > 0) {
-                        _scrollOffset.X = 0;
-                    }
-
-                    if (_scrollOffset.X < maxSize.X) {
-                        _scrollOffset.X = maxSize.X;
-                    }
                 } else {
                     _scrollOffset.Y += change;
-                    if (_scrollOffset.Y > 0) {
-                        _scrollOffset.Y = 0;
-                    }
-
-                    if (_scrollOffset.Y < maxSize.Y) {
-                        _scrollOffset.Y = maxSize.Y;
-                    }
                 }
             });
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
-            IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
+            IReadOnlyList<InterfaceLogicalButton> inputPressed, Vector2 mouseLocation, bool click, bool clickHold) {
             _shiftHeld = shift;
             var scrollOffset = origin + _scrollOffset;
 
@@ -102,6 +92,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             } else {
                 _scrollUpButton.Show();
                 _scrollDownButton.Show();
+            }
+
+            if (_scrollOffset.X > 0) {
+                _scrollOffset.X = 0;
+            }
+
+            if (_scrollOffset.X < maxSize.X) {
+                _scrollOffset.X = maxSize.X;
+            }
+
+            if (_scrollOffset.Y > 0) {
+                _scrollOffset.Y = 0;
+            }
+
+            if (_scrollOffset.Y < maxSize.Y) {
+                _scrollOffset.Y = maxSize.Y;
             }
 
             _scrollLeftButton.Enable();
@@ -137,7 +143,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     continue;
                 }
 
-                element.Update(universe, scrollOffset, avatar, input, ctrl, shift, inputPressed, mouseState);
+                element.Update(universe, scrollOffset, avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
 
                 scrollOffset = scrollOffset + new Vector2(0, element.GetSize().Y);
             }
@@ -146,27 +152,27 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 var size = _scrollDownButton.GetSize();
                 _scrollDownButton.Update(universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(5, 0)) - size) - new Vector2(0, size.Y), avatar,
-                    input, ctrl, shift, inputPressed, mouseState);
+                    input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
             }
 
             if (_scrollUpButton.Visible) {
-                _scrollUpButton.Update(universe, origin + new Vector2(Width + 5, 0), avatar, input, ctrl, shift, inputPressed, mouseState);
+                _scrollUpButton.Update(universe, origin + new Vector2(Width + 5, 0), avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
             }
 
             if (_scrollLeftButton.Visible) {
-                _scrollLeftButton.Update(universe, origin + new Vector2(0, Height + 5), avatar, input, ctrl, shift, inputPressed, mouseState);
+                _scrollLeftButton.Update(universe, origin + new Vector2(0, Height + 5), avatar, input, ctrl, shift, inputPressed, mouseLocation, click, clickHold);
             }
 
             if (_scrollRightButton.Visible) {
                 var size = _scrollRightButton.GetSize();
                 _scrollRightButton.Update(universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(0, 5)) - size) - new Vector2(size.X, 0), avatar, input, ctrl,
-                    shift, inputPressed, mouseState);
+                    shift, inputPressed, mouseLocation, click, clickHold);
             }
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState, Rectangle scissor) {
+            Vector2 mouseLocation, Rectangle scissor) {
 
             try {
                 spriteBatch.End();
@@ -186,7 +192,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     continue;
                 }
 
-                element.Draw(graphics, entity, universe, scrollOffset, spriteBatch, mouseState, spriteBatch.GraphicsDevice.ScissorRectangle);
+                element.Draw(graphics, entity, universe, scrollOffset, spriteBatch, mouseLocation, spriteBatch.GraphicsDevice.ScissorRectangle);
 
                 scrollOffset = scrollOffset + new Vector2(0, element.GetSize().Y);
             }
@@ -199,25 +205,25 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 var size = _scrollDownButton.GetSize();
                 _scrollDownButton.Draw(graphics, entity, universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(5, 0)) - size) - new Vector2(0, size.Y),
-                    spriteBatch, mouseState, scissor);
+                    spriteBatch, mouseLocation, scissor);
             }
 
             if (_scrollUpButton.Visible) {
                 _scrollUpButton.Draw(graphics, entity, universe,
                     origin + new Vector2(Width + 5, 0),
-                    spriteBatch, mouseState, scissor);
+                    spriteBatch, mouseLocation, scissor);
             }
 
             if (_scrollLeftButton.Visible) {
                 _scrollLeftButton.Draw(graphics, entity, universe, origin + new Vector2(0, Height + 5), spriteBatch,
-                    mouseState, scissor);
+                    mouseLocation, scissor);
             }
 
             if (_scrollRightButton.Visible) {
                 var size = _scrollRightButton.GetSize();
                 _scrollRightButton.Draw(graphics, entity, universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(0, 5)) - size) - new Vector2(size.X + 8, 0), spriteBatch,
-                    mouseState, scissor);
+                    mouseLocation, scissor);
             }
         }
 
