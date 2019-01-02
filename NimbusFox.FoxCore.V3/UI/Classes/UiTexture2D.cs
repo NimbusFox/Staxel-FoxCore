@@ -28,7 +28,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState) {
+            MouseState mouseState, Rectangle scissor) {
             TextureCheck(graphics);
 
             if (_selfRender) {

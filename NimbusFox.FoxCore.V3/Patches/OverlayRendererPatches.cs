@@ -59,9 +59,6 @@ namespace NimbusFox.FoxCore.V3.Patches {
             var remove = new List<UiWindow>();
 
             foreach (var window in new List<UiWindow>(FoxUIHook.Instance.Windows)) {
-                if (!window.CallUpdates) {
-                    continue;
-                }
                 window.Update(universe, avatarController, input, ClientContext.InputSource.IsControlKeyDown(),
                     input.Contains(ScanCode.LeftShift) || input.Contains(ScanCode.RightShift), interfacePressed,
                     mouseState);
@@ -79,10 +76,14 @@ namespace NimbusFox.FoxCore.V3.Patches {
             AvatarController avatarController) {
             InitializeContentManager(graphics);
             var mouseState = ClientContext.InputSource.GetMouseState();
-            foreach (var window in FoxUIHook.Instance.Windows) {
-                if (window.Visible && !window.AlwaysOnTop) {
-                    window.Draw(graphics, ref matrix, avatar, universe, avatarController, mouseState);
+            try {
+                foreach (var window in FoxUIHook.Instance.Windows) {
+                    if (window.Visible && !window.AlwaysOnTop && !window.IsDisposed) {
+                        window.Draw(graphics, ref matrix, avatar, universe, avatarController, mouseState);
+                    }
                 }
+            } catch {
+                // stop enumeration bugs
             }
         }
 
@@ -90,10 +91,14 @@ namespace NimbusFox.FoxCore.V3.Patches {
             EntityPainter avatarPainter, Universe universe, Timestep timestep) {
             InitializeContentManager(graphics);
             var mouseState = ClientContext.InputSource.GetMouseState();
-            foreach (var window in FoxUIHook.Instance.Windows) {
-                if (window.Visible && window.AlwaysOnTop) {
-                    window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep, mouseState);
+            try {
+                foreach (var window in FoxUIHook.Instance.Windows) {
+                    if (window.Visible && window.AlwaysOnTop && !window.IsDisposed) {
+                        window.DrawTop(graphics, ref matrix, avatar, avatarPainter, universe, timestep, mouseState);
+                    }
                 }
+            } catch {
+                // stop enumeration bugs
             }
         }
 

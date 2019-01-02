@@ -26,7 +26,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected int MinWidth = 0;
 
         public virtual void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState) {
+            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
             var offset = Vector2.Zero;
 
             foreach (var element in Elements) {
@@ -34,7 +34,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     continue;
                 }
 
-                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState);
+                element.Draw(graphics, entity, universe, origin + offset, spriteBatch, mouseState, scissor);
                 offset = offset + new Vector2(0, element.GetSize().Y);
             }
         }
@@ -67,11 +67,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
                 if (element.Parent == null) {
-                    element.Parent = this;
+                    element.SetParent(this);
                 }
 
                 if (element.Window == null) {
-                    element.Window = Window;
+                    element.SetWindow(Window);
                 }
 
                 if (!element.Visible) {

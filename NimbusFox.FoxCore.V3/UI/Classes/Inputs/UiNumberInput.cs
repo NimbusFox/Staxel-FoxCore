@@ -105,8 +105,8 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState) {
-            _displayRow.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
+            MouseState mouseState, Rectangle scissor) {
+            _displayRow.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
         }
 
         public void SetMin(float min) {

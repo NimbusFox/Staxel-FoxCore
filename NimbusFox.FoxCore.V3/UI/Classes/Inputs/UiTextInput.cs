@@ -78,7 +78,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
 
             if (input.Any()) {
                 var direction = input.GetDirectionKey();
-                var key = input.GetFirstPressedKey();
+                var key = input.GetPressedKey();
 
                 if (key == null && direction == null) {
                     if (input.Contains(ScanCode.Space)) {
@@ -176,7 +176,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState) {
+            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
             var size = GetSize();
             if (_selected) {
                 Background.Draw(graphics, origin, size, spriteBatch, _activeColor);
@@ -196,7 +196,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes.Inputs {
                 }
             }
 
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
         }
 
         public string GetValue() {

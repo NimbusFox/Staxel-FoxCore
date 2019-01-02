@@ -23,8 +23,9 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         internal Viewport ViewPort;
         internal bool Remove = false;
         internal bool CallUpdates = true;
+        private Timer _timer;
 
-        private List<UiWindow> _childrenWindows = new List<UiWindow>();
+        private List<UiWindow> ChildrenWindows { get; } = new List<UiWindow>();
 
         public event Action OnClose;
         public event Action OnShow;
@@ -32,17 +33,12 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
         private bool _escape = false;
 
-        private UiAlignment _alignment;
+        private UiAlignment Alignment { get; }
 
-        public UiWindow(UiAlignment alignment = UiAlignment.MiddleCenter, bool delayUpdate = true) {
+        public UiWindow(UiAlignment alignment = UiAlignment.MiddleCenter) {
             FoxUIHook.Instance.Windows.Add(this);
             Container = new UiContainer();
-            _alignment = alignment;
-
-            if (delayUpdate) {
-                StopUpdateCalls();
-                StartUpdateCalls();
-            }
+            Alignment = alignment;
         }
 
         internal void Draw(DeviceContext graphics, ref Matrix4F matrix, Entity avatar, Universe universe,
@@ -73,7 +69,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Vector2 origin;
             ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
-            switch (_alignment) {
+            switch (Alignment) {
                 case UiAlignment.TopLeft:
                     origin = new Vector2(0, 0);
                     break;
@@ -104,7 +100,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState, _spriteBatch.GraphicsDevice.ScissorRectangle);
             if (!_spriteBatch.IsDisposed) {
                 try {
                     _spriteBatch.End();
@@ -142,7 +138,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             Vector2 origin;
             ViewPort = graphics.Graphics.GraphicsDevice.Viewport;
 
-            switch (_alignment) {
+            switch (Alignment) {
                 case UiAlignment.TopLeft:
                     origin = new Vector2(0, 0);
                     break;
@@ -173,14 +169,14 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     break;
             }
 
-            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState);
+            Container.Draw(graphics, avatar, universe, origin, _spriteBatch, mouseState, _spriteBatch.GraphicsDevice.ScissorRectangle);
             if (!_spriteBatch.IsDisposed) {
                 _spriteBatch.End();
             }
         }
 
         public void Dispose() {
-            foreach (var window in _childrenWindows) {
+            foreach (var window in ChildrenWindows) {
                 if (!window.IsDisposed) {
                     window.Dispose();
                 }
@@ -217,7 +213,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
 
             Vector2 origin;
 
-            switch (_alignment) {
+            switch (Alignment) {
                 case UiAlignment.TopLeft:
                     origin = new Vector2(0, 0);
                     break;
@@ -261,24 +257,22 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public void AddChildWindow(UiWindow window) {
-            _childrenWindows.Add(window);
-        }
-
-        public void RemoveChildWindow(UiWindow window) {
-            _childrenWindows.Remove(window);
+            ChildrenWindows.Add(window);
         }
 
         public void StopUpdateCalls() {
             CallUpdates = false;
+            _timer?.Dispose();
+            _timer?.Stop();
         }
 
         public void StartUpdateCalls() {
-            var timer = new Timer {Interval = 400};
-            timer.Elapsed += (sender, args) => {
-                CallUpdates = true; 
-                timer.Dispose();
+            _timer = new Timer {Interval = 400};
+            _timer.Elapsed += (sender, args) => {
+                CallUpdates = true;
+                _timer.Dispose();
             };
-            timer.Start();
+            _timer.Start();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe,
-            Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState) {
+            Vector2 origin, SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
             if (_caret != null) {
                 if (_caretIndex == 0) {
                     if (_drawCaret) {

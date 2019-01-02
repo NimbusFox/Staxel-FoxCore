@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -125,8 +126,9 @@ namespace NimbusFox.FoxCore.V3 {
             return new Vector2(mousestate.X, mousestate.Y);
         }
 
-        public static char? GetFirstPressedKey(this IEnumerable<ScanCode> keys) {
-            foreach (var key in keys) {
+        public static char? GetPressedKey(this IEnumerable<ScanCode> keys) {
+            var reverseKeys = keys.Reverse();
+            foreach (var key in reverseKeys) {
                 var text = Enum.GetName(typeof(ScanCode), key);
                 if (text?.Length <= 2 && text.Length > 0) {
                     var ch = text.Length == 2 && text[0] == 'D' ? text[1] : text[0];

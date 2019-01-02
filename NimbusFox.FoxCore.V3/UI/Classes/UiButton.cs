@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -20,6 +21,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         private bool _isEnabled = true;
         private Color _disabledColor = Color.LightGray;
         private Color _disabledTextColor = Color.Gray;
+        private bool _update = true;
 
         public UiButton() {
             SetBackground(Constants.Backgrounds.Button);
@@ -31,8 +33,11 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             var range = origin + size;
             if (_isEnabled) {
                 if (Helpers.VectorContains(origin, range, new Vector2(mouseState.X, mouseState.Y))) {
-                    if (mouseState.LeftButton == ButtonState.Pressed) {
-                        OnClick?.Invoke();
+                    if (mouseState.LeftButton == ButtonState.Pressed && Window?.CallUpdates != false && Window?.Visible != false) {
+                        if (_update) {
+                            Click();
+                            OnClick?.Invoke();
+                        }
                     }
                     foreach (var element in Elements) {
                         if (element is UiTextBlock textElement) {
@@ -55,8 +60,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
         }
 
+        private void Click() {
+            _update = false;
+
+            var timer = new Timer { Interval = 50 };
+            timer.Elapsed += (sender, args) => {
+                _update = true;
+                timer.Dispose();
+            };
+            timer.Start();
+        }
+
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState) {
+            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
             var size = GetSize();
             var range = origin + size;
             if (Background != null) {
@@ -71,7 +87,7 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                 }
             }
 
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
         }
 
         public event Action OnClick;

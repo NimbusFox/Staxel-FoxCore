@@ -19,7 +19,6 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public uint Width { get; private set; } = 100;
         private Vector2 _scrollOffset = Vector2.Zero;
         readonly RasterizerState _rasterizerState = new RasterizerState() { ScissorTestEnable = true };
-        private Rectangle _lastRect;
         private bool _shiftHeld = false;
 
         private UiButton _scrollUpButton;
@@ -33,19 +32,19 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         public UiScrollableContainer() {
             _scrollUpButton = new UiButton();
             _scrollUpButton.SetBackground(Constants.Backgrounds.Button);
-            _scrollUpButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.colorblocks.ui.images.upArrow"));
+            _scrollUpButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.upArrow"));
             _scrollUpButton.Hide();
             _scrollDownButton = new UiButton();
             _scrollDownButton.SetBackground(Constants.Backgrounds.Button);
-            _scrollDownButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.colorblocks.ui.images.downArrow"));
+            _scrollDownButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.downArrow"));
             _scrollDownButton.Hide();
             _scrollLeftButton = new UiButton();
             _scrollLeftButton.SetBackground(Constants.Backgrounds.Button);
-            _scrollLeftButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.colorblocks.ui.images.leftArrow"));
+            _scrollLeftButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.leftArrow"));
             _scrollLeftButton.Hide();
             _scrollRightButton = new UiButton();
             _scrollRightButton.SetBackground(Constants.Backgrounds.Button);
-            _scrollRightButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.colorblocks.ui.images.rightArrow"));
+            _scrollRightButton.AddChild(FoxUIHook.Instance.GetPicture("nimbusfox.ui.images.rightArrow"));
             _scrollRightButton.Hide();
             ClientContext.InputSource.RegisterScrollHandler((change, state) => {
                 var innerSize = InternalGetSize();
@@ -127,6 +126,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
             }
 
             foreach (var element in Elements) {
+                if (element.Parent == null) {
+                    element.SetParent(this);
+                }
+
+                if (element.Window == null) {
+                    element.SetWindow(Window);
+                }
                 if (!element.Visible) {
                     continue;
                 }
@@ -160,15 +166,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState) {
+            MouseState mouseState, Rectangle scissor) {
 
             try {
                 spriteBatch.End();
             } catch {
                 // ignore
             }
-
-            _lastRect = spriteBatch.GraphicsDevice.ScissorRectangle;
 
             spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle((int)Math.Floor(origin.X), (int)Math.Floor(origin.Y), (int)Width, (int)Height);
 
@@ -182,38 +186,38 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
                     continue;
                 }
 
-                element.Draw(graphics, entity, universe, scrollOffset, spriteBatch, mouseState);
+                element.Draw(graphics, entity, universe, scrollOffset, spriteBatch, mouseState, spriteBatch.GraphicsDevice.ScissorRectangle);
 
                 scrollOffset = scrollOffset + new Vector2(0, element.GetSize().Y);
             }
 
             spriteBatch.End();
-            spriteBatch.GraphicsDevice.ScissorRectangle = _lastRect;
+            spriteBatch.GraphicsDevice.ScissorRectangle = scissor;
             spriteBatch.Begin();
 
             if (_scrollDownButton.Visible) {
                 var size = _scrollDownButton.GetSize();
                 _scrollDownButton.Draw(graphics, entity, universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(5, 0)) - size) - new Vector2(0, size.Y),
-                    spriteBatch, mouseState);
+                    spriteBatch, mouseState, scissor);
             }
 
             if (_scrollUpButton.Visible) {
                 _scrollUpButton.Draw(graphics, entity, universe,
                     origin + new Vector2(Width + 5, 0),
-                    spriteBatch, mouseState);
+                    spriteBatch, mouseState, scissor);
             }
 
             if (_scrollLeftButton.Visible) {
                 _scrollLeftButton.Draw(graphics, entity, universe, origin + new Vector2(0, Height + 5), spriteBatch,
-                    mouseState);
+                    mouseState, scissor);
             }
 
             if (_scrollRightButton.Visible) {
                 var size = _scrollRightButton.GetSize();
                 _scrollRightButton.Draw(graphics, entity, universe,
                     ((origin + new Vector2(Width, Height) + new Vector2(0, 5)) - size) - new Vector2(size.X + 8, 0), spriteBatch,
-                    mouseState);
+                    mouseState, scissor);
             }
         }
 

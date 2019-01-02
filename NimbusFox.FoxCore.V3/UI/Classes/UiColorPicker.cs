@@ -67,13 +67,13 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         }
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin, SpriteBatch spriteBatch,
-            MouseState mouseState) {
+            MouseState mouseState, Rectangle scissor) {
 
             if (_colorWheel == null) {
                 return;
             }
 
-            _colorWheel.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
+            _colorWheel.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
         }
 
         public override Vector2 GetSize() {

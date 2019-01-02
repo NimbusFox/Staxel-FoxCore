@@ -16,24 +16,32 @@ namespace NimbusFox.FoxCore.V3.UI.Classes {
         protected UiBackground Background;
 
         public override void Draw(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState) {
+            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
             if (Background != null) {
                 var size = GetSize();
 
                 Background.Draw(graphics, origin, size, spriteBatch);
             }
-            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState);
+            DrawChildren(graphics, entity, universe, origin + (Background?.TopLeftOffset ?? Vector2.Zero), spriteBatch, mouseState, scissor);
         }
 
         protected void DrawChildren(DeviceContext graphics, Entity entity, Universe universe, Vector2 origin,
-            SpriteBatch spriteBatch, MouseState mouseState) {
-            base.Draw(graphics, entity, universe, origin, spriteBatch, mouseState);
+            SpriteBatch spriteBatch, MouseState mouseState, Rectangle scissor) {
+            base.Draw(graphics, entity, universe, origin, spriteBatch, mouseState, scissor);
         }
 
         public override void Update(Universe universe, Vector2 origin, AvatarController avatar, List<ScanCode> input, bool ctrl, bool shift,
             IReadOnlyList<InterfaceLogicalButton> inputPressed, MouseState mouseState) {
             var offset = Vector2.Zero;
             foreach (var element in Elements) {
+                if (element.Parent == null) {
+                    element.SetParent(this);
+                }
+
+                if (element.Window == null) {
+                    element.SetWindow(Window);
+                }
+
                 if (!element.Visible) {
                     continue;
                 }
