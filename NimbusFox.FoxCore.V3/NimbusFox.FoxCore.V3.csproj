@@ -354,6 +354,7 @@
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FoxUIHook.cs" />
+    <Compile Include="UI\Classes\ColorPickerWindow.cs" />
     <Compile Include="UI\Classes\FoxCore\UiModSettings.cs" />
     <Compile Include="UI\Classes\Inputs\UiNumberInput.cs" />
     <Compile Include="UI\Classes\UiBackground.cs" />
@@ -408,6 +409,9 @@
     <None Include="Staxel\Fonts\obj\MyFirstCrush.24.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.36.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.font.mgcontent" />
+    <None Include="Staxel\UI\AddFavorite.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Staxel\UI\Backgrounds\Button\ButtonBackground.uiBackground">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -420,13 +424,28 @@
     <None Include="Staxel\UI\ColorWheel.uiPicture">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Staxel\UI\Delete.Text.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\UI\Delete.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Staxel\UI\DownArrow.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\UI\Favorites.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\UI\History.uiPicture">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Staxel\UI\LeftArrow.uiPicture">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Staxel\UI\RightArrow.uiPicture">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Staxel\UI\Set.uiPicture">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Staxel\UI\UpArrow.uiPicture">
@@ -442,6 +461,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Licenses\Json.NET.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\AddFavorite.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\Backgrounds\Button\ButtonBottomLeft.png">
@@ -489,13 +511,28 @@
     <Content Include="Staxel\UI\ColorWheel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Staxel\UI\Delete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Delete.Text.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Staxel\UI\DownArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Favorites.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\History.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\LeftArrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\RightArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Staxel\UI\Set.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Staxel\UI\UpArrow.png">
