@@ -409,6 +409,9 @@
     <None Include="Staxel\Fonts\obj\MyFirstCrush.24.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.36.mgcontent" />
     <None Include="Staxel\Fonts\obj\MyFirstCrush.font.mgcontent" />
+    <None Include="Staxel\Translations\NimbusFox.FoxCore-EN-GB.lang">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Staxel\UI\AddFavorite.uiPicture">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

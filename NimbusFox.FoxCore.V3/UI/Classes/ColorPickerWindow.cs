@@ -70,7 +70,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             var mouseText = new UiTextBlock();
 
             mouseText.SetColor(Color.White);
-            mouseText.SetString("Mouse");
+            mouseText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.mouse"));
             column.AddChild(mouseText);
             column.AddChild(hoverColor);
             column.AddChild(spacer);
@@ -78,14 +78,14 @@ namespace NimbusFox.ColorBlocks.Classes {
             var selectedText = new UiTextBlock();
 
             selectedText.SetColor(Color.White);
-            selectedText.SetString("Selected");
+            selectedText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.selected"));
             column.AddChild(selectedText);
             column.AddChild(selectedColor);
             column.AddChild(spacer);
 
             var currentText = new UiTextBlock();
             currentText.SetColor(Color.White);
-            currentText.SetString("Current");
+            currentText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.current"));
             column.AddChild(currentText);
             column.AddChild(currentColor);
 
@@ -96,10 +96,6 @@ namespace NimbusFox.ColorBlocks.Classes {
             _current.AddChild(spacer);
 
             var colorRow = new UiRow();
-
-            //var colorR = new UiTextBlock();
-            //colorR.SetString("R: " + _color.R);
-            //colorR.SetColor(Color.Red);
 
             UiTextInput colorHex = null;
 
@@ -117,10 +113,6 @@ namespace NimbusFox.ColorBlocks.Classes {
                     selectedColor.SetColor(_color);
                 }
             };
-
-            //var colorG = new UiTextBlock();
-            //colorG.SetString("G: " + _color.G);
-            //colorG.SetColor(Color.LimeGreen);
             var colorG = new UiNumberInput();
             colorG.SetItteration(1.0f);
             colorG.SetMin(0);
@@ -135,10 +127,6 @@ namespace NimbusFox.ColorBlocks.Classes {
                     selectedColor.SetColor(_color);
                 }
             };
-
-            //var colorB = new UiTextBlock();
-            //colorB.SetString("B: " + _color.B);
-            //colorB.SetColor(Color.LightBlue);
 
             var colorB = new UiNumberInput();
             colorB.SetItteration(1.0f);
@@ -156,13 +144,10 @@ namespace NimbusFox.ColorBlocks.Classes {
                 }
             };
 
-            //var colorHex = new UiTextBlock();
-            //colorHex.SetString($"Hex: {_color.R:X2}{_color.G:X2}{_color.B:X2}");
-
             var colorHexRow = new UiRow();
 
             var hex = new UiTextBlock();
-            hex.SetString("HEX: ");
+            hex.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.hex"));
 
             colorHex = new UiTextInput();
             colorHex.ForceSetValue($"{_color.R:X2}{_color.G:X2}{_color.B:X2}");
@@ -235,7 +220,7 @@ namespace NimbusFox.ColorBlocks.Classes {
 
             var confirmText = new UiTextBlock();
 
-            confirmText.SetString("Set Color");
+            confirmText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.setColor"));
 
             confirmButton.AddChild(confirmText);
 
@@ -256,7 +241,7 @@ namespace NimbusFox.ColorBlocks.Classes {
 
             var cancelText = new UiTextBlock();
 
-            cancelText.SetString("Cancel");
+            cancelText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.cancel"));
 
             cancelButton.AddChild(cancelText);
 
@@ -328,9 +313,10 @@ namespace NimbusFox.ColorBlocks.Classes {
             var reverse = new List<Color>(_colorHistory);
             reverse.Reverse();
 
-            SpawnColorWindowContent(window, historyWindow, spacer, setColor, SpawnHistoryWindow, color => {
-                _colorHistory.Remove(color);
-            }, reverse, "History", "No history", true);
+            SpawnColorWindowContent(window, historyWindow, spacer, setColor, SpawnHistoryWindow,
+                color => { _colorHistory.Remove(color); }, reverse,
+                ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.history"),
+                ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.noHistory"), true);
 
             historyWindow.OnClose += () => {
                 window.ListenForEscape(true);
@@ -473,7 +459,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             closeButton.SetBackground(Constants.Backgrounds.Button);
 
             var closeText = new UiTextBlock();
-            closeText.SetString("Close");
+            closeText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.close"));
 
             closeButton.AddChild(closeText);
 
@@ -488,7 +474,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             scrollable.SetDimensions(400, 500);
             var favFolderMenuTitle = new UiTextBlock();
             favFolderMenuTitle.SetFont(Constants.Fonts.MyFirstCrush36);
-            favFolderMenuTitle.SetString("Favorites");
+            favFolderMenuTitle.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.favorites"));
             favFolderMenuTitle.SetColor(Color.Orange);
             favFolderMenuWindow.AddChild(favFolderMenuTitle);
             favFolderMenuWindow.AddChild(spacer);
@@ -496,11 +482,11 @@ namespace NimbusFox.ColorBlocks.Classes {
 
             var newFolderButton = new UiButton();
             var newFolderText = new UiTextBlock();
-            newFolderText.SetString("New Folder");
+            newFolderText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.newFolder"));
             newFolderButton.OnClick += () => {
                 favFolderMenuWindow.StopUpdateCalls();
                 favFolderMenuWindow.Dispose();
-                SpawnInputTextWindow(window, spacer, "Name:", "New Folder", value => {
+                SpawnInputTextWindow(window, spacer, ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.name") + ":", ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.newFolder"), value => {
                     if (_favDir.Files.Any(x => x.ToLower() == value.ToLower())) {
                         return false;
                     }
@@ -511,7 +497,7 @@ namespace NimbusFox.ColorBlocks.Classes {
                     }
 
                     return true;
-                }, "Folder exists", "A folder with this name already exists", () => {
+                }, ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.folderExists"), ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.folderExists.message"), () => {
                     SpawnAddToFavFromHistoryMenu(window, spacer, setColor);
                 });
             };
@@ -547,7 +533,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             closeButton.SetBackground(Constants.Backgrounds.Button);
 
             var closeText = new UiTextBlock();
-            closeText.SetString("Close");
+            closeText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.close"));
 
             closeButton.AddChild(closeText);
 
@@ -649,7 +635,7 @@ namespace NimbusFox.ColorBlocks.Classes {
                     }
 
                     File.WriteAllLines(Path.Combine(_favDir.GetPath(Path.DirectorySeparatorChar), folder), values);
-                }, colors, folder, "No colors");
+                }, colors, folder, ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.nocolors"));
 
             historyWindow.OnClose += () => {
                 window.ListenForEscape(true);
@@ -670,7 +656,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             scrollable.SetDimensions(400, 500);
             var favFolderMenuTitle = new UiTextBlock();
             favFolderMenuTitle.SetFont(Constants.Fonts.MyFirstCrush36);
-            favFolderMenuTitle.SetString("Favorites");
+            favFolderMenuTitle.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.favorites"));
             favFolderMenuTitle.SetColor(Color.Orange);
             favFolderMenuWindow.AddChild(favFolderMenuTitle);
             favFolderMenuWindow.AddChild(spacer);
@@ -678,10 +664,10 @@ namespace NimbusFox.ColorBlocks.Classes {
 
             var newFolderButton = new UiButton();
             var newFolderText = new UiTextBlock();
-            newFolderText.SetString("New Folder");
+            newFolderText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.newFolder"));
             newFolderButton.OnClick += () => {
                 favFolderMenuWindow.Dispose();
-                SpawnInputTextWindow(window, spacer, "Name: ", "New Folder", value => {
+                SpawnInputTextWindow(window, spacer, ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.name") + ":", ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.newFolder"), value => {
                     if (_favDir.Files
                         .Any(x => x.ToLower() == value.ToLower())) {
                         return false;
@@ -693,7 +679,7 @@ namespace NimbusFox.ColorBlocks.Classes {
                     }
 
                     return true;
-                }, "Folder exists", "A folder with this name already exists", () => {
+                }, ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.folderExists"), ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.folderExists.message"), () => {
                     SpawnFavoriteFolderMenu(window, spacer, setColor);
                 });
             };
@@ -718,7 +704,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             closeButton.SetBackground(Constants.Backgrounds.Button);
 
             var closeText = new UiTextBlock();
-            closeText.SetString("Close");
+            closeText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.close"));
 
             closeButton.AddChild(closeText);
 
@@ -811,12 +797,12 @@ namespace NimbusFox.ColorBlocks.Classes {
                 confirmWindow.AddChild(confirmTitle);
                 confirmTitle.SetFont(Constants.Fonts.MyFirstCrush36);
                 confirmTitle.SetColor(Color.Orange);
-                confirmTitle.SetString($"Delete \"{folder}\"?");
+                confirmTitle.SetString(string.Format(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.deleteTitle"), folder));
                 confirmWindow.AddChild(spacer);
 
                 var confirmMessage = new UiTextBlock();
                 confirmWindow.AddChild(confirmMessage);
-                confirmMessage.SetString($"Are you sure you want to delete \"{folder}\"?");
+                confirmMessage.SetString(string.Format(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.deleteMessage"), folder));
                 confirmWindow.AddChild(spacer);
 
                 var buttonRow = new UiRow();
@@ -826,7 +812,7 @@ namespace NimbusFox.ColorBlocks.Classes {
                 buttonRow.AddChild(confirmButton);
                 var confirmButtonText = new UiTextBlock();
                 confirmButton.AddChild(confirmButtonText);
-                confirmButtonText.SetString("Delete");
+                confirmButtonText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.delete"));
                 buttonRow.AddChild(spacer);
                 confirmButton.OnClick += () => {
                     if (_favDir.FileExists(folder)) {
@@ -846,7 +832,7 @@ namespace NimbusFox.ColorBlocks.Classes {
                 buttonRow.AddChild(cancelButton);
                 var cancelText = new UiTextBlock();
                 cancelButton.AddChild(cancelText);
-                cancelText.SetString("Cancel");
+                cancelText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.cancel"));
 
                 cancelButton.OnClick += () => { confirmWindow.Dispose(); };
 
@@ -901,7 +887,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             buttonRow.AddChild(createButton);
             buttonRow.AddChild(spacer);
             var createText = new UiTextBlock();
-            createText.SetString("Create");
+            createText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.create"));
             createButton.AddChild(createText);
 
             createButton.OnClick += () => {
@@ -926,7 +912,7 @@ namespace NimbusFox.ColorBlocks.Classes {
 
                     var okButton = new UiButton();
                     var okText = new UiTextBlock();
-                    okText.SetString("OK");
+                    okText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.ok"));
                     okButton.AddChild(okText);
                     okButton.OnClick += () => {
                         textInputWindow.StartUpdateCalls();
@@ -952,7 +938,7 @@ namespace NimbusFox.ColorBlocks.Classes {
             buttonRow.AddChild(cancelButton);
             var cancelText = new UiTextBlock();
             cancelButton.AddChild(cancelText);
-            cancelText.SetString("Cancel");
+            cancelText.SetString(ClientContext.LanguageDatabase.GetTranslationString("nimbusfox.foxcore.text.cancel"));
 
             cancelButton.OnClick += () => {
                 textInputWindow.Dispose();

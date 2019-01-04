@@ -1,0 +1,23 @@
+﻿language.code=en-GB
+language=English
+
+nimbusfox.foxcore.text.mouse=Mouse
+nimbusfox.foxcore.text.selected=Selected
+nimbusfox.foxcore.text.current=Current
+nimbusfox.foxcore.text.hex=#
+nimbusfox.foxcore.text.setColor=Set Color
+nimbusfox.foxcore.text.cancel=Cancel
+nimbusfox.foxcore.text.history=History
+nimbusfox.foxcore.text.noHistory=No History
+nimbusfox.foxcore.text.close=Close
+nimbusfox.foxcore.text.favorites=Favourites
+nimbusfox.foxcore.text.newFolder=New Folder
+nimbusfox.foxcore.text.name=Name
+nimbusfox.foxcore.text.folderExists=Folder Exists
+nimbusfox.foxcore.text.folderExists.message=A folder with this name already exists
+nimbusfox.foxcore.text.nocolors=No Colours
+nimbusfox.foxcore.text.deleteTitle=Delete "{0-folder}"?
+nimbusfox.foxcore.text.deleteMessage=Are you sure you want to delete "{0-folder}"?
+nimbusfox.foxcore.text.delete=Delete
+nimbusfox.foxcore.text.create=Create
+nimbusfox.foxcore.text.ok=OK

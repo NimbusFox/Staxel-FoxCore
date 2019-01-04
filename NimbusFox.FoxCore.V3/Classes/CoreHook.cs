@@ -48,7 +48,9 @@ namespace NimbusFox.FoxCore.V3.Classes {
             }
         }
 
-        internal static void BeforeSave(PlayerEntityLogic __instance, Blob __state) {
+        private static Blob __state;
+
+        internal static void BeforeSave(PlayerEntityLogic __instance) {
             __state = BlobAllocator.Blob(true);
             if (__instance == null) {
                 return;
@@ -64,15 +66,10 @@ namespace NimbusFox.FoxCore.V3.Classes {
 
         }
 
-        internal static void AfterSave(PlayerEntityLogic __instance, Blob __state) {
+        internal static void AfterSave(PlayerEntityLogic __instance) {
             if (__instance == null) {
                 return;
             }
-            __state.FetchBlob("collections").MergeFrom(__instance.PlayerEntity.Blob.GetBlob("collections"));
-            __state.SetBool("dontStare", __instance.PlayerEntity.GetPrivateFieldValue<bool>("NPCsDontStare"));
-            __state.SetLong("theftCount", __instance.PlayerEntity.GetPrivateFieldValue<long>("_theftCount"));
-            __state.SetLong("theftResetDay", __instance.PlayerEntity.GetPrivateFieldValue<long>("_theftResetDay"));
-            __state.SetBool("hasSoldToMerchant", __instance.PlayerEntity.GetPrivateFieldValue<bool>("HasSoldToMerchant"));
 
             foreach (var modInstance in GameContext.ModdingController.GetPrivateFieldValue<IEnumerable>("_modHooks")) {
                 if (modInstance.GetPrivateFieldValue<object>("_instance") is IFoxModHook mod) {
@@ -82,6 +79,13 @@ namespace NimbusFox.FoxCore.V3.Classes {
                     }
                 }
             }
+
+            __state.FetchBlob("collections").MergeFrom(__instance.GetPrivateFieldValue<Entity>("_entity").Blob.FetchBlob("collections"));
+            __state.SetBool("dontStare", __instance.GetPrivateFieldValue<bool>("NPCsDontStare"));
+            __state.SetLong("theftCount", __instance.GetPrivateFieldValue<long>("_theftCount"));
+            __state.SetLong("theftResetDay", __instance.GetPrivateFieldValue<long>("_theftResetDay"));
+            __state.SetBool("hasSoldToMerchant", __instance.GetPrivateFieldValue<bool>("HasSoldToMerchant"));
+            __state.SetBool("autoPickupItems", __instance.GetPrivateFieldValue<bool>("_autoPickupItems"));
 
             ServerContext.EntityBlobDatabase.Set(__instance.Uid(), __instance.DisplayName(), EntityStorageKey.OtherPlayerData, __state);
             Blob.Deallocate(ref __state);
@@ -130,7 +134,7 @@ namespace NimbusFox.FoxCore.V3.Classes {
         }
 
         public void GameContextInitializeAfter() {
-            
+
         }
         public void GameContextDeinitialize() { }
         public void GameContextReloadBefore() { }
