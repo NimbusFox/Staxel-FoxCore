@@ -144,16 +144,14 @@ namespace NimbusFox.FoxCore.V3.Classes {
 
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
-            if (universe.Server) {
-                if (UserManager == null) {
-                    UserManager = new UserManager();
-                }
+            if (UserManager == null) {
+                UserManager = new UserManager();
+            }
 
-                if (ServerMainLoop == null) {
-                    ServerMainLoop =
-                        ServerContext.VillageDirector?.UniverseFacade?
-                            .GetPrivateFieldValue<ServerMainLoop>("_serverMainLoop");
-                }
+            if (ServerMainLoop == null) {
+                ServerMainLoop =
+                    ServerContext.VillageDirector?.UniverseFacade?
+                        .GetPrivateFieldValue<ServerMainLoop>("_serverMainLoop");
             }
         }
 
