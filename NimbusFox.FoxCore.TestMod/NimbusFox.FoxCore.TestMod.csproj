@@ -56,13 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHook.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NimbusFox.FoxCore\NimbusFox.FoxCore.csproj">
-      <Project>{8b473a82-8c34-44ea-b13d-39d0418e021f}</Project>
-      <Name>NimbusFox.FoxCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>del $(TargetDir)\*.mod</PreBuildEvent>
