@@ -35,10 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Plukit.Base">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
+      <HintPath>S:\SteamLibrary\steamapps\common\Staxel\bin\Plukit.Base.dll</HintPath>
     </Reference>
     <Reference Include="Staxel">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.dll</HintPath>
+      <HintPath>S:\SteamLibrary\steamapps\common\Staxel\bin\Staxel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
