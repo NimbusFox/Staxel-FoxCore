@@ -42,7 +42,7 @@
     </Reference>
     <Reference Include="Staxel.Auth, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>S:\SteamLibrary\steamapps\common\Staxel\bin\Staxel.Auth.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Staxel\bin\Staxel.Auth.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
