@@ -430,7 +430,8 @@ namespace NimbusFox.FoxCore.V3.Managers {
         //    var num1 = 0;
         //    var color1 = Color.White;
         //    var num2 = 0;
-        //    for (; num1 < range.Z; ++num1) {
+        //    for (; num1 < range.Z; ++num1)
+        // {
         //        for (var index = 0; index < range.X * range.Y; ++index) {
         //            var num3 = index % range.X;
         //            var num4 = index / range.X;
