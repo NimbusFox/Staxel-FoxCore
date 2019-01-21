@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Harmony;
 using NimbusFox.FoxCore.Classes.Exceptions;
-using NimbusFox.FoxCore.Dependencies.Harmony;
 using Plukit.Base;
 using Event = NimbusFox.FoxCore.Classes.Event;
 

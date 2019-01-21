@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using NimbusFox.FoxCore.Dependencies.Harmony;
+using Harmony;
 using NimbusFox.FoxCore.Dependencies.Newtonsoft.Json;
 using Plukit.Base;
 using Staxel;

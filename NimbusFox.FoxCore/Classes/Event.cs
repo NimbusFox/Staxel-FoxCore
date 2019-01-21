@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using NimbusFox.FoxCore.Dependencies.Harmony;
+using Harmony;
 
 namespace NimbusFox.FoxCore.Classes {
     internal class Event {

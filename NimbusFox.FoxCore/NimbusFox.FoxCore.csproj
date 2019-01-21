@@ -39,6 +39,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Lib.Harmony.1.2.0.1\lib\net45\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=3.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Costura.Fody.3.1.0\lib\net46\Costura.dll</HintPath>
     </Reference>
@@ -146,37 +149,6 @@
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Patches\ChatControllerPatches.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Attributes.cs" />
-    <Compile Include="Personal-Harmony\Harmony\CodeInstruction.cs" />
-    <Compile Include="Personal-Harmony\Harmony\CodeTranspiler.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Extras\DelegateTypeFactory.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Extras\FastAccess.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Extras\MethodInvoker.cs" />
-    <Compile Include="Personal-Harmony\Harmony\GlobalSuppressions.cs" />
-    <Compile Include="Personal-Harmony\Harmony\HarmonyInstance.cs" />
-    <Compile Include="Personal-Harmony\Harmony\HarmonyMethod.cs" />
-    <Compile Include="Personal-Harmony\Harmony\HarmonySharedState.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\ByteBuffer.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\Emitter.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\ILInstruction.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\Memory.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\MethodCopier.cs" />
-    <Compile Include="Personal-Harmony\Harmony\ILCopying\Signature.cs" />
-    <Compile Include="Personal-Harmony\Harmony\MethodPatcher.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Patch.cs" />
-    <Compile Include="Personal-Harmony\Harmony\PatchFunctions.cs" />
-    <Compile Include="Personal-Harmony\Harmony\PatchProcessor.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Priority.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\AccessCache.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\AccessTools.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\DynamicTools.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\Extensions.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\FileLog.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\PatchTools.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\SelfPatching.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\SymbolExtensions.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Tools\Traverse.cs" />
-    <Compile Include="Personal-Harmony\Harmony\Transpilers.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Personal-Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonObjectId.cs" />
