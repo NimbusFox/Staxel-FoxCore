@@ -3,27 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Plukit.Base;
 using NimbusFox.FoxCore.Classes;
+using Staxel;
 using Staxel.Logic;
 
 namespace NimbusFox.FoxCore.Managers {
     public class UserManager {
-        private const string CacheFile = "User.cache";
-        private Blob _cache;
-
         internal UserManager() {
-            if (!CoreHook.FxCore.ConfigDirectory.FileExists(CacheFile)) {
-                _cache = BlobAllocator.Blob(true);
-                Flush();
-            } else {
-                _cache = CoreHook.FxCore.ConfigDirectory.ReadFile<Blob>(CacheFile);
-            }
-        }
-
-        private void Flush() {
-            var blob = BlobAllocator.Blob(true);
-            blob.SetObject("userCache", _cache);
-            CoreHook.FxCore.ConfigDirectory.WriteFile(CacheFile, blob, false, true);
-            Blob.Deallocate(ref blob);
         }
 
         private Universe Universe => CoreHook.Universe;
@@ -36,38 +21,12 @@ namespace NimbusFox.FoxCore.Managers {
             return output;
         }
 
-        internal void AddUpdateEntry(string uid, string name) {
-            if (string.IsNullOrEmpty(GetNameByUid(uid))) {
-                var newUser = new UserCache {
-                    DisplayName = name,
-                    Uid = uid
-                };
-                _cache.SetObject(uid, newUser);
-            } else {
-                var user = _cache.GetObject<UserCache>(uid);
-                user.DisplayName = name;
-                _cache.SetObject(uid, user);
-            }
-
-            Flush();
-        }
-
-        private List<UserCache> CloneCache() {
-            var list = new List<UserCache>();
-
-            foreach (var blob in _cache.KeyValueIteratable) {
-                list.Add(_cache.GetObject<UserCache>(blob.Key));
-            }
-
-            return list;
-        }
-
         public string GetUidByName(string name) {
-            return CloneCache().FirstOrDefault(x => string.Equals(x.DisplayName, name, StringComparison.CurrentCultureIgnoreCase))?.Uid ?? "";
+            return ServerContext.RightsManager.TryGetUIDByUsername(name, out var uid) ? uid : null;
         }
 
         public string GetNameByUid(string uid) {
-            return CloneCache().FirstOrDefault(x => x.Uid == uid)?.DisplayName ?? "";
+            return GetPlayerEntityByUid(uid).PlayerEntityLogic.DisplayName();
         }
 
         public IReadOnlyList<string> GetPlayerNames() {

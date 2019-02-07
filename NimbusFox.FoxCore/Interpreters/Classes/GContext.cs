@@ -128,10 +128,6 @@ namespace NimbusFox.FoxCore.Interpreters.Classes {
 
         public LightingWorker LightingWorker => GameContext.LightingWorker;
 
-        public StructureDatabase StructureDatabase => GameContext.StructureDatabase;
-
-        public BiomeDatabase BiomeDatabase => GameContext.BiomeDatabase;
-
         public ExpressionDatabase ExpressionDatabase => GameContext.ExpressionDatabase;
 
         public EntityActionDatabase EntityActionDatabase => GameContext.EntityActionDatabase;

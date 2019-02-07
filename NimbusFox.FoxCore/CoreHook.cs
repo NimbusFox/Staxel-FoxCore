@@ -27,7 +27,6 @@ namespace NimbusFox {
         internal static Universe Universe;
         internal static ServerMainLoop ServerMainLoop;
         internal static Fox_Core FxCore;
-        private static long _cacheTick;
         internal static Entity _settingEntity;
 
         internal static void AfterLoad(PlayerEntityLogic __instance) {
@@ -115,7 +114,6 @@ namespace NimbusFox {
         }
 
         public void Dispose() {
-            _cacheTick = 0;
             _settingEntity?.Dispose();
             _settingEntity = null;
         }
@@ -157,13 +155,6 @@ namespace NimbusFox {
         public void UniverseUpdateBefore(Universe universe, Timestep step) {
             Universe = universe;
             if (universe.Server) {
-                if (_cacheTick <= DateTime.Now.Ticks) {
-                    foreach (var player in UserManager.GetPlayerEntities()) {
-                        UserManager.AddUpdateEntry(player.PlayerEntityLogic.Uid(), player.PlayerEntityLogic.DisplayName());
-                    }
-                    _cacheTick = DateTime.Now.AddSeconds(30).Ticks;
-                }
-
                 if (ServerMainLoop == null) {
                     ServerMainLoop =
                         ServerContext.VillageDirector?.UniverseFacade?
