@@ -12,6 +12,7 @@ using Plukit.Base;
 using Staxel;
 using Staxel.Core;
 using Staxel.Items;
+using Staxel.Logic;
 using Staxel.Tiles;
 using Staxel.Voxel;
 
@@ -324,7 +325,7 @@ namespace NimbusFox.FoxCore.Managers {
                 var index = x + z * range.X + y * range.X * range.Z;
                 Tile tile;
                 if (!CoreHook.Universe.ReadTile(baseVector + new Vector3I(x, y, z),
-                    TileAccessFlags.SynchronousWait, out tile)) {
+                    TileAccessFlags.SynchronousWait, ChunkFetchKind.Synchronous, EntityId.NullEntityId, out tile)) {
                     throw new Exception("Failed to read tile at: " + (baseVector + new Vector3I(x, y, z)) +
                                         ". Tileflags: " + TileAccessFlags.SynchronousWait);
                 }

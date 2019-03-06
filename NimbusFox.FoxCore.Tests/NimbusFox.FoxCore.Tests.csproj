@@ -57,12 +57,5 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NimbusFox.FoxCore\NimbusFox.FoxCore.csproj">
-      <Project>{8b473a82-8c34-44ea-b13d-39d0418e021f}</Project>
-      <Name>NimbusFox.FoxCore</Name>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
